@@ -65,14 +65,12 @@ class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
-
     this.displayed.then(() => {
       this.init_render();
     });
   }
 
   value_changed() {
-    console.log('value changed!')
     if (this.is_rendered) {
         this.init_render();
     }
@@ -80,6 +78,7 @@ class CytoscapeView extends DOMWidgetView {
 
   init_render() {
     this.is_rendered = true;
+    console.log(this.model.get('elements'));
     this.cytoscapemodel = cytoscape({
       container: this.el,
       autounselectify: this.model.get('autounselectify'),

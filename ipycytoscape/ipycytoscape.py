@@ -11,10 +11,15 @@ Graph visualization in Jupyter.
 import networkx as nx
 import matplotlib.pyplot as plt
 
+import copy
+
 from ipywidgets import DOMWidget
 from traitlets import Dict, Unicode, Bool, List
 from ._frontend import module_name, module_version
 
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 class CytoscapeWidget(DOMWidget):
     """TODO: Add docstring here
@@ -43,19 +48,43 @@ class CytoscapeWidget(DOMWidget):
                         }
                     }]).tag(sync=True)
     elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
-
-    nx_graph = nx.Graph()
+    changeFlag = Bool(False).tag(sync=True)
 
     """
     Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495
     """
-    def add_node(self, id, label=""):
-        self.nx_graph.add_node(id, key=label)
-        self.elements['nodes'].append({"data": {"id": id, "label": label}})
 
-    def add_edge(self, source, target):
-        self.nx_graph.add_edge(source, target)
-        self.elements['edges'].append({"data": {"source": source,"target": target}})
+    # def set_graph(self):
+    #     d = {'nodes': [], 'edges': []}
+
+    #     for node in self.elements['nodes']:
+    #         logging.debug(node)
+    #         d['nodes'].append({'data': {'id': node['data']['id'], 'label': node['data']['label']}})
+    #     for edge in self.elements['edges']:
+    #         logging.debug(edge)
+    #         d['edges'].append({'data': {'source': edge['data']['source'],'target': edge['data']['target']}})
+
+    #     return d
+
+    # def display_networkx_graph(self, graph):
+    #     """TODO: Implement labels, weights, etc"""
+    #     aux_dict = {'nodes': [], 'edges': []}
+    #     for node in graph.nodes():
+    #         aux_dict['nodes'].append({'data': {'id': node, 'label': ''}})
+    #     for edge in graph.edges():
+    #         aux_dict['edges'].append({'data': {'source': edge[0], 'targett': edge[1]}})
+    #     logging.debug(aux_dict)
+    #     self.elements = aux_dict
+
+    def add_node(self, node_id, label=""):
+        new_dict = copy.deepcopy(self.elements)
+        new_dict['nodes'].append({'data': {'id': node_id, 'label': label}})
+        self.elements = new_dict
+
+    def add_edge(self, edge_source, edge_target):
+        new_dict = copy.deepcopy(self.elements)
+        new_dict['edges'].append({'data': {'source': edge_source,'target': edge_target}})
+        self.elements = new_dict
 
     def remove_node(self, id):
         pass
@@ -64,8 +93,7 @@ class CytoscapeWidget(DOMWidget):
         pass
 
     def set_layout(self, layout):
-        self.cytoscape_layout = Dict({'name': cytoscape_layout})
+        self.cytoscape_layout = Dict({'name': cytoscape_layout}).tag(sync=True)
 
     def set_style(self, stylesheet):
         self.cytoscape_style = stylesheet
-
