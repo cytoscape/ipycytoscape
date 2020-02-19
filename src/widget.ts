@@ -15,8 +15,10 @@ import '../css/widget.css'
 import cytoscape from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
+// import euler from 'cytoscape-euler';
 
 cytoscape.use( cola );
+// cytoscape.use( euler );
 
 export
 class CytoscapeModel extends DOMWidgetModel {
@@ -28,17 +30,17 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_name: CytoscapeModel.view_name,
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
-      value : 'Hello World',
+      value : {},
       autounselectify: true,
       boxSelectionEnabled: false,
-      layout: {'name': 'cola'},
+      layout: {},
       style: [],
+      elements: [],
     };
   }
 
   static serializers: ISerializers = {
       ...DOMWidgetModel.serializers,
-      // Add any extra serializers here
     }
 
   static model_name = 'CytoscapeModel';
@@ -59,11 +61,16 @@ class CytoscapeView extends DOMWidgetView {
 
     this.value_changed();
     this.model.on('change:value', this.value_changed, this);
-    // this.model.on('change:autounselectify', this.value_changed, this);
+    this.model.on('change:autounselectify', this.value_changed, this);
+    this.model.on('change:boxSelectionEnabled', this.value_changed, this);
+    this.model.on('change:layout', this.value_changed, this);
+    this.model.on('change:style', this.value_changed, this);
+    this.model.on('change:elements', this.value_changed, this);
 
-    this.displayed.then(() => { 
+    //TODO: There is a bug in the middle of a react(?) lib here
+    this.displayed.then(() => {
       this.init_render();
-    }); //maybe I should return something for the promise
+    });
   }
 
   value_changed() {
@@ -82,5 +89,6 @@ class CytoscapeView extends DOMWidgetView {
       style: this.model.get('style'),
       elements: this.model.get('value'),
     });
+
   }
 }
