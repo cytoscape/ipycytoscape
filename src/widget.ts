@@ -33,8 +33,8 @@ class CytoscapeModel extends DOMWidgetModel {
       value : {},
       autounselectify: true,
       boxSelectionEnabled: false,
-      layout: {},
-      style: [],
+      cytoscape_layout: {},
+      cytoscape_style: [],
       elements: [],
     };
   }
@@ -60,20 +60,19 @@ class CytoscapeView extends DOMWidgetView {
     this.el.classList.add('custom-widget');
 
     this.value_changed();
-    this.model.on('change:value', this.value_changed, this);
     this.model.on('change:autounselectify', this.value_changed, this);
     this.model.on('change:boxSelectionEnabled', this.value_changed, this);
-    this.model.on('change:layout', this.value_changed, this);
-    this.model.on('change:style', this.value_changed, this);
+    this.model.on('change:cytoscape_layout', this.value_changed, this);
+    this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
 
-    //TODO: There is a bug in the middle of a react(?) lib here
     this.displayed.then(() => {
       this.init_render();
     });
   }
 
   value_changed() {
+    console.log('value changed!')
     if (this.is_rendered) {
         this.init_render();
     }
@@ -85,10 +84,9 @@ class CytoscapeView extends DOMWidgetView {
       container: this.el,
       autounselectify: this.model.get('autounselectify'),
       boxSelectionEnabled: this.model.get('boxSelectionEnabled'),
-      layout: this.model.get('layout'),
-      style: this.model.get('style'),
-      elements: this.model.get('value'),
+      layout: this.model.get('cytoscape_layout'),
+      style: this.model.get('cytoscape_style'),
+      elements: this.model.get('elements'),
     });
-
   }
 }

@@ -19,6 +19,7 @@ from ._frontend import module_name, module_version
 class CytoscapeWidget(DOMWidget):
     """TODO: Add docstring here
     """
+
     _model_name = Unicode('CytoscapeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
@@ -28,8 +29,8 @@ class CytoscapeWidget(DOMWidget):
 
     autounselectify = Bool(True).tag(sync=True)
     boxSelectionEnabled = Bool(False).tag(sync=True)
-    layout = Dict({'name': 'cola'}).tag(sync=True)
-    style = List([{
+    cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
+    cytoscape_style = List([{
                     'selector': 'node',
                     'css': {
                         'background-color': 'blue'
@@ -41,7 +42,7 @@ class CytoscapeWidget(DOMWidget):
                         'line-color': 'blue'
                         }
                     }]).tag(sync=True)
-    value = Dict().tag(sync=True)
+    elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
 
     nx_graph = nx.Graph()
 
@@ -50,19 +51,21 @@ class CytoscapeWidget(DOMWidget):
     """
     def add_node(self, id, label=""):
         self.nx_graph.add_node(id, key=label)
-        dummy_graph = self.value
-        dummy_graph['nodes'].append({"data": {"id": id, "label": label}})
-        self.value = dummy_graph
+        self.elements['nodes'].append({"data": {"id": id, "label": label}})
 
     def add_edge(self, source, target):
         self.nx_graph.add_edge(source, target)
-        dummy_graph = self.value
-        dummy_graph['edges'].append({"data": {"source": source,"target": target}})
-        self.value = dummy_graph
+        self.elements['edges'].append({"data": {"source": source,"target": target}})
+
+    def remove_node(self, id):
+        pass
+
+    def remove_edge(self, source, target):
+        pass
 
     def set_layout(self, layout):
-        self.layout = Dict({'name': layout})
+        self.cytoscape_layout = Dict({'name': cytoscape_layout})
 
     def set_style(self, stylesheet):
-        self.style = stylesheet
+        self.cytoscape_style = stylesheet
 
