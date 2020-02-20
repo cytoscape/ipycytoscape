@@ -78,15 +78,25 @@ class CytoscapeWidget(DOMWidget):
     #     logging.debug(aux_dict)
     #     self.elements = aux_dict
 
+    def complete_graph(self, create_using):
+        g = nx.complete_graph(create_using)
+
+        for node in g.nodes():
+            self.add_node(node)
+        for edge in g.edges():
+            logging.debug(edge[0])
+            logging.debug(edge[1])
+            self.add_edge(edge[0], edge[-1])
+
     def add_node(self, node_id, label=""):
-        new_dict = copy.deepcopy(self.elements)
-        new_dict['nodes'].append({'data': {'id': node_id, 'label': label}})
-        self.elements = new_dict
+        d = copy.deepcopy(self.elements)
+        d['nodes'].append({'data': {'id': node_id, 'label': label}})
+        self.elements = d
 
     def add_edge(self, edge_source, edge_target):
-        new_dict = copy.deepcopy(self.elements)
-        new_dict['edges'].append({'data': {'source': edge_source,'target': edge_target}})
-        self.elements = new_dict
+        d = copy.deepcopy(self.elements)
+        d['edges'].append({'data': {'source': edge_source,'target': edge_target}})
+        self.elements = d
 
     def remove_node(self, id):
         pass
