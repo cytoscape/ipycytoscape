@@ -78,9 +78,8 @@ class CytoscapeWidget(DOMWidget):
     #     logging.debug(aux_dict)
     #     self.elements = aux_dict
 
-    def complete_graph(self, create_using):
-        g = nx.complete_graph(create_using)
-
+    def complete_graph(self, g):
+        #not do deepcopies here
         for node in g.nodes():
             self.add_node(node)
         for edge in g.edges():
