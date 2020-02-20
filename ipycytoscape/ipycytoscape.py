@@ -84,8 +84,6 @@ class CytoscapeWidget(DOMWidget):
         for node in g.nodes():
             self.add_node(node)
         for edge in g.edges():
-            logging.debug(edge[0])
-            logging.debug(edge[1])
             self.add_edge(edge[0], edge[-1])
 
     def add_node(self, node_id, label=""):
