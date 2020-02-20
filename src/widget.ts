@@ -36,6 +36,7 @@ class CytoscapeModel extends DOMWidgetModel {
       cytoscape_layout: {},
       cytoscape_style: [],
       elements: [],
+      zoom: {},
     };
   }
 
@@ -53,7 +54,7 @@ class CytoscapeModel extends DOMWidgetModel {
 
 export
 class CytoscapeView extends DOMWidgetView {
-  cytoscapemodel: any;
+  cytoscape_object: any;
   is_rendered: boolean = false;
 
   render() {
@@ -65,6 +66,8 @@ class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
+    this.model.on('change:zoom', this.zoom_change, this);
+
     this.displayed.then(() => {
       this.init_render();
     });
@@ -78,8 +81,7 @@ class CytoscapeView extends DOMWidgetView {
 
   init_render() {
     this.is_rendered = true;
-    console.log(this.model.get('elements'));
-    this.cytoscapemodel = cytoscape({
+    this.cytoscape_object = cytoscape({
       container: this.el,
       autounselectify: this.model.get('autounselectify'),
       boxSelectionEnabled: this.model.get('boxSelectionEnabled'),
@@ -87,5 +89,15 @@ class CytoscapeView extends DOMWidgetView {
       style: this.model.get('cytoscape_style'),
       elements: this.model.get('elements'),
     });
+    /*
+    TODO: implement the sync with python ipyleaflet/js/src/Map.js implements a
+    similar method.
+    */
+    this.cytoscape_object.on('zoom', () => {
+    })
+  }
+
+  zoom_change() {
+    this.cytoscape_object.zoom(this.model.get('zoom'));
   }
 }
