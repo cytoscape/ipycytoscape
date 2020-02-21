@@ -88,10 +88,7 @@ class CytoscapeView extends DOMWidgetView {
       style: this.model.get('cytoscape_style'),
       elements: this.model.get('elements'),
     });
-    /*
-    TODO: implement the sync with python ipyleaflet/js/src/Map.js implements a
-    similar method.
-    */
+
     this.cytoscape_obj.on('zoom', () => {
       this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
       this.model.save_changes();

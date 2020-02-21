@@ -23,7 +23,8 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 class CytoscapeWidget(DOMWidget):
-    """TODO: Add docstring here
+    """
+    Implements the main Cytoscape Widget
     """
 
     _model_name = Unicode('CytoscapeModel').tag(sync=True)
@@ -49,13 +50,12 @@ class CytoscapeWidget(DOMWidget):
                         }
                     }]).tag(sync=True)
     elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
-    zoom = Float(2).tag(sync=True)
+    zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
     """
     Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495
     """
-
     def complete_graph(self, g):
         d = copy.deepcopy(self.elements)
         for node in g.nodes():
@@ -75,7 +75,11 @@ class CytoscapeWidget(DOMWidget):
         d['edges'].append({'data': {'source': edge_source,'target': edge_target}})
         self.elements = d
 
-    def remove_node(self, id):
+    """
+    TODO: Implement remove node and edges. Not sure how useful this will be since
+    you can use all of the NetworkX functions.
+    """
+    def remove_node(self):
         pass
 
     def remove_edge(self, source, target):
@@ -83,6 +87,9 @@ class CytoscapeWidget(DOMWidget):
 
     def set_layout(self, layout):
         self.cytoscape_layout = Dict({'name': cytoscape_layout}).tag(sync=True)
+
+    def get_layout(self):
+        return self.cytoscape_layout
 
     def set_style(self, stylesheet):
         self.cytoscape_style = stylesheet
