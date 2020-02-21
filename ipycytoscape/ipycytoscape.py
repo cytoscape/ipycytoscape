@@ -56,33 +56,7 @@ class CytoscapeWidget(DOMWidget):
     Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495
     """
 
-    # def set_graph(self):
-    #     d = {'nodes': [], 'edges': []}
-
-    #     for node in self.elements['nodes']:
-    #         logging.debug(node)
-    #         d['nodes'].append({'data': {'id': node['data']['id'], 'label': node['data']['label']}})
-    #     for edge in self.elements['edges']:
-    #         logging.debug(edge)
-    #         d['edges'].append({'data': {'source': edge['data']['source'],'target': edge['data']['target']}})
-
-    #     return d
-
-    # def display_networkx_graph(self, graph):
-    #     """TODO: Implement labels, weights, etc"""
-    #     aux_dict = {'nodes': [], 'edges': []}
-    #     for node in graph.nodes():
-    #         aux_dict['nodes'].append({'data': {'id': node, 'label': ''}})
-    #     for edge in graph.edges():
-    #         aux_dict['edges'].append({'data': {'source': edge[0], 'targett': edge[1]}})
-    #     logging.debug(aux_dict)
-    #     self.elements = aux_dict
-
     def complete_graph(self, g):
-        #trying not to do deepcopies here
-        #idk why it only works if I deepcopy this here, cause I created the 
-        #exact same obj, this: Dict({'nodes': [], 'edges': []}).tag(sync=True) doesn't work
-        #not sure what this self.elements has
         d = copy.deepcopy(self.elements)
         for node in g.nodes():
             d['nodes'].append({'data': {'id': node, 'label': ""}})
