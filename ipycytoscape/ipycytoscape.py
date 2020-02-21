@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import copy
 
 from ipywidgets import DOMWidget
-from traitlets import Dict, Unicode, Bool, List
+from traitlets import Dict, Unicode, Bool, List, Float
 from ._frontend import module_name, module_version
 
 """TODO: Remove this after this is somewhat done"""
@@ -49,7 +49,8 @@ class CytoscapeWidget(DOMWidget):
                         }
                     }]).tag(sync=True)
     elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
-    zoom = Dict({'level': 2.0, 'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
+    zoom = Float(2).tag(sync=True)
+    rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
     """
     Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495

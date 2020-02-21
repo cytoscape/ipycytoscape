@@ -28,13 +28,13 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_name: CytoscapeModel.view_name,
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
-      value : {},
       auto_unselectify: true,
       box_selection_enabled: false,
       cytoscape_layout: {},
       cytoscape_style: [],
       elements: [],
-      zoom: {},
+      zoom: 0,
+      rendered_position: {},
     };
   }
 
@@ -65,6 +65,7 @@ class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
     this.model.on('change:zoom', this.zoom_change, this);
+    this.model.on('change:rendered_position', this.rendered_position_change, this);
 
     this.displayed.then(() => {
       this.init_render();
@@ -92,10 +93,22 @@ class CytoscapeView extends DOMWidgetView {
     similar method.
     */
     this.cytoscape_obj.on('zoom', () => {
+      this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
+      this.model.save_changes();
+    });
+
+    this.cytoscape_obj.on('rendered_position', () => {
+      this.model.set('rendered_position', {'renderedPosition': this.cytoscape_obj.rendered_position()});
+      this.model.save_changes();
     })
   }
 
   zoom_change() {
     this.cytoscape_obj.zoom(this.model.get('zoom'));
   }
+
+  rendered_position_change() {
+    this.cytoscape_obj.rendered_position(this.model.get('rendered_position'));
+  }
+
 }
