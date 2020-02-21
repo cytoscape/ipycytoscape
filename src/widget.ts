@@ -15,10 +15,8 @@ import '../css/widget.css'
 import cytoscape from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
-// import euler from 'cytoscape-euler';
 
 cytoscape.use( cola );
-// cytoscape.use( euler );
 
 export
 class CytoscapeModel extends DOMWidgetModel {
@@ -31,8 +29,8 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
       value : {},
-      autounselectify: true,
-      boxSelectionEnabled: false,
+      auto_unselectify: true,
+      box_selection_enabled: false,
       cytoscape_layout: {},
       cytoscape_style: [],
       elements: [],
@@ -54,15 +52,15 @@ class CytoscapeModel extends DOMWidgetModel {
 
 export
 class CytoscapeView extends DOMWidgetView {
-  cytoscape_object: any;
+  cytoscape_obj: any;
   is_rendered: boolean = false;
 
   render() {
     this.el.classList.add('custom-widget');
 
     this.value_changed();
-    this.model.on('change:autounselectify', this.value_changed, this);
-    this.model.on('change:boxSelectionEnabled', this.value_changed, this);
+    this.model.on('change:auto_unselectify', this.value_changed, this);
+    this.model.on('change:box_selection_enabled', this.value_changed, this);
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
@@ -81,10 +79,10 @@ class CytoscapeView extends DOMWidgetView {
 
   init_render() {
     this.is_rendered = true;
-    this.cytoscape_object = cytoscape({
+    this.cytoscape_obj = cytoscape({
       container: this.el,
-      autounselectify: this.model.get('autounselectify'),
-      boxSelectionEnabled: this.model.get('boxSelectionEnabled'),
+      autounselectify: this.model.get('auto_unselectify'),
+      boxSelectionEnabled: this.model.get('box_selection_enabled'),
       layout: this.model.get('cytoscape_layout'),
       style: this.model.get('cytoscape_style'),
       elements: this.model.get('elements'),
@@ -93,11 +91,11 @@ class CytoscapeView extends DOMWidgetView {
     TODO: implement the sync with python ipyleaflet/js/src/Map.js implements a
     similar method.
     */
-    this.cytoscape_object.on('zoom', () => {
+    this.cytoscape_obj.on('zoom', () => {
     })
   }
 
   zoom_change() {
-    this.cytoscape_object.zoom(this.model.get('zoom'));
+    this.cytoscape_obj.zoom(this.model.get('zoom'));
   }
 }

@@ -33,8 +33,8 @@ class CytoscapeWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    autounselectify = Bool(True).tag(sync=True)
-    boxSelectionEnabled = Bool(False).tag(sync=True)
+    auto_unselectify = Bool(True).tag(sync=True)
+    box_selection_enabled = Bool(False).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
     cytoscape_style = List([{
                     'selector': 'node',
@@ -49,7 +49,6 @@ class CytoscapeWidget(DOMWidget):
                         }
                     }]).tag(sync=True)
     elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
-    changeFlag = Bool(False).tag(sync=True)
     zoom = Dict({'level': 2.0, 'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
     """
@@ -79,13 +78,19 @@ class CytoscapeWidget(DOMWidget):
     #     self.elements = aux_dict
 
     def complete_graph(self, g):
-        #not do deepcopies here
+        #trying not to do deepcopies here
+        #idk why it only works if I deepcopy this here, cause I created the 
+        #exact same obj, this: Dict({'nodes': [], 'edges': []}).tag(sync=True) doesn't work
+        #not sure what this self.elements has
+        d = copy.deepcopy(self.elements)
         for node in g.nodes():
-            self.add_node(node)
+            d['nodes'].append({'data': {'id': node, 'label': ""}})
+            logging.debug(node)
         for edge in g.edges():
-            self.add_edge(edge[0], edge[-1])
+            d['edges'].append({'data': {'source': edge[0],'target': edge[1]}})
+        self.elements = d
 
-    def add_node(self, node_id, label=""):
+    def add_node(self, node_id, label="", parent=""):
         d = copy.deepcopy(self.elements)
         d['nodes'].append({'data': {'id': node_id, 'label': label}})
         self.elements = d
