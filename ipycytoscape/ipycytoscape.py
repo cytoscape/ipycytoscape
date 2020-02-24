@@ -77,7 +77,9 @@ class CytoscapeWidget(DOMWidget):
 
     """
     TODO: Implement remove node and edges. Not sure how useful this will be since
-    you can use all of the NetworkX functions.
+    we can use all of the NetworkX functions. Also, I'd have to implement a
+    generalist template that would deal with all the kinds of graphs and NetX
+    already does it. Don't think this is worthwhile. 
     """
     def remove_node(self):
         pass
@@ -86,7 +88,7 @@ class CytoscapeWidget(DOMWidget):
         pass
 
     def set_layout(self, layout):
-        self.cytoscape_layout = Dict({'name': cytoscape_layout}).tag(sync=True)
+        self.cytoscape_layout = {'name': layout}
 
     def get_layout(self):
         return self.cytoscape_layout
