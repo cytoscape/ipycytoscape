@@ -57,6 +57,14 @@ class CytoscapeWidget(DOMWidget):
     Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495
     """
     def complete_graph(self, g):
+        """
+        Converts a NetworkX graph in to a Cytoscape graph.
+        Parameters
+        ----------
+        g: nx graph
+            receives a generic NetworkX graph. more info in
+            https://networkx.github.io/documentation/
+        """
         d = copy.deepcopy(self.elements)
         for node in g.nodes():
             d['nodes'].append({'data': {'id': node, 'label': ""}})
@@ -87,11 +95,39 @@ class CytoscapeWidget(DOMWidget):
     def remove_edge(self, source, target):
         pass
 
-    def set_layout(self, layout):
-        self.cytoscape_layout = {'name': layout}
+    def set_layout(self, name='', col=''):
+        """
+        Sets the layout of the current object.
+        Parameters
+        ----------
+        name: str
+            name of the layout, ex.: cola, grid.
+        col: int
+            set number of columns in which the layout will be shown, doesn't
+            apply to every layout.
+        """
+        self.cytoscape_layout = {'name': name, 'col': col}
 
     def get_layout(self):
+        """
+        Gets the layout of the current object.
+        """
         return self.cytoscape_layout
 
     def set_style(self, stylesheet):
+        """
+        Sets the layout of the current object.
+        Parameters
+        ----------
+        stylesheet: dict
+            adds a complete stylesheet to the graph see https://js.cytoscape.org
+            for examples
+        """
         self.cytoscape_style = stylesheet
+
+    def get_style(self):
+        """
+        Gets the style of the current object.
+        """
+        return self.cytoscape_style
+
