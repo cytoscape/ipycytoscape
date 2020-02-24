@@ -95,18 +95,15 @@ class CytoscapeWidget(DOMWidget):
     def remove_edge(self, source, target):
         pass
 
-    def set_layout(self, name='', col=''):
+    def set_layout(self, name=''):
         """
         Sets the layout of the current object.
         Parameters
         ----------
         name: str
             name of the layout, ex.: cola, grid.
-        col: int
-            set number of columns in which the layout will be shown, doesn't
-            apply to every layout.
         """
-        self.cytoscape_layout = {'name': name, 'col': col}
+        self.cytoscape_layout = {'name': name}
 
     def get_layout(self):
         """
