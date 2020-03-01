@@ -15,6 +15,12 @@ import '../css/widget.css'
 import cytoscape from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
+// @ts-ignore
+import popper from 'cytoscape-popper';
+// @ts-ignore
+import Tippy from 'tippy.js';
+
+cytoscape.use( popper );
 
 cytoscape.use( cola );
 
@@ -89,15 +95,51 @@ class CytoscapeView extends DOMWidgetView {
       elements: this.model.get('elements'),
     });
 
-    this.cytoscape_obj.on('zoom', () => {
-      this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
-      this.model.save_changes();
-    });
 
-    this.cytoscape_obj.on('rendered_position', () => {
-      this.model.set('rendered_position', {'renderedPosition': this.cytoscape_obj.rendered_position()});
-      this.model.save_changes();
-    })
+      // var h: any = function(tag:any, attrs:any, children:any){
+      //   console.log('inside h')
+      //   var el = document.createElement(tag);
+
+      //   Object.keys(attrs).forEach(function(key){
+      //     var val = attrs[key];
+      //     el.setAttribute(key, val);
+      //   });
+      // }
+
+    this.cytoscape_obj.on('click', 'node', (e: any) => {
+    let node:any = e.target;
+
+    let ref = node.popperRef(); // used only for positioning
+
+    let dummyDomEle = document.createElement('div');
+    if (e.target.data().name){
+      let tip = Tippy(dummyDomEle, {
+        trigger: 'manual',
+        lazy: false, // needed for onCreate(), must be true
+        //TODO: reference not working, don't think it's making a difference though
+        onCreate: instance => { instance!.popperInstance!.reference = ref; }, // needed for `ref` positioning
+        content: () => {
+          //TODO: modularize this, add a function to edit this somehow
+          let content = document.createElement('div');
+          //TODO: add a pretty tippy
+          content.innerHTML = e.target.data().name;
+          return content;
+        }
+      });
+      tip.show();
+    }
+
+  })
+
+  this.cytoscape_obj.on('zoom', () => {
+    this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
+    this.model.save_changes();
+  });
+
+  this.cytoscape_obj.on('rendered_position', () => {
+    this.model.set('rendered_position', {'renderedPosition': this.cytoscape_obj.rendered_position()});
+    this.model.save_changes();
+  })
   }
 
   zoom_change() {

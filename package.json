@@ -52,7 +52,11 @@
     "@jupyter-widgets/base": "^1.1.10 || ^2",
     "@types/cytoscape": "^3.8.8",
     "cytoscape": "^3.14.0",
-    "cytoscape-cola": "^2.3.0"
+    "cytoscape-cola": "^2.3.0",
+    "cytoscape-popper": "^1.0.6",
+    "popper": "^1.0.1",
+    "tippy": "0.0.0",
+    "tippy.js": "^5.2.1"
   },
   "devDependencies": {
     "@phosphor/application": "^1.6.0",

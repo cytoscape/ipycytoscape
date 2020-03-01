@@ -95,7 +95,8 @@ class CytoscapeWidget(DOMWidget):
     def remove_edge(self, source, target):
         pass
 
-    def set_layout(self, name=''):
+    def set_layout(self, name='', nodeSpacing='', edgeLengthVal='',
+                    animate='', randomize='', maxSimulationTime=''):
         """
         Sets the layout of the current object.
         Parameters
@@ -103,7 +104,10 @@ class CytoscapeWidget(DOMWidget):
         name: str
             name of the layout, ex.: cola, grid.
         """
-        self.cytoscape_layout = {'name': name}
+        self.cytoscape_layout = {'name': name, 'nodeSpacing': nodeSpacing,
+                                'edgeLengthVal': edgeLengthVal,
+                                'animate': animate, 'randomize': randomize,
+                                'maxSimulationTime': randomize}
 
     def get_layout(self):
         """
