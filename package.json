@@ -55,7 +55,6 @@
     "cytoscape-cola": "^2.3.0",
     "cytoscape-popper": "^1.0.6",
     "popper": "^1.0.1",
-    "tippy": "0.0.0",
     "tippy.js": "^5.2.1"
   },
   "devDependencies": {
