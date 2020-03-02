@@ -132,3 +132,12 @@ class CytoscapeWidget(DOMWidget):
         """
         return self.cytoscape_style
 
+    #WIP: this doesn't update the frontend, traitlets bug
+    #Implementing the solution Martin gave might be a good way to solve it
+    #so I'll look into it.
+    def set_tip(self, node_id, attrs):
+        counter = 0
+        for n in self.elements['nodes']:
+            counter += 1
+            if node_id == n['data']['id']:
+                n['data']['name'] = attrs

@@ -20,6 +20,8 @@ import popper from 'cytoscape-popper';
 // @ts-ignore
 import Tippy from 'tippy.js';
 
+import 'tippy.js/themes/material.css';
+
 cytoscape.use( popper );
 
 cytoscape.use( cola );
@@ -93,43 +95,32 @@ class CytoscapeView extends DOMWidgetView {
       layout: this.model.get('cytoscape_layout'),
       style: this.model.get('cytoscape_style'),
       elements: this.model.get('elements'),
-    });
+  });
 
-
-      // var h: any = function(tag:any, attrs:any, children:any){
-      //   console.log('inside h')
-      //   var el = document.createElement(tag);
-
-      //   Object.keys(attrs).forEach(function(key){
-      //     var val = attrs[key];
-      //     el.setAttribute(key, val);
-      //   });
-      // }
-
-    this.cytoscape_obj.on('click', 'node', (e: any) => {
-    let node:any = e.target;
-
-    let ref = node.popperRef(); // used only for positioning
-
+  this.cytoscape_obj.on('click', 'node', (e: any) => {
+    let node = e.target;
+    let ref = node.popperRef();
     let dummyDomEle = document.createElement('div');
-    if (e.target.data().name){
+
+    if (node.data().name){
       let tip = Tippy(dummyDomEle, {
+        //TODO: add a pretty tippy
         trigger: 'manual',
-        lazy: false, // needed for onCreate(), must be true
-        //TODO: reference not working, don't think it's making a difference though
-        onCreate: instance => { instance!.popperInstance!.reference = ref; }, // needed for `ref` positioning
+        lazy: false,
+        arrow: true,
+        theme: 'material',
+        placement: 'bottom',
         content: () => {
           //TODO: modularize this, add a function to edit this somehow
           let content = document.createElement('div');
-          //TODO: add a pretty tippy
-          content.innerHTML = e.target.data().name;
+          content.innerHTML = node.data().name;
           return content;
-        }
+        },
+        onCreate: instance => { instance!.popperInstance!.reference = ref; }
       });
       tip.show();
     }
-
-  })
+  });
 
   this.cytoscape_obj.on('zoom', () => {
     this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
