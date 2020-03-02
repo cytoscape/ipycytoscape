@@ -53,6 +53,7 @@
     "@types/cytoscape": "^3.8.8",
     "cytoscape": "^3.14.0",
     "cytoscape-cola": "^2.3.0",
+    "cytoscape-dagre": "^2.2.2",
     "cytoscape-popper": "^1.0.6",
     "popper": "^1.0.1",
     "tippy.js": "^5.2.1"

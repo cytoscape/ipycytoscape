@@ -19,11 +19,13 @@ import cola from 'cytoscape-cola';
 import popper from 'cytoscape-popper';
 // @ts-ignore
 import Tippy from 'tippy.js';
+// @ts-ignore
+import dagre from 'cytoscape-dagre';
 
 import 'tippy.js/themes/material.css';
 
 cytoscape.use( popper );
-
+cytoscape.use( dagre );
 cytoscape.use( cola );
 
 export
