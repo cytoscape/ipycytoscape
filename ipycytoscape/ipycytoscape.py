@@ -95,19 +95,43 @@ class CytoscapeWidget(DOMWidget):
     def remove_edge(self, source, target):
         pass
 
-    def set_layout(self, name='', nodeSpacing='', edgeLengthVal='',
-                    animate='', randomize='', maxSimulationTime=''):
+    def set_layout(self, name=None, nodeSpacing=None, edgeLengthVal=None,
+                    animate=None, randomize=None, maxSimulationTime=None,
+                    padding=None):
         """
         Sets the layout of the current object.
         Parameters
         ----------
         name: str
             name of the layout, ex.: cola, grid.
+        nodeSpacing: int
+            changes padding between nodes
+        edgeLengthVal: int
+            changes lenght of edges
+        padding: int
+            adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        self.cytoscape_layout = {'name': name, 'nodeSpacing': nodeSpacing,
-                                'edgeLengthVal': edgeLengthVal,
-                                'animate': animate, 'randomize': randomize,
-                                'maxSimulationTime': randomize}
+        #TODO: currently the only way of updating a layout is by returning a
+        #new copy
+        dummyDict = {}
+
+        if name != None:
+            dummyDict['name'] = name
+            logging.debug('new name ')
+            logging.debug(name)
+        else:
+            dummyDict['name'] = self.cytoscape_layout['name']
+        if nodeSpacing != None:
+            dummyDict['nodeSpacing'] = nodeSpacing
+            logging.debug(nodeSpacing)
+        else:
+            dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
+        if edgeLengthVal != None:
+            dummyDict['edgeLengthVal'] = edgeLengthVal
+        else:
+            dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
+
+        self.cytoscape_layout = dummyDict
 
     def get_layout(self):
         """
