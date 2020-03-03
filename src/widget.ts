@@ -1,9 +1,13 @@
 // Copyright (c) Mariana Meireles
 // Distributed under the terms of the Modified BSD License.
 
+// import * as widgets from '@jupyter-widgets/base';
+
 import {
-  DOMWidgetModel, DOMWidgetView, ISerializers
+  DOMWidgetModel, DOMWidgetView, ISerializers, WidgetModel
 } from '@jupyter-widgets/base';
+
+var widgets = require('@jupyter-widgets/base');
 
 import {
   MODULE_NAME, MODULE_VERSION
@@ -29,6 +33,85 @@ cytoscape.use( dagre );
 cytoscape.use( cola );
 
 export
+class NodeModel extends WidgetModel {
+  defaults() {
+    return {...super.defaults(),
+      _model_name: 'NodeModel',
+      _model_module: NodeModel.model_module,
+      _model_module_version: NodeModel.model_module_version,
+      id: 0,
+      idInt: 0,
+      name: '',
+      score: 0,
+      query: false,
+      gene: false,
+      label: '',
+      x: 0,
+      y: 0,
+      group: '',
+      removed: false,
+      selected: false,
+      selectable: false,
+      locked: false,
+      grabbed: false,
+      grabbable: false,
+      classes: '',
+      data: {},
+      position: {},
+    }
+  };
+
+  static serializers: ISerializers = {
+      ...WidgetModel.serializers
+    }
+
+  static model_module = MODULE_NAME;
+  static model_module_version = MODULE_VERSION;
+}
+
+export
+class GraphModel extends WidgetModel {
+  defaults() {
+    return {...super.defaults(),
+      _model_name: 'GraphModel',
+      _model_module: GraphModel.model_module,
+      _model_module_version: GraphModel.model_module_version,
+      nodes: [],
+      edges: [],
+    }
+  };
+
+  static serializers: ISerializers = {
+      nodes: { deserialize: widgets.unpack_models },
+      edges: { deserialize: widgets.unpack_models },
+      ...WidgetModel.serializers
+    }
+
+  static model_module = MODULE_NAME;
+  static model_module_version = MODULE_VERSION;
+
+  converts_dict(){
+    let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
+    if (this.attributes.nodes != undefined){
+      let data: object;
+      let position: object = {}
+      let node: object = {}
+      for (var i: number = 0; i < this.attributes.nodes.length; i++) {
+        console.log('🌈')
+        data = this.attributes.nodes[i].attributes.data
+        position = this.attributes.nodes[i].attributes.position
+        node = {'data': data, 'position': position}
+        console.log(data)
+        node_list.push(node)
+      }
+      console.log('🌸')
+      console.log(node_list)
+    }
+  }
+}
+
+
+export
 class CytoscapeModel extends DOMWidgetModel {
   defaults() {
     return {...super.defaults(),
@@ -38,25 +121,20 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_name: CytoscapeModel.view_name,
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
-      auto_unselectify: true,
-      box_selection_enabled: false,
-      cytoscape_layout: {},
-      cytoscape_style: [],
-      elements: [],
-      zoom: 0,
-      rendered_position: {},
+      graph: {},
     };
   }
 
   static serializers: ISerializers = {
-      ...DOMWidgetModel.serializers,
+      graph: { deserialize: widgets.unpack_models },
+      ...DOMWidgetModel.serializers
     }
 
   static model_name = 'CytoscapeModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
-  static view_name = 'CytoscapeView';   // Set to null if no view
-  static view_module = MODULE_NAME;   // Set to null if no view
+  static view_name = 'CytoscapeView';
+  static view_module = MODULE_NAME;
   static view_module_version = MODULE_VERSION;
 }
 
@@ -69,14 +147,7 @@ class CytoscapeView extends DOMWidgetView {
     this.el.classList.add('custom-widget');
 
     this.value_changed();
-    this.model.on('change:auto_unselectify', this.value_changed, this);
-    this.model.on('change:box_selection_enabled', this.value_changed, this);
-    this.model.on('change:cytoscape_layout', this.value_changed, this);
-    this.model.on('change:cytoscape_style', this.value_changed, this);
-    this.model.on('change:elements', this.value_changed, this);
-    this.model.on('change:zoom', this.zoom_change, this);
-    this.model.on('change:rendered_position', this.rendered_position_change, this);
-
+    this.model.on('change:graph', this.value_changed, this);
     this.displayed.then(() => {
       this.init_render();
     });
@@ -90,57 +161,14 @@ class CytoscapeView extends DOMWidgetView {
 
   init_render() {
     this.is_rendered = true;
+    console.log('🦋')
+    console.log(this.model.get('graph')["attributes"]['nodes'])
     this.cytoscape_obj = cytoscape({
       container: this.el,
-      autounselectify: this.model.get('auto_unselectify'),
-      boxSelectionEnabled: this.model.get('box_selection_enabled'),
-      layout: this.model.get('cytoscape_layout'),
-      style: this.model.get('cytoscape_style'),
-      elements: this.model.get('elements'),
-  });
-
-  this.cytoscape_obj.on('click', 'node', (e: any) => {
-    let node = e.target;
-    let ref = node.popperRef();
-    let dummyDomEle = document.createElement('div');
-
-    if (node.data().name){
-      let tip = Tippy(dummyDomEle, {
-        //TODO: add a pretty tippy
-        trigger: 'manual',
-        lazy: false,
-        arrow: true,
-        theme: 'material',
-        placement: 'bottom',
-        content: () => {
-          //TODO: modularize this, add a function to edit this somehow
-          let content = document.createElement('div');
-          content.innerHTML = node.data().name;
-          return content;
-        },
-        onCreate: instance => { instance!.popperInstance!.reference = ref; }
-      });
-      tip.show();
-    }
-  });
-
-  this.cytoscape_obj.on('zoom', () => {
-    this.model.set('zoom', {'level': this.cytoscape_obj.zoom()});
-    this.model.save_changes();
-  });
-
-  this.cytoscape_obj.on('rendered_position', () => {
-    this.model.set('rendered_position', {'renderedPosition': this.cytoscape_obj.rendered_position()});
-    this.model.save_changes();
-  })
-  }
-
-  zoom_change() {
-    this.cytoscape_obj.zoom(this.model.get('zoom'));
-  }
-
-  rendered_position_change() {
-    this.cytoscape_obj.rendered_position(this.model.get('rendered_position'));
+      elements: this.model.get('graph').converts_dict(),
+    });
+    console.log(this.cytoscape_obj.graph) //Will print undefined
+    // this.model.get('graph')["attributes"]['nodes']
   }
 
 }
