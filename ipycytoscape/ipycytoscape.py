@@ -117,18 +117,15 @@ class CytoscapeWidget(DOMWidget):
 
         if name != None:
             dummyDict['name'] = name
-            logging.debug('new name ')
-            logging.debug(name)
-        else:
+        elif name:
             dummyDict['name'] = self.cytoscape_layout['name']
-        if nodeSpacing != None:
+        elif nodeSpacing != None:
             dummyDict['nodeSpacing'] = nodeSpacing
-            logging.debug(nodeSpacing)
-        else:
+        elif nodeSpacing:
             dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
-        if edgeLengthVal != None:
+        elif edgeLengthVal != None:
             dummyDict['edgeLengthVal'] = edgeLengthVal
-        else:
+        elif edgeLengthVal:
             dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
 
         self.cytoscape_layout = dummyDict
