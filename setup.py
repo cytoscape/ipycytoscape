@@ -19,7 +19,7 @@ from setuptools import setup
 
 
 # The name of the project
-name = 'jupyter-cytoscape'
+name = 'ipycytoscape'
 
 # Ensure a valid python version
 ensure_python('>=3.4')
