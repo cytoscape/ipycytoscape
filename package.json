@@ -1,12 +1,13 @@
 {
-  "name": "ipycytoscape",
+  "name": "jupyter-cytoscape",
   "version": "0.1.0",
   "description": "A Custom Jupyter Widget Library",
   "keywords": [
     "jupyter",
     "jupyterlab",
     "jupyterlab-extension",
-    "widgets"
+    "widgets",
+    "cytoscape"
   ],
   "files": [
     "lib/**/*.js",
