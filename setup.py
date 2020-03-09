@@ -19,7 +19,7 @@ from setuptools import setup
 
 
 # The name of the project
-name = 'ipycytoscape'
+name = 'jupyter-cytoscape'
 
 # Ensure a valid python version
 ensure_python('>=3.4')
@@ -47,7 +47,7 @@ data_files_spec = [
     ('share/jupyter/nbextensions/ipycytoscape',
         nb_path, '*.js*'),
     ('share/jupyter/lab/extensions', lab_path, '*.tgz'),
-    ('etc/jupyter/nbconfig/notebook.d' , HERE, 'ipycytoscape.json')
+    ('etc/jupyter/nbconfig/notebook.d' , HERE, 'jupyter-cytoscape.json')
 ]
 
 
