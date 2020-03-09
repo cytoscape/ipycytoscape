@@ -8,8 +8,6 @@
 Graph visualization in Jupyter.
 """
 
-import networkx as nx
-
 import copy
 
 from ipywidgets import DOMWidget
