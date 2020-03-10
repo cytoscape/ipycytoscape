@@ -65,7 +65,6 @@ class CytoscapeWidget(DOMWidget):
         d = copy.deepcopy(self.elements)
         for node in g.nodes():
             d['nodes'].append({'data': {'id': node, 'label': ""}})
-            logging.debug(node)
         for edge in g.edges():
             d['edges'].append({'data': {'source': edge[0],'target': edge[1]}})
         self.elements = d
