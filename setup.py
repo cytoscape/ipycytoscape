@@ -44,7 +44,7 @@ package_data_spec = {
 }
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/ipycytoscape',
+    ('share/jupyter/nbextensions/jupyter-cytoscape',
         nb_path, '*.js*'),
     ('share/jupyter/lab/extensions', lab_path, '*.tgz'),
     ('etc/jupyter/nbconfig/notebook.d' , HERE, 'jupyter-cytoscape.json')
@@ -87,7 +87,6 @@ setup_args = dict(
     include_package_data = True,
     install_requires = [
         'ipywidgets>=7.0.0',
-        'networkx',
     ],
     extras_require = {
         'test': [

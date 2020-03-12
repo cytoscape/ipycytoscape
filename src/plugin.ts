@@ -19,7 +19,7 @@ import {
   MODULE_NAME, MODULE_VERSION
 } from './version';
 
-const EXTENSION_ID = 'ipycytoscape:plugin';
+const EXTENSION_ID = 'jupyter-cytoscape:plugin';
 
 /**
  * The example plugin.
