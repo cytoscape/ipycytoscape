@@ -154,3 +154,5 @@ ipycytoscape/labextension/*.tgz
 
 # Packed lab extensions
 ipycytoscape/labextension
+
+MANIFEST
