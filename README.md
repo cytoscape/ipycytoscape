@@ -1,4 +1,3 @@
-
 # ipycytoscape
 
 [![Build Status](https://travis-ci.org/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.org/Quantstack/ipycytoscape)
@@ -6,7 +5,7 @@
 
 Python implementation of the graph visualization tool Cytoscape.
 
-Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/ipycytoscape/master?filepath=examples)
+Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/ipycytoscape/stable?filepath=examples)
 
 ![cytoscape screencast](https://user-images.githubusercontent.com/17600982/76328068-bbbbcf00-62e2-11ea-93ed-01ba392ac50c.gif)
 
@@ -51,3 +50,11 @@ $ jupyter nbextension enable --py --sys-prefix ipycytoscape
 $ jupyter labextension install @jupyter-widgets/jupyterlab-manager
 $ jupyter labextension install js
 ```
+
+## License
+
+We use a shared copyright model that enables all contributors to maintain the
+copyright on their contributions.
+
+This software is licensed under the BSD-3-Clause license. See the
+[LICENSE](LICENSE) file for details.
