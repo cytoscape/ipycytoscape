@@ -6,7 +6,7 @@ define(function() {
     window['requirejs'].config({
         map: {
             '*': {
-                'ipycytoscape': 'nbextensions/ipycytoscape/index',
+                'jupyter-cytoscape': 'nbextensions/jupyter-cytoscape/index',
             },
         }
     });

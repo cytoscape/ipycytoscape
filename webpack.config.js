@@ -39,7 +39,7 @@ module.exports = [
   },
 
   /**
-   * Embeddable ipycytoscape bundle
+   * Embeddable jupyter-cytoscape bundle
    *
    * This bundle is almost identical to the notebook extension bundle. The only
    * difference is in the configuration of the webpack public path for the
@@ -54,8 +54,8 @@ module.exports = [
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'amd',
-        library: "ipycytoscape",
-        publicPath: 'https://unpkg.com/ipycytoscape@' + version + '/dist/'
+        library: "jupyter-cytoscape",
+        publicPath: 'https://unpkg.com/jupyter-cytoscape@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {
@@ -76,7 +76,7 @@ module.exports = [
     output: {
       filename: 'embed-bundle.js',
       path: path.resolve(__dirname, 'docs', 'source', '_static'),
-      library: "ipycytoscape",
+      library: "jupyter-cytoscape",
       libraryTarget: 'amd'
     },
     module: {

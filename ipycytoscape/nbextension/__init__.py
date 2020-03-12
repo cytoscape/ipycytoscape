@@ -8,6 +8,6 @@ def _jupyter_nbextension_paths():
     return [{
         'section': 'notebook',
         'src': 'nbextension/static',
-        'dest': 'ipycytoscape',
-        'require': 'ipycytoscape/extension'
+        'dest': 'jupyter-cytoscape',
+        'require': 'jupyter-cytoscape/extension'
     }]
