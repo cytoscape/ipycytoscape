@@ -50,6 +50,8 @@ class Node(Widget):
     grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
 
+    #think data and position are not necessary here
+    #since I'm actually gonna write a converts_dict() method on the frontend
     data = Dict().tag(sync=True)
     position = Dict().tag(sync=True)
 
@@ -71,6 +73,7 @@ class Graph(Widget):
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
 
+    #similar to this... I don't think I'll need it
     nodes = List(trait=Instance(Node)).tag(sync=True, **widget_serialization)
     edges = List(trait=Instance(Edge)).tag(sync=True, **widget_serialization)
 

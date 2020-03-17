@@ -61,6 +61,7 @@ class NodeModel extends WidgetModel {
     }
   };
 
+//I don't think this one needs a serializer
   static serializers: ISerializers = {
       ...WidgetModel.serializers
     }
@@ -91,22 +92,22 @@ class GraphModel extends WidgetModel {
   static model_module_version = MODULE_VERSION;
 
   converts_dict(){
-    let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
-    if (this.attributes.nodes != undefined){
-      let data: object;
-      let position: object = {}
-      let node: object = {}
-      for (var i: number = 0; i < this.attributes.nodes.length; i++) {
-        console.log('🌈')
-        data = this.attributes.nodes[i].attributes.data
-        position = this.attributes.nodes[i].attributes.position
-        node = {'data': data, 'position': position}
-        console.log(data)
-        node_list.push(node)
-      }
+    // let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
+    // if (this.attributes.nodes != undefined){
+    //   let data: object;
+    //   let position: object = {}
+    //   let node: object = {}
+    //   for (var i: number = 0; i < this.attributes.nodes.length; i++) {
+    //     console.log('🌈')
+    //     data = this.attributes.nodes[i].attributes.data
+    //     position = this.attributes.nodes[i].attributes.position
+    //     node = {'data': data, 'position': position}
+      //   console.log(data)
+      //   node_list.push(node)
+      // }
       console.log('🌸')
-      console.log(node_list)
-    }
+      // console.log(node_list)
+    // }
   }
 }
 
@@ -162,13 +163,10 @@ class CytoscapeView extends DOMWidgetView {
   init_render() {
     this.is_rendered = true;
     console.log('🦋')
-    console.log(this.model.get('graph')["attributes"]['nodes'])
     this.cytoscape_obj = cytoscape({
       container: this.el,
       elements: this.model.get('graph').converts_dict(),
     });
-    console.log(this.cytoscape_obj.graph) //Will print undefined
-    // this.model.get('graph')["attributes"]['nodes']
   }
 
 }
