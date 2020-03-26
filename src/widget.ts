@@ -33,6 +33,25 @@ cytoscape.use( dagre );
 cytoscape.use( cola );
 
 export
+class EdgeModel extends WidgetModel {
+  defaults() {
+    return {...super.defaults(),
+      _model_name: 'EdgeModel',
+      _model_module: EdgeModel.model_module,
+      _model_module_version: EdgeModel.model_module_version,
+      id: 0,
+    }
+  };
+
+  static serializers: ISerializers = {
+      ...WidgetModel.serializers
+    }
+
+  static model_module = MODULE_NAME;
+  static model_module_version = MODULE_VERSION;
+}
+
+export
 class NodeModel extends WidgetModel {
   defaults() {
     return {...super.defaults(),
@@ -91,23 +110,21 @@ class GraphModel extends WidgetModel {
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 
-  converts_dict(){
-    // let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
-    // if (this.attributes.nodes != undefined){
-    //   let data: object;
-    //   let position: object = {}
-    //   let node: object = {}
-    //   for (var i: number = 0; i < this.attributes.nodes.length; i++) {
-    //     console.log('🌈')
-    //     data = this.attributes.nodes[i].attributes.data
-    //     position = this.attributes.nodes[i].attributes.position
-    //     node = {'data': data, 'position': position}
-      //   console.log(data)
-      //   node_list.push(node)
-      // }
-      console.log('🌸')
-      // console.log(node_list)
-    // }
+  converts_dict() {
+    console.log('☁️');
+    let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
+      // let data: object;
+      // let position: object = {}
+      let node: object = {}
+      for (var i: number = 0; i < this.attributes.nodes.length; i++) {
+        node = this.attributes.nodes[i].attributes.data
+        // position = this.attributes.nodes[i].attributes.data.position
+        // node = {'data': data, 'position': position}
+        // console.log(data)
+        console.log(node_list)
+        node_list.push(node)
+      }
+      return node_list;
   }
 }
 
@@ -122,7 +139,7 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_name: CytoscapeModel.view_name,
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
-      graph: {},
+      graph: null,
     };
   }
 
@@ -148,6 +165,7 @@ class CytoscapeView extends DOMWidgetView {
     this.el.classList.add('custom-widget');
 
     this.value_changed();
+    this.model.get('graph').on('change:nodes', this.value_changed, this);
     this.model.on('change:graph', this.value_changed, this);
     this.displayed.then(() => {
       this.init_render();
@@ -161,12 +179,15 @@ class CytoscapeView extends DOMWidgetView {
   }
 
   init_render() {
-    this.is_rendered = true;
     console.log('🦋')
-    this.cytoscape_obj = cytoscape({
-      container: this.el,
-      elements: this.model.get('graph').converts_dict(),
-    });
+    if (this.model.get('graph') != null) {
+        this.is_rendered = true;
+        this.cytoscape_obj = cytoscape({
+          container: this.el,
+          elements: this.model.get('graph').converts_dict(),
+        });
+    }
+    console.log('🦇');
   }
 
 }

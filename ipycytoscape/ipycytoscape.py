@@ -64,8 +64,16 @@ class Node(Widget):
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-class Edge():
-    pass
+class Edge(Widget):
+    """ Edge Widget """
+    _model_name = Unicode('EdgeModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+
+    id = Integer().tag(sync=True)
+
+    def __init__(self, **kwargs):
+        super(Edge, self).__init__()
 
 class Graph(Widget):
     """ Graph Widget """
@@ -74,8 +82,8 @@ class Graph(Widget):
     _model_module_version = Unicode(module_version).tag(sync=True)
 
     #similar to this... I don't think I'll need it
-    nodes = List(trait=Instance(Node)).tag(sync=True, **widget_serialization)
-    edges = List(trait=Instance(Edge)).tag(sync=True, **widget_serialization)
+    nodes = List(Instance(Node)).tag(sync=True, **widget_serialization)
+    edges = List(Instance(Edge)).tag(sync=True, **widget_serialization)
 
     def __init__(self, nodes=[], edges=[]):
         super(Graph, self).__init__()
@@ -98,7 +106,7 @@ class CytoscapeWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    graph = Instance(Graph, allow_none=True).tag(sync=True, **widget_serialization)
+    graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
     def __init__(self, nodes=[], edges=[]):
         super(CytoscapeWidget, self).__init__()
