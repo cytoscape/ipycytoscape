@@ -80,11 +80,6 @@ class NodeModel extends WidgetModel {
     }
   };
 
-//I don't think this one needs a serializer
-  static serializers: ISerializers = {
-      ...WidgetModel.serializers
-    }
-
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 }
@@ -110,19 +105,14 @@ class GraphModel extends WidgetModel {
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 
+  //Necessary if you're using the constructor
   converts_dict() {
-    console.log('☁️');
-
       let graph: {nodes:Array<object>, edges:Array<object>} = {nodes: [], edges: []};
       var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
         node = this.attributes.nodes[i].attributes.data
         graph.nodes.push(node);
-
-        console.log(node)
       }
-
-      console.log(graph)
       return graph;
   }
 }
@@ -178,7 +168,6 @@ class CytoscapeView extends DOMWidgetView {
   }
 
   init_render() {
-    console.log('🦋')
     if (this.model.get('graph') != null) {
         this.is_rendered = true;
         this.cytoscape_obj = cytoscape({
@@ -186,7 +175,6 @@ class CytoscapeView extends DOMWidgetView {
           elements: this.model.get('graph').converts_dict(),
         });
     }
-    console.log('🦇');
   }
 
 }
