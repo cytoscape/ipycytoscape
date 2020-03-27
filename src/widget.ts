@@ -112,19 +112,18 @@ class GraphModel extends WidgetModel {
 
   converts_dict() {
     console.log('☁️');
-    let node_list: Array<object> = [{'nodes': '', 'edges': ''}];
-      // let data: object;
-      // let position: object = {}
-      let node: object = {}
+
+      let graph: {nodes:Array<object>, edges:Array<object>} = {nodes: [], edges: []};
+      var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
         node = this.attributes.nodes[i].attributes.data
-        // position = this.attributes.nodes[i].attributes.data.position
-        // node = {'data': data, 'position': position}
-        // console.log(data)
-        console.log(node_list)
-        node_list.push(node)
+        graph.nodes.push(node);
+
+        console.log(node)
       }
-      return node_list;
+
+      console.log(graph)
+      return graph;
   }
 }
 

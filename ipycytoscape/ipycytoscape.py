@@ -50,16 +50,11 @@ class Node(Widget):
     grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
 
-    #think data and position are not necessary here
-    #since I'm actually gonna write a converts_dict() method on the frontend
     data = Dict().tag(sync=True)
     position = Dict().tag(sync=True)
 
-    def __init__(self, data={}, position={}, **kwargs):
+    def __init__(self, **kwargs):
         super(Node, self).__init__()
-
-        self.data = data
-        self.position = position
 
         for key, val in kwargs.items():
             setattr(self, key, val)
