@@ -153,6 +153,14 @@ class CytoscapeModel extends DOMWidgetModel {
 }
 
 export
+class NodeView extends DOMWidgetView {
+
+    render()
+    {
+    }
+}
+
+export
 class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
   is_rendered: boolean = false;

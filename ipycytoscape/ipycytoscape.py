@@ -8,10 +8,8 @@
 Graph visualization in Jupyter.
 """
 
-import networkx as nx
-import matplotlib.pyplot as plt
-
-import copy
+from spectate import mvc
+from traitlets import TraitType, HasTraits, observe
 
 from ipywidgets.widgets.trait_types import InstanceDict, TypedTuple
 
@@ -38,10 +36,6 @@ logger.setLevel(logging.DEBUG)
 #[] - add from csv
 #[] - add from json
 #[x] - add support for edges
-
-from spectate import mvc
-from traitlets import TraitType, HasTraits, observe
-
 
 class Mutable(TraitType):
     """A base class for mutable traits using Spectate"""
