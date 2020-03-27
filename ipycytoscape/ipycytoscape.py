@@ -48,8 +48,6 @@ class Mutable(TraitType):
 
         @mvc.view(default)
         def callback(default, events):
-            logging.debug('🐸')
-            logging.debug(events)
             change = dict(
                 new=getattr(obj, self.name),
                 name=self.name,
@@ -120,16 +118,6 @@ class Node(Widget):
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-    # @observe('data', type='item')
-    # def _on_attr_change(self, change):
-    #     print(change)
-    #     self.notify_change(dict(
-    #         owner=self,
-    #         name='data',
-    #         type='change',
-    #         new=self.data,
-    #     ))
-
 class Graph(Widget):
     """ Graph Widget """
     _model_name = Unicode('GraphModel').tag(sync=True)
@@ -141,26 +129,6 @@ class Graph(Widget):
 
     def __init__(self):
         super(Graph, self).__init__()
-
-    # @observe('nodes', type='item')
-    # def _on_nodes_change(self, change):
-    #     logging.debug(change)
-    #     self.notify_change(dict(
-    #         owner=self,
-    #         name='nodes',
-    #         type='change',
-    #         new=self.nodes,
-    #     ))
-
-    # @observe('edges', type='item')
-    # def _on_edges_change(self, change):
-    #     logging.debug(change)
-    #     self.notify_change(dict(
-    #         owner=self,
-    #         name='edges',
-    #         type='change',
-    #         new=self.edges,
-    #     ))
 
     def add_node(self, node):
         self.nodes.append(node)
