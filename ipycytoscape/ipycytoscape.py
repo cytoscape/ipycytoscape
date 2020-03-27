@@ -24,22 +24,50 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+#TODO:
+#[] - add_node
+#[] - add_edge
+#[] - remove_node
+#[] - remove_edge
+#[] - set_layout
+#[] - get_layout
+#[] - set_style
+#[] - get_style
+#[] - set_tip
+#  [] - update TippyJS for latest version
+#[] - add from csv
+#[] - add from json
+#[x] - add support for edges
+
+class Edge(Widget):
+    """ Edge Widget """
+    _model_name = Unicode('EdgeModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+
+    group = Unicode().tag(sync=True)
+    removed = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
+    selectable = Bool().tag(sync=True)
+    locked = Bool().tag(sync=True)
+    grabbed = Bool().tag(sync=True)
+    grabbable = Bool().tag(sync=True)
+    classes = Unicode().tag(sync=True)
+
+    data = Dict().tag(sync=True)
+    position = Dict().tag(sync=True)
+
+    def __init__(self, **kwargs):
+        super(Edge, self).__init__()
+
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
 class Node(Widget):
     """ Node Widget """
     _model_name = Unicode('NodeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
-
-    id = Integer().tag(sync=True)
-    idInt = Integer().tag(sync=True)
-    name = Unicode().tag(sync=True)
-    score = Float().tag(sync=True)
-    query = Bool().tag(sync=True)
-    gene = Bool().tag(sync=True)
-    label = Unicode().tag(sync=True)
-
-    x = Float().tag(sync=True)
-    y = Float().tag(sync=True)
 
     group = Unicode().tag(sync=True)
     removed = Bool().tag(sync=True)
@@ -59,24 +87,12 @@ class Node(Widget):
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-class Edge(Widget):
-    """ Edge Widget """
-    _model_name = Unicode('EdgeModel').tag(sync=True)
-    _model_module = Unicode(module_name).tag(sync=True)
-    _model_module_version = Unicode(module_version).tag(sync=True)
-
-    id = Integer().tag(sync=True)
-
-    def __init__(self, **kwargs):
-        super(Edge, self).__init__()
-
 class Graph(Widget):
     """ Graph Widget """
     _model_name = Unicode('GraphModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
 
-    #similar to this... I don't think I'll need it
     nodes = List(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = List(Instance(Edge)).tag(sync=True, **widget_serialization)
 

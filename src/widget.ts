@@ -39,7 +39,17 @@ class EdgeModel extends WidgetModel {
       _model_name: 'EdgeModel',
       _model_module: EdgeModel.model_module,
       _model_module_version: EdgeModel.model_module_version,
-      id: 0,
+
+      group: '',
+      removed: false,
+      selected: false,
+      selectable: false,
+      locked: false,
+      grabbed: false,
+      grabbable: false,
+      classes: '',
+      data: {},
+      position: {},
     }
   };
 
@@ -58,15 +68,7 @@ class NodeModel extends WidgetModel {
       _model_name: 'NodeModel',
       _model_module: NodeModel.model_module,
       _model_module_version: NodeModel.model_module_version,
-      id: 0,
-      idInt: 0,
-      name: '',
-      score: 0,
-      query: false,
-      gene: false,
-      label: '',
-      x: 0,
-      y: 0,
+
       group: '',
       removed: false,
       selected: false,
@@ -113,6 +115,11 @@ class GraphModel extends WidgetModel {
         node = this.attributes.nodes[i].attributes.data
         graph.nodes.push(node);
       }
+      var edge: object;
+      for (var i: number = 0; i < this.attributes.edges.length; i++) {
+        edge = this.attributes.edges[i].attributes.data
+        graph.edges.push(edge);
+      }
       return graph;
   }
 }
@@ -150,12 +157,20 @@ class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
   is_rendered: boolean = false;
 
+/*TODO:
+[] - create a way to observe individually change on nodes
+[] - show tippys on click
+[] - add zoom_change
+[] - add rendered_position_change
+[] - add support for edges
+*/
+
   render() {
     this.el.classList.add('custom-widget');
 
     this.value_changed();
     this.model.get('graph').on('change:nodes', this.value_changed, this);
-    this.model.on('change:graph', this.value_changed, this);
+    this.model.get('graph').on('change:edges', this.value_changed, this);
     this.displayed.then(() => {
       this.init_render();
     });
