@@ -162,7 +162,7 @@ class CytoscapeView extends DOMWidgetView {
 [] - show tippys on click
 [] - add zoom_change
 [] - add rendered_position_change
-[] - add support for edges
+[x] - add support for edges
 */
 
   render() {

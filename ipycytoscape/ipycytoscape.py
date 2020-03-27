@@ -39,6 +39,42 @@ logger.setLevel(logging.DEBUG)
 #[] - add from json
 #[x] - add support for edges
 
+from spectate import mvc
+from traitlets import TraitType, HasTraits, observe
+
+
+class Mutable(TraitType):
+    """A base class for mutable traits using Spectate"""
+
+    _model_type = None
+    _event_type = "change"
+
+    def instance_init(self, obj):
+        default = self._model_type()
+
+        @mvc.view(default)
+        def callback(default, events):
+            logging.debug('🐸')
+            logging.debug(events)
+            change = dict(
+                new=getattr(obj, self.name),
+                name=self.name,
+                type=self._event_type,
+            )
+            obj.notify_change(change)
+
+        setattr(obj, self.name, default)
+
+
+class MutableDict(Mutable):
+    """A mutable dictionary trait"""
+    _model_type = mvc.Dict
+
+class MutableList(Mutable):
+    """A mutable dictionary trait"""
+    _model_type = mvc.List
+
+
 class Edge(Widget):
     """ Edge Widget """
     _model_name = Unicode('EdgeModel').tag(sync=True)
@@ -54,8 +90,8 @@ class Edge(Widget):
     grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
 
-    data = Dict().tag(sync=True)
-    position = Dict().tag(sync=True)
+    data = MutableDict().tag(sync=True)
+    position = MutableDict().tag(sync=True)
 
     def __init__(self, **kwargs):
         super(Edge, self).__init__()
@@ -68,6 +104,9 @@ class Node(Widget):
     _model_name = Unicode('NodeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_name = Unicode('NodeView').tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
 
     group = Unicode().tag(sync=True)
     removed = Bool().tag(sync=True)
@@ -78,8 +117,8 @@ class Node(Widget):
     grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
 
-    data = Dict().tag(sync=True)
-    position = Dict().tag(sync=True)
+    data = MutableDict().tag(sync=True)
+    position = MutableDict().tag(sync=True)
 
     def __init__(self, **kwargs):
         super(Node, self).__init__()
@@ -87,20 +126,47 @@ class Node(Widget):
         for key, val in kwargs.items():
             setattr(self, key, val)
 
+    # @observe('data', type='item')
+    # def _on_attr_change(self, change):
+    #     print(change)
+    #     self.notify_change(dict(
+    #         owner=self,
+    #         name='data',
+    #         type='change',
+    #         new=self.data,
+    #     ))
+
 class Graph(Widget):
     """ Graph Widget """
     _model_name = Unicode('GraphModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
 
-    nodes = List(Instance(Node)).tag(sync=True, **widget_serialization)
-    edges = List(Instance(Edge)).tag(sync=True, **widget_serialization)
+    nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
+    edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
 
-    def __init__(self, nodes=[], edges=[]):
+    def __init__(self):
         super(Graph, self).__init__()
 
-        self.nodes = nodes
-        self.edges = edges
+    # @observe('nodes', type='item')
+    # def _on_nodes_change(self, change):
+    #     logging.debug(change)
+    #     self.notify_change(dict(
+    #         owner=self,
+    #         name='nodes',
+    #         type='change',
+    #         new=self.nodes,
+    #     ))
+
+    # @observe('edges', type='item')
+    # def _on_edges_change(self, change):
+    #     logging.debug(change)
+    #     self.notify_change(dict(
+    #         owner=self,
+    #         name='edges',
+    #         type='change',
+    #         new=self.edges,
+    #     ))
 
     def add_node(self, node):
         self.nodes.append(node)
@@ -119,8 +185,8 @@ class CytoscapeWidget(DOMWidget):
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def __init__(self, nodes=[], edges=[]):
+    def __init__(self):
         super(CytoscapeWidget, self).__init__()
 
-        self.graph = Graph(nodes, edges)
+        self.graph = Graph()
 
