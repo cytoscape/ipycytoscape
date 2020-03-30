@@ -262,13 +262,9 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        #TODO: currently the only way of updating a layout is by returning a
-        #new copy, but it shouldn't. Find out what's going on with the Multi objs
-        dummyDict = {}
 
-        dummyDict[key] = value
-
-        self.cytoscape_layout = dummyDict
+        for key, val in kwargs.items():
+            self.cytoscape_layout[key] = val
 
     def get_layout(self):
         """
@@ -285,11 +281,9 @@ class CytoscapeWidget(DOMWidget):
         stylesheet: dict
             See https://js.cytoscape.org for layout examples.
         """
-        dummyDict = {}
 
-        dummyDict[key] = value
-
-        self.cytoscape_style = dummyDict
+        for key, val in kwargs.items():
+            self.cytoscape_style[key] = val
 
     def get_style(self):
         """
