@@ -116,14 +116,20 @@ class GraphModel extends WidgetModel {
 
   converts_dict() {
       let graph: {nodes:Array<object>, edges:Array<object>} = {nodes: [], edges: []};
+
       var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
-        node = this.attributes.nodes[i].attributes.data
+        node = this.attributes.nodes[i].get('data')
         graph.nodes.push(node);
       }
+      //TODO: adding edges is not working
+      //Error setting state: An element must be of type `nodes` or `edges`; you specified `coexp`
       var edge: object;
-      for (var i: number = 0; i < this.attributes.edges.length; i++) {
-        edge = this.attributes.edges[i].attributes.data
+      for (var j: number = 0; j < this.attributes.edges.length; j++) {
+        console.log('🌈')
+        console.log(this.attributes.edges[j])
+        console.log(this.attributes.edges[j].get('data'))
+        edge = this.attributes.edges[j].get('data')
         graph.edges.push(edge);
       }
       return graph;
@@ -181,14 +187,51 @@ class NodeView extends WidgetView {
         console.log(arguments);  
         this.parentModel = this.options.parentModel;
         console.log(this.model);
+        this.model.on('change:group', this.groupChanged, this);
+        this.model.on('change:removed', this.removedChanged, this);
+        this.model.on('change:selected', this.selectedChanged, this);
+        this.model.on('change:locked', this.lockedChanged, this);
+        this.model.on('change:grabbed', this.grabbedChanged, this);
+        this.model.on('change:grabbable', this.grabbableChanged, this);
         this.model.on('change:classes', this.classesChanged, this);
+        this.model.on('change:data', this.dataChanged, this);
+        this.model.on('change:position', this.positionChanged, this);
+    }
+
+    groupChanged() {
+      this.parentModel.set("group", this.model.get('group'));
+    }
+
+    removedChanged() {
+      this.parentModel.set("removed", this.model.get('removed'));
+    }
+
+    selectedChanged() {
+      this.parentModel.set("selected", this.model.get('selected'));
+    }
+
+    lockedChanged() {
+      this.parentModel.set("locked", this.model.get('locked'));
+    }
+
+    grabbedChanged() {
+      this.parentModel.set("grabbed", this.model.get('grabbed'));
+    }
+
+    grabbableChanged() {
+      this.parentModel.set("grabbable", this.model.get('grabbable'));
     }
 
     classesChanged() {
-      console.log("Classes have changed, applying the changes on the cytoscape view.");
-      console.log(this.model.get('classes'));
+      this.parentModel.set("classes", this.model.get('classes'));
+    }
 
-      // PSEUDO CODE!!! this.parentModel.select(this.node_id).set_classes(this.model.get('classes'));
+    dataChanged() {
+      this.parentModel.set("data", this.model.get('data'));
+    }
+
+    positionChanged() {
+      this.parentModel.set("position", this.model.get('position'));
     }
 }
 
@@ -199,7 +242,7 @@ class CytoscapeView extends DOMWidgetView {
   nodeViews: any = [];
 
 /*TODO:
-[] - create a way to observe individually change on nodes
+[x] - create a way to observe individually change on nodes
 [] - show tippys on click
 [] - add zoom_change
 [] - add rendered_position_change
