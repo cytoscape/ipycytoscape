@@ -57,7 +57,6 @@ class Mutable(TraitType):
 
         setattr(obj, self.name, default)
 
-
 class MutableDict(Mutable):
     """A mutable dictionary trait"""
     _model_type = mvc.Dict
@@ -65,7 +64,6 @@ class MutableDict(Mutable):
 class MutableList(Mutable):
     """A mutable list trait"""
     _model_type = mvc.List
-
 
 class Edge(Widget):
     """ Edge Widget """
@@ -209,6 +207,7 @@ class Graph(Widget):
             https://networkx.github.io/documentation/
         """
         for node in g.nodes():
+            #TODO: test with different **kwargs
             self.nodes.append({'data': {'id': node, 'label': ""}})
         for edge in g.edges():
             self.edges.append({'data': {'source': edge[0],'target': edge[1]}})
@@ -229,3 +228,6 @@ class CytoscapeWidget(DOMWidget):
 
         self.graph = Graph()
 
+    def set_layout(self, **kwargs):
+        logging.debug(**kwargs)
+        # setattr(self key, val)

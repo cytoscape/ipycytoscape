@@ -4,7 +4,7 @@
 // import * as widgets from '@jupyter-widgets/base';
 
 import {
-  DOMWidgetModel, DOMWidgetView, ISerializers, WidgetModel
+  DOMWidgetModel, DOMWidgetView, ISerializers, WidgetModel, WidgetView
 } from '@jupyter-widgets/base';
 
 var widgets = require('@jupyter-widgets/base');
@@ -65,9 +65,12 @@ export
 class NodeModel extends WidgetModel {
   defaults() {
     return {...super.defaults(),
-      _model_name: 'NodeModel',
+      _model_name: NodeModel.model_name,
       _model_module: NodeModel.model_module,
       _model_module_version: NodeModel.model_module_version,
+      _view_name: NodeModel.view_name,
+      _view_module: NodeModel.view_module,
+      _view_module_version: NodeModel.view_module_version,
 
       group: '',
       removed: false,
@@ -82,8 +85,12 @@ class NodeModel extends WidgetModel {
     }
   };
 
+  static model_name = 'NodeModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
+  static view_name = 'NodeView';
+  static view_module = MODULE_NAME;
+  static view_module_version = MODULE_VERSION;
 }
 
 export
@@ -107,7 +114,6 @@ class GraphModel extends WidgetModel {
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 
-  //Necessary if you're using the constructor
   converts_dict() {
       let graph: {nodes:Array<object>, edges:Array<object>} = {nodes: [], edges: []};
       var node: object;
@@ -123,7 +129,6 @@ class GraphModel extends WidgetModel {
       return graph;
   }
 }
-
 
 export
 class CytoscapeModel extends DOMWidgetModel {
@@ -153,10 +158,27 @@ class CytoscapeModel extends DOMWidgetModel {
 }
 
 export
-class NodeView extends DOMWidgetView {
+class NodeView extends WidgetView {
+    parentModel: any;
+    constructor(params: any) {
+        console.log('🦋')
+        console.log(params);
+        // console.log(parentModel);
+        super({
+          model: params.model,
+          options: params.options
+        }); 
+        console.log(arguments);  
+        this.parentModel = this.options.parentModel;
+        console.log(this.model);
+        this.model.on('change:classes', this.classesChanged, this);
+    }
 
-    render()
-    {
+    classesChanged() {
+      console.log("Classes have changed, applying the changes on the cytoscape view.");
+      console.log(this.model.get('classes'));
+
+      // PSEUDO CODE!!! this.parentModel.select(this.node_id).set_classes(this.model.get('classes'));
     }
 }
 
@@ -164,6 +186,7 @@ export
 class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
   is_rendered: boolean = false;
+  nodeViews: any = [];
 
 /*TODO:
 [] - create a way to observe individually change on nodes
@@ -175,6 +198,10 @@ class CytoscapeView extends DOMWidgetView {
 
   render() {
     this.el.classList.add('custom-widget');
+
+    this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
+    this.nodeViews.update(this.model.get('graph').get('nodes'));
+    // this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
     this.value_changed();
     this.model.get('graph').on('change:nodes', this.value_changed, this);
@@ -199,5 +226,28 @@ class CytoscapeView extends DOMWidgetView {
         });
     }
   }
+
+  addNodeModel(NodeModel: any) {
+      return this.create_child_view(NodeModel, {
+          cytoscapeView: this,
+          parentModel: this.model,
+      });
+  }
+
+  removeNodeView(nodeView: any) {
+      nodeView.remove();
+  }
+
+  // handleNodesChange() {
+  //     this.nodeViews.update(this.model.get('nodes'));
+  //     // If top level nodes are changed, icons disappear
+  //     // So reload them for all visible nodes
+  //     Promise.all(this.nodeViews.views).then(function(views) {
+  //       for(var view in views){
+  //         views[view].setOpenCloseIcon(true);
+  //       }
+  //     });
+  // }
+
 
 }
