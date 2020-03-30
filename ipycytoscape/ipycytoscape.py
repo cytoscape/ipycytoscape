@@ -23,10 +23,10 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 #TODO:
-#[] - add_node
-#[] - add_edge
-#[] - remove_node
-#[] - remove_edge
+#[x] - add_node
+#[x] - add_edge
+#[x] - remove_node
+#[x] - remove_edge
 #[] - set_layout
 #[] - get_layout
 #[] - set_style
@@ -63,7 +63,7 @@ class MutableDict(Mutable):
     _model_type = mvc.Dict
 
 class MutableList(Mutable):
-    """A mutable dictionary trait"""
+    """A mutable list trait"""
     _model_type = mvc.List
 
 
@@ -133,8 +133,28 @@ class Graph(Widget):
     def add_node(self, node):
         self.nodes.append(node)
 
-    def add_edge(self):
-        pass
+    def remove_node(self, node):
+        self.nodes.remove(node)
+
+    def remove_node_by_id(self, node_id):
+        for node in self.nodes:
+            if node.data['id'] == node_id:
+                self.nodes.remove(node)
+            else:
+                print("The id doesn't exist in your graph.")
+
+    def add_edge(self, edge):
+        self.edges.append(node)
+
+    def remove_edge(self, edge):
+        self.edges.remove(node)
+
+    def remove_edge_by_id(self, edge_id):
+        for edge in self.edges:
+            if edge.data['id'] == edge_id:
+                self.edges.remove(edge)
+            else:
+                print("The id doesn't exist in your graph.")
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
