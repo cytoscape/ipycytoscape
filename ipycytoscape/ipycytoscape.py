@@ -9,12 +9,12 @@ Graph visualization in Jupyter.
 """
 
 from spectate import mvc
-from traitlets import TraitType, HasTraits, observe
+from traitlets import TraitType
 
-from ipywidgets.widgets.trait_types import InstanceDict, TypedTuple
+from ipywidgets.widgets.trait_types import InstanceDict
 
 from ipywidgets import DOMWidget, register, Widget, widget_serialization
-from traitlets import Dict, Unicode, Bool, List, Float, Integer, Tuple, Instance, Union
+from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
 from ._frontend import module_name, module_version
 
 """TODO: Remove this after this is somewhat done"""
@@ -27,10 +27,10 @@ logger.setLevel(logging.DEBUG)
 #[x] - add_edge
 #[x] - remove_node
 #[x] - remove_edge
-#[] - set_layout
-#[] - get_layout
-#[] - set_style
-#[] - get_style
+#[x] - set_layout
+#[x] - get_layout
+#[x] - set_style
+#[x] - get_style
 #[] - set_tip
 #  [] - update TippyJS for latest version
 #[] - add from csv
@@ -221,6 +221,24 @@ class CytoscapeWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
+    auto_unselectify = Bool(True).tag(sync=True)
+    box_selection_enabled = Bool(False).tag(sync=True)
+    cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
+    cytoscape_style = List([{
+                        'selector': 'node',
+                        'css': {
+                            'background-color': 'blue'
+                            }
+                        },
+                        {
+                        'selector': 'edge',
+                        'css': {
+                            'line-color': 'blue'
+                            }
+                        }]).tag(sync=True)
+    zoom = Float(2.0).tag(sync=True)
+    rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
+
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
     def __init__(self):
@@ -229,5 +247,52 @@ class CytoscapeWidget(DOMWidget):
         self.graph = Graph()
 
     def set_layout(self, **kwargs):
-        logging.debug(**kwargs)
-        # setattr(self key, val)
+        """
+        Sets the layout of the current object. You can either pass a dictionary
+        or change the parameters individually.
+        Parameters
+        ----------
+        name: str
+            name of the layout, ex.: cola, grid.
+        nodeSpacing: int
+            changes padding between nodes
+        edgeLengthVal: int
+            changes lenght of edges
+        padding: int
+            adds padding to the whole graph in comparison to the Jupyter's cell
+        """
+        #TODO: currently the only way of updating a layout is by returning a
+        #new copy, but it shouldn't. Find out what's going on with the Multi objs
+        dummyDict = {'name':''}
+
+        for key, val in kwargs.items():
+            setattr(dummyDict, key, val)
+
+        self.cytoscape_layout = dummyDict
+
+    def get_layout(self):
+        """
+        Gets the layout of the current object.
+        """
+        return self.cytoscape_layout
+
+    def set_style(self, **kwargs):
+        """
+        Sets the layout of the current object. You can either pass a dictionary
+        or change the parameters individually.
+        Parameters
+        ----------
+        stylesheet: dict
+            adds a complete stylesheet to the graph see https://js.cytoscape.org
+            for examples
+        """
+        for key, val in kwargs.items():
+            setattr(dummyDict, key, val)
+
+        self.cytoscape_style = stylesheet
+
+    def get_style(self):
+        """
+        Gets the style of the current object.
+        """
+        return self.cytoscape_style

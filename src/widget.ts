@@ -140,6 +140,15 @@ class CytoscapeModel extends DOMWidgetModel {
       _view_name: CytoscapeModel.view_name,
       _view_module: CytoscapeModel.view_module,
       _view_module_version: CytoscapeModel.view_module_version,
+
+      auto_unselectify: true,
+      box_selection_enabled: false,
+      cytoscape_layout: {},
+      cytoscape_style: [],
+      elements: [],
+      zoom: 0,
+      rendered_position: {},
+
       graph: null,
     };
   }
@@ -155,6 +164,7 @@ class CytoscapeModel extends DOMWidgetModel {
   static view_name = 'CytoscapeView';
   static view_module = MODULE_NAME;
   static view_module_version = MODULE_VERSION;
+
 }
 
 export
