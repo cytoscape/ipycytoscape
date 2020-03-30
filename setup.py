@@ -44,10 +44,10 @@ package_data_spec = {
 }
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/ipycytoscape',
+    ('share/jupyter/nbextensions/jupyter-cytoscape',
         nb_path, '*.js*'),
     ('share/jupyter/lab/extensions', lab_path, '*.tgz'),
-    ('etc/jupyter/nbconfig/notebook.d' , HERE, 'ipycytoscape.json')
+    ('etc/jupyter/nbconfig/notebook.d' , HERE, 'jupyter-cytoscape.json')
 ]
 
 

@@ -8,5 +8,5 @@
 Information about the frontend package of the widgets.
 """
 
-module_name = "ipycytoscape"
-module_version = "^0.1.0"
+module_name = "jupyter-cytoscape"
+module_version = "^0.1.3"

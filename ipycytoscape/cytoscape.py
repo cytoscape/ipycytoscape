@@ -11,8 +11,6 @@ Graph visualization in Jupyter.
 from spectate import mvc
 from traitlets import TraitType
 
-from ipywidgets.widgets.trait_types import InstanceDict
-
 from ipywidgets import DOMWidget, register, Widget, widget_serialization
 from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
 from ._frontend import module_name, module_version
@@ -208,8 +206,12 @@ class Graph(Widget):
             https://networkx.github.io/documentation/
         """
         for node in g.nodes():
+<<<<<<< HEAD:ipycytoscape/ipycytoscape.py
             #TODO: test with different **kwargs
             self.nodes.append({'data': {'id': node, 'label': ""}})
+=======
+            d['nodes'].append({'data': {'id': node, 'label': ""}})
+>>>>>>> dev:ipycytoscape/cytoscape.py
         for edge in g.edges():
             self.edges.append({'data': {'source': edge[0],'target': edge[1]}})
 
@@ -262,9 +264,30 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
+<<<<<<< HEAD:ipycytoscape/ipycytoscape.py
 
         for key, val in kwargs.items():
             self.cytoscape_layout[key] = val
+=======
+        #TODO: currently the only way of updating a layout is by returning a
+        #new copy
+        dummyDict = {}
+
+        if name != None:
+            dummyDict['name'] = name
+        else:
+            dummyDict['name'] = self.cytoscape_layout['name']
+        if nodeSpacing != None:
+            dummyDict['nodeSpacing'] = nodeSpacing
+        else:
+            dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
+        if edgeLengthVal != None:
+            dummyDict['edgeLengthVal'] = edgeLengthVal
+        else:
+            dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
+
+        self.cytoscape_layout = dummyDict
+>>>>>>> dev:ipycytoscape/cytoscape.py
 
     def get_layout(self):
         """

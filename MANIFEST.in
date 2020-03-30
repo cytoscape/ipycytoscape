@@ -1,4 +1,4 @@
-include LICENSE.txt
+include LICENSE
 include README.md
 
 include setupbase.py
@@ -27,6 +27,7 @@ prune tests/build
 # Javascript files
 graft ipycytoscape/nbextension
 graft src
+graft css
 prune **/node_modules
 prune coverage
 prune lib
