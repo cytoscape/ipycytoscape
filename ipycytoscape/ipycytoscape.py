@@ -131,12 +131,33 @@ class Graph(Widget):
         super(Graph, self).__init__()
 
     def add_node(self, node):
+        """
+        Equivalent to Python's append method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node: cytoscape node
+        """
         self.nodes.append(node)
 
     def remove_node(self, node):
+        """
+        Equivalent to Python's remove method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node: cytoscape node
+        """
         self.nodes.remove(node)
 
     def remove_node_by_id(self, node_id):
+        """
+        Removes node by the id specified.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node_id: numeric types and string
+        """
         for node in self.nodes:
             if node.data['id'] == node_id:
                 self.nodes.remove(node)
@@ -144,17 +165,53 @@ class Graph(Widget):
                 print("The id doesn't exist in your graph.")
 
     def add_edge(self, edge):
+        """
+        Equivalent to Python's append method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge: cytoscape edge
+        """
         self.edges.append(node)
 
     def remove_edge(self, edge):
+        """
+        Equivalent to Python's remove method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge: cytoscape edge
+        """
         self.edges.remove(node)
 
     def remove_edge_by_id(self, edge_id):
+        """
+        Removes edge by the id specified.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge_id: numeric types and string
+        """
         for edge in self.edges:
             if edge.data['id'] == edge_id:
                 self.edges.remove(edge)
             else:
                 print("The id doesn't exist in your graph.")
+
+    def complete_graph(self, g):
+        """
+        Converts a NetworkX graph in to a Cytoscape graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        g: nx graph
+            receives a generic NetworkX graph. more info in
+            https://networkx.github.io/documentation/
+        """
+        for node in g.nodes():
+            self.nodes.append({'data': {'id': node, 'label': ""}})
+        for edge in g.edges():
+            self.edges.append({'data': {'source': edge[0],'target': edge[1]}})
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
