@@ -32,6 +32,14 @@ cytoscape.use( popper );
 cytoscape.use( dagre );
 cytoscape.use( cola );
 
+/*TODO:
+[x] - create a way to observe individually change on nodes
+[] - show tippys on click
+[] - add zoom_change
+[] - add rendered_position_change
+[x] - add support for edges
+*/
+
 export
 class EdgeModel extends WidgetModel {
   defaults() {
@@ -175,64 +183,62 @@ class CytoscapeModel extends DOMWidgetModel {
 
 export
 class NodeView extends WidgetView {
-    parentModel: any;
-    constructor(params: any) {
-        console.log('🦋')
-        console.log(params);
-        // console.log(parentModel);
-        super({
-          model: params.model,
-          options: params.options
-        }); 
-        console.log(arguments);  
-        this.parentModel = this.options.parentModel;
-        console.log(this.model);
-        this.model.on('change:group', this.groupChanged, this);
-        this.model.on('change:removed', this.removedChanged, this);
-        this.model.on('change:selected', this.selectedChanged, this);
-        this.model.on('change:locked', this.lockedChanged, this);
-        this.model.on('change:grabbed', this.grabbedChanged, this);
-        this.model.on('change:grabbable', this.grabbableChanged, this);
-        this.model.on('change:classes', this.classesChanged, this);
-        this.model.on('change:data', this.dataChanged, this);
-        this.model.on('change:position', this.positionChanged, this);
-    }
+  parentModel: any;
 
-    groupChanged() {
-      this.parentModel.set("group", this.model.get('group'));
-    }
+  constructor(params: any) {
+    super({
+      model: params.model,
+      options: params.options
+    }); 
+  this.parentModel = this.options.parentModel;
 
-    removedChanged() {
-      this.parentModel.set("removed", this.model.get('removed'));
-    }
+  this.model.on('change:group', this.groupChanged, this);
+  this.model.on('change:removed', this.removedChanged, this);
+  this.model.on('change:selected', this.selectedChanged, this);
+  this.model.on('change:locked', this.lockedChanged, this);
+  this.model.on('change:grabbed', this.grabbedChanged, this);
+  this.model.on('change:grabbable', this.grabbableChanged, this);
+  this.model.on('change:classes', this.classesChanged, this);
+  this.model.on('change:data', this.dataChanged, this);
+  this.model.on('change:position', this.positionChanged, this);
+  }
 
-    selectedChanged() {
-      this.parentModel.set("selected", this.model.get('selected'));
-    }
+  //TODO: not sure if this is necessary to propagate the changes...
+  groupChanged() {
+    this.parentModel.set("group", this.model.get('group'));
+  }
 
-    lockedChanged() {
-      this.parentModel.set("locked", this.model.get('locked'));
-    }
+  removedChanged() {
+    this.parentModel.set("removed", this.model.get('removed'));
+  }
 
-    grabbedChanged() {
-      this.parentModel.set("grabbed", this.model.get('grabbed'));
-    }
+  selectedChanged() {
+    this.parentModel.set("selected", this.model.get('selected'));
+  }
 
-    grabbableChanged() {
-      this.parentModel.set("grabbable", this.model.get('grabbable'));
-    }
+  lockedChanged() {
+    this.parentModel.set("locked", this.model.get('locked'));
+  }
 
-    classesChanged() {
-      this.parentModel.set("classes", this.model.get('classes'));
-    }
+  grabbedChanged() {
+    this.parentModel.set("grabbed", this.model.get('grabbed'));
+  }
 
-    dataChanged() {
-      this.parentModel.set("data", this.model.get('data'));
-    }
+  grabbableChanged() {
+    this.parentModel.set("grabbable", this.model.get('grabbable'));
+  }
 
-    positionChanged() {
-      this.parentModel.set("position", this.model.get('position'));
-    }
+  classesChanged() {
+    this.parentModel.set("classes", this.model.get('classes'));
+  }
+
+  dataChanged() {
+    this.parentModel.set("data", this.model.get('data'));
+  }
+
+  positionChanged() {
+    this.parentModel.set("position", this.model.get('position'));
+  }
 }
 
 export
@@ -241,20 +247,11 @@ class CytoscapeView extends DOMWidgetView {
   is_rendered: boolean = false;
   nodeViews: any = [];
 
-/*TODO:
-[x] - create a way to observe individually change on nodes
-[] - show tippys on click
-[] - add zoom_change
-[] - add rendered_position_change
-[x] - add support for edges
-*/
-
   render() {
     this.el.classList.add('custom-widget');
 
     this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
     this.nodeViews.update(this.model.get('graph').get('nodes'));
-    // this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
     this.value_changed();
     this.model.get('graph').on('change:nodes', this.value_changed, this);
@@ -290,17 +287,4 @@ class CytoscapeView extends DOMWidgetView {
   removeNodeView(nodeView: any) {
       nodeView.remove();
   }
-
-  // handleNodesChange() {
-  //     this.nodeViews.update(this.model.get('nodes'));
-  //     // If top level nodes are changed, icons disappear
-  //     // So reload them for all visible nodes
-  //     Promise.all(this.nodeViews.views).then(function(views) {
-  //       for(var view in views){
-  //         views[view].setOpenCloseIcon(true);
-  //       }
-  //     });
-  // }
-
-
 }
