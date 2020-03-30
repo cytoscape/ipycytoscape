@@ -35,6 +35,7 @@ logger.setLevel(logging.DEBUG)
 #  [] - update TippyJS for latest version
 #[] - add from csv
 #[] - add from json
+#[] - implement get/set for rendered_position
 #[x] - add support for edges
 
 class Mutable(TraitType):
@@ -263,10 +264,9 @@ class CytoscapeWidget(DOMWidget):
         """
         #TODO: currently the only way of updating a layout is by returning a
         #new copy, but it shouldn't. Find out what's going on with the Multi objs
-        dummyDict = {'name':''}
+        dummyDict = {}
 
-        for key, val in kwargs.items():
-            setattr(dummyDict, key, val)
+        dummyDict[key] = value
 
         self.cytoscape_layout = dummyDict
 
@@ -283,13 +283,13 @@ class CytoscapeWidget(DOMWidget):
         Parameters
         ----------
         stylesheet: dict
-            adds a complete stylesheet to the graph see https://js.cytoscape.org
-            for examples
+            See https://js.cytoscape.org for layout examples.
         """
-        for key, val in kwargs.items():
-            setattr(dummyDict, key, val)
+        dummyDict = {}
 
-        self.cytoscape_style = stylesheet
+        dummyDict[key] = value
+
+        self.cytoscape_style = dummyDict
 
     def get_style(self):
         """
