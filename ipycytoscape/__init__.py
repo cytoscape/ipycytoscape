@@ -4,7 +4,7 @@
 # Copyright (c) Mariana Meireles.
 # Distributed under the terms of the Modified BSD License.
 
-from .ipycytoscape import *
+from .cytoscape import *
 
 from ._version import __version__, version_info
 
