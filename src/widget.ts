@@ -34,7 +34,7 @@ cytoscape.use( cola );
 
 /*TODO:
 [x] - create a way to observe individually change on nodes
-[] - show tippys on click
+[x] - show tippys on click
 [] - add zoom_change //will fail on jupyterlab see issue #26
 [] - add rendered_position_change
 [x] - add support for edges
@@ -128,6 +128,7 @@ class GraphModel extends WidgetModel {
 
       var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
+        console.log('🌧')
         console.log("This is being pushed to the graph: ", this.attributes.nodes[i].get('data'))
         node = this.attributes.nodes[i].get('data')
         graph.nodes.push(node);
@@ -273,10 +274,39 @@ class CytoscapeView extends DOMWidgetView {
         this.is_rendered = true;
         this.cytoscape_obj = cytoscape({
           container: this.el,
+          autounselectify: this.model.get('auto_unselectify'),
+          boxSelectionEnabled: this.model.get('box_selection_enabled'),
+          layout: this.model.get('cytoscape_layout'),
+          style: this.model.get('cytoscape_style'),
           elements: this.model.get('graph').converts_dict(),
         });
         console.log('🌸')
         console.log(this.cytoscape_obj)
+
+        this.cytoscape_obj.on('click', 'node', (e: any) => {
+          let node = e.target;
+          let ref = node.popperRef();
+          let dummyDomEle = document.createElement('div');
+
+          if (node.data().name){
+            let tip = Tippy(dummyDomEle, {
+              //TODO: add a pretty tippy
+              trigger: 'manual',
+              lazy: false,
+              arrow: true,
+              theme: 'material',
+              placement: 'bottom',
+              content: () => {
+                //TODO: modularize this, add a function to edit this somehow
+                let content = document.createElement('div');
+                content.innerHTML = node.data().name;
+                return content;
+              },
+              onCreate: instance => { instance!.popperInstance!.reference = ref; }
+            });
+            tip.show();
+          }
+        });
     }
   }
 
@@ -290,4 +320,6 @@ class CytoscapeView extends DOMWidgetView {
   removeNodeView(nodeView: any) {
       nodeView.remove();
   }
+
+
 }
