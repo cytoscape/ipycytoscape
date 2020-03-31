@@ -35,7 +35,7 @@ cytoscape.use( cola );
 /*TODO:
 [x] - create a way to observe individually change on nodes
 [] - show tippys on click
-[] - add zoom_change
+[] - add zoom_change //will fail on jupyterlab see issue #26
 [] - add rendered_position_change
 [x] - add support for edges
 */
@@ -44,7 +44,7 @@ export
 class EdgeModel extends WidgetModel {
   defaults() {
     return {...super.defaults(),
-      _model_name: 'EdgeModel',
+      _model_name: EdgeModel.model_name,
       _model_module: EdgeModel.model_module,
       _model_module_version: EdgeModel.model_module_version,
 
@@ -65,6 +65,7 @@ class EdgeModel extends WidgetModel {
       ...WidgetModel.serializers
     }
 
+  static model_name = 'EdgeModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 }
@@ -127,6 +128,7 @@ class GraphModel extends WidgetModel {
 
       var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
+        console.log("This is being pushed to the graph: ", this.attributes.nodes[i].get('data'))
         node = this.attributes.nodes[i].get('data')
         graph.nodes.push(node);
       }
@@ -135,8 +137,7 @@ class GraphModel extends WidgetModel {
       var edge: object;
       for (var j: number = 0; j < this.attributes.edges.length; j++) {
         console.log('🌈')
-        console.log(this.attributes.edges[j])
-        console.log(this.attributes.edges[j].get('data'))
+        console.log("This is being pushed to the graph: ", this.attributes.edges[j].get('data'))
         edge = this.attributes.edges[j].get('data')
         graph.edges.push(edge);
       }
@@ -274,6 +275,8 @@ class CytoscapeView extends DOMWidgetView {
           container: this.el,
           elements: this.model.get('graph').converts_dict(),
         });
+        console.log('🌸')
+        console.log(this.cytoscape_obj)
     }
   }
 
