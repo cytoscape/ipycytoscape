@@ -11,7 +11,7 @@ Graph visualization in Jupyter.
 from spectate import mvc
 from traitlets import TraitType
 
-from ipywidgets import DOMWidget, register, Widget, widget_serialization
+from ipywidgets import DOMWidget, Widget, widget_serialization
 from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
 from ._frontend import module_name, module_version
 
