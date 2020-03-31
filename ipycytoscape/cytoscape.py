@@ -129,7 +129,7 @@ class Graph(Widget):
 
     def add_node(self, node):
         """
-        Equivalent to Python's append method.
+        Appends node to the end of the list. Equivalent to Python's append method.
         Parameters
         ----------
         self: cytoscape graph
@@ -139,7 +139,7 @@ class Graph(Widget):
 
     def remove_node(self, node):
         """
-        Equivalent to Python's remove method.
+        Removes node from the end of the list. Equivalent to Python's remove method.
         Parameters
         ----------
         self: cytoscape graph
@@ -163,23 +163,23 @@ class Graph(Widget):
 
     def add_edge(self, edge):
         """
-        Equivalent to Python's append method.
+        Appends edge from the end of the list. Equivalent to Python's append method.
         Parameters
         ----------
         self: cytoscape graph
         edge: cytoscape edge
         """
-        self.edges.append(node)
+        self.edges.append(edge)
 
     def remove_edge(self, edge):
         """
-        Equivalent to Python's remove method.
+        Removes edge from the end of the list.  Equivalent to Python's remove method.
         Parameters
         ----------
         self: cytoscape graph
         edge: cytoscape edge
         """
-        self.edges.remove(node)
+        self.edges.remove(edge)
 
     def remove_edge_by_id(self, edge_id):
         """
