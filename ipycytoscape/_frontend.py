@@ -9,4 +9,4 @@ Information about the frontend package of the widgets.
 """
 
 module_name = "jupyter-cytoscape"
-module_version = "^0.1.3"
+module_version = "^0.1.5"

@@ -43,7 +43,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 
 ```
 $ git clone https://github.com/QuantStack/ipycytoscape.git
-$ cd ipytree
+$ cd ipycytoscape
 $ pip install -e .
 $ jupyter nbextension install --py --symlink --sys-prefix ipycytoscape
 $ jupyter nbextension enable --py --sys-prefix ipycytoscape
