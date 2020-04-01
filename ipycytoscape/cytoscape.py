@@ -20,14 +20,6 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-#TODO:
-#[] - get node and edge by id
-#[] - set_tip
-#  [] - update TippyJS for latest version
-#[] - add from csv
-#[] - add from json
-#[] - implement get/set for rendered_position
-
 class Mutable(TraitType):
     """A base class for mutable traits using Spectate"""
 

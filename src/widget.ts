@@ -1,8 +1,6 @@
 // Copyright (c) Mariana Meireles
 // Distributed under the terms of the Modified BSD License.
 
-// import * as widgets from '@jupyter-widgets/base';
-
 import {
   DOMWidgetModel, DOMWidgetView, ISerializers, WidgetModel, WidgetView
 } from '@jupyter-widgets/base';
@@ -31,11 +29,6 @@ import 'tippy.js/themes/material.css';
 cytoscape.use( popper );
 cytoscape.use( dagre );
 cytoscape.use( cola );
-
-/*TODO:
-[] - add zoom_change //will fail on jupyterlab see issue #26
-[] - add rendered_position_change
-*/
 
 export
 class NodeModel extends WidgetModel {
