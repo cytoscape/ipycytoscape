@@ -130,23 +130,24 @@ class GraphModel extends WidgetModel {
   static model_module_version = MODULE_VERSION;
 
   converts_dict() {
-      let graph: {nodes:Array<object>, edges:Array<object>} = {nodes: [], edges: []};
+      let graph: Array<any> = [];
 
-      var node: object;
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
         console.log('🌧')
         console.log("This is being pushed to the graph: ", this.attributes.nodes[i].get('data'))
-        node = this.attributes.nodes[i].get('data')
-        graph.nodes.push(node);
+        // let node: any = {group: "nodes", data: this.attributes.nodes[i].get('data')};
+        // node.group = "nodes";
+        // node.data = this.attributes.nodes[i].get('data')
+        graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
       }
       //TODO: adding edges is not working
       //Error setting state: An element must be of type `nodes` or `edges`; you specified `coexp`
-      var edge: object;
+      // var edge: object;
       for (var j: number = 0; j < this.attributes.edges.length; j++) {
         console.log('🌈')
         console.log("This is being pushed to the graph: ", this.attributes.edges[j].get('data'))
-        edge = this.attributes.edges[j].get('data')
-        graph.edges.push(edge);
+      //   edge = this.attributes.edges[j].get('data')
+        graph.push({group: "edges", data: this.attributes.edges[j].get('data')});
       }
       return graph;
   }
