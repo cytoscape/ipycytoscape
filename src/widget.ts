@@ -122,6 +122,8 @@ class GraphModel extends WidgetModel {
   converts_dict() {
       let graph: Array<any> = [];
 
+      console.log('🌸')
+
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
         graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
       }

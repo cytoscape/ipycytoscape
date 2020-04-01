@@ -194,6 +194,14 @@ class Graph(Widget):
         for edge in g.edges():
             self.edges.append({'data': {'source': edge[0],'target': edge[1]}})
 
+    def add_graph_from_json(self, json_file):
+        for node in json_file['nodes']:
+            self.nodes.append(node)
+
+        for edge in json_file['edges']:
+            self.edges.append(edge)
+
+
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
     _model_name = Unicode('CytoscapeModel').tag(sync=True)
