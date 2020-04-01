@@ -25,6 +25,7 @@ logger.setLevel(logging.DEBUG)
 #[x] - add_edge
 #[x] - remove_node
 #[x] - remove_edge
+#[] - get node and edge by id
 #[x] - set_layout
 #[x] - get_layout
 #[x] - set_style
