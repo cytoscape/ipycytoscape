@@ -21,21 +21,12 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 #TODO:
-#[x] - add_node
-#[x] - add_edge
-#[x] - remove_node
-#[x] - remove_edge
 #[] - get node and edge by id
-#[x] - set_layout
-#[x] - get_layout
-#[x] - set_style
-#[x] - get_style
 #[] - set_tip
 #  [] - update TippyJS for latest version
 #[] - add from csv
 #[] - add from json
 #[] - implement get/set for rendered_position
-#[x] - add support for edges
 
 class Mutable(TraitType):
     """A base class for mutable traits using Spectate"""

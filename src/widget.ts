@@ -33,11 +33,8 @@ cytoscape.use( dagre );
 cytoscape.use( cola );
 
 /*TODO:
-[x] - create a way to observe individually change on nodes
-[x] - show tippys on click
 [] - add zoom_change //will fail on jupyterlab see issue #26
 [] - add rendered_position_change
-[x] - add support for edges
 */
 
 export
@@ -133,22 +130,12 @@ class GraphModel extends WidgetModel {
       let graph: Array<any> = [];
 
       for (var i: number = 0; i < this.attributes.nodes.length; i++) {
-        console.log('🌧')
-        console.log("This is being pushed to the graph: ", this.attributes.nodes[i].get('data'))
-        // let node: any = {group: "nodes", data: this.attributes.nodes[i].get('data')};
-        // node.group = "nodes";
-        // node.data = this.attributes.nodes[i].get('data')
         graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
       }
-      //TODO: adding edges is not working
-      //Error setting state: An element must be of type `nodes` or `edges`; you specified `coexp`
-      // var edge: object;
       for (var j: number = 0; j < this.attributes.edges.length; j++) {
-        console.log('🌈')
-        console.log("This is being pushed to the graph: ", this.attributes.edges[j].get('data'))
-      //   edge = this.attributes.edges[j].get('data')
         graph.push({group: "edges", data: this.attributes.edges[j].get('data')});
       }
+
       return graph;
   }
 }
@@ -352,8 +339,6 @@ class CytoscapeView extends DOMWidgetView {
           style: this.model.get('cytoscape_style'),
           elements: this.model.get('graph').converts_dict()
         });
-        console.log('🌸')
-        console.log(this.cytoscape_obj)
 
         this.cytoscape_obj.on('click', 'node', (e: any) => {
           let node = e.target;
@@ -383,7 +368,6 @@ class CytoscapeView extends DOMWidgetView {
   }
 
   addNodeModel(NodeModel: any) {
-    console.log('adding node model')
       return this.create_child_view(NodeModel, {
           cytoscapeView: this,
           parentModel: this.model,
