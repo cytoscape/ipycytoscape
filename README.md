@@ -29,8 +29,7 @@ Or if you use jupyterlab:
 
 ```bash
 pip install ipycytoscape
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-jupyter labextension install jupyter-cytoscape@0.1.2
+jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
 ```
 
 If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
