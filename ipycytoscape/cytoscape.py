@@ -255,8 +255,12 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
+        dummy_dict = {}
+
         for key, val in kwargs.items():
-            self.cytoscape_layout[key] = val
+            dummy_dict[key] = val
+
+        self.cytoscape_layout = dummy_dict
 
     def get_layout(self):
         """
