@@ -190,9 +190,16 @@ class Graph(Widget):
             https://networkx.github.io/documentation/
         """
         for node in g.nodes():
-            self.nodes.append({'data': {'id': node, 'label': ""}})
+            node_instance = Node()
+            node_instance.data = {'id': int(node)}
+            logging.debug(node_instance.data)
+            self.nodes.append(node_instance)
+
         for edge in g.edges():
-            self.edges.append({'data': {'source': edge[0],'target': edge[1]}})
+            edge_instance = Edge()
+            edge_instance.data = {'source': edge[0],'target': edge[1]}
+            logging.debug(edge_instance.data)
+            self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
         for node in json_file['nodes']:
@@ -240,7 +247,9 @@ class CytoscapeWidget(DOMWidget):
 
         self.graph = Graph()
 
-    def set_layout(self, **kwargs):
+    def set_layout(self, name=None, nodeSpacing=None, edgeLengthVal=None,
+                    animate=None, randomize=None, maxSimulationTime=None,
+                    padding=None):
         """
         Sets the layout of the current object. You can either pass a dictionary
         or change the parameters individually.
@@ -255,12 +264,23 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        dummy_dict = {}
+        dummyDict = {}
 
-        for key, val in kwargs.items():
-            dummy_dict[key] = val
+        if name != None:
+            dummyDict['name'] = name
+        else:
+            dummyDict['name'] = self.cytoscape_layout['name']
+        if nodeSpacing != None:
+            dummyDict['nodeSpacing'] = nodeSpacing
+        else:
+            dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
+        if edgeLengthVal != None:
+            dummyDict['edgeLengthVal'] = edgeLengthVal
+        else:
+            dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
 
-        self.cytoscape_layout = dummy_dict
+        self.cytoscape_layout = dummyDict
+
 
     def get_layout(self):
         """

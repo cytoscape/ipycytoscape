@@ -100,8 +100,6 @@ class EdgeModel extends WidgetModel {
 
 export
 class GraphModel extends WidgetModel {
-  i: number = 0;
-  j: number = 0;
   defaults() {
     return {...super.defaults(),
       _model_name: 'GraphModel',
@@ -109,7 +107,6 @@ class GraphModel extends WidgetModel {
       _model_module_version: GraphModel.model_module_version,
       nodes: [],
       edges: [],
-      // j: Number,
     }
   };
 
@@ -125,11 +122,11 @@ class GraphModel extends WidgetModel {
   converts_dict() {
       let graph: Array<any> = [];
 
-      for (this.i = 0; this.i < this.attributes.nodes.length; this.i++) {
-        graph.push({group: "nodes", data: this.attributes.nodes[this.i].get('data')});
+      for (let i = 0; i < this.attributes.nodes.length; i++) {
+        graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
       }
-      for (this.j; this.j < this.attributes.edges.length; this.j++) {
-        graph.push({group: "edges", data: this.attributes.edges[this.j].get('data')});
+      for (let j = 0; j < this.attributes.edges.length; j++) {
+        graph.push({group: "edges", data: this.attributes.edges[j].get('data')});
       }
 
       return graph;
@@ -310,9 +307,18 @@ class CytoscapeView extends DOMWidgetView {
     // this.edgeViews.update(this.model.get('graph').get('edges'));
 
     this.value_changed();
+
     this.model.get('graph').on('change:nodes', this.value_changed, this);
     this.model.get('graph').on('change:edges', this.value_changed, this);
-    // this.model.on('graph', this.value_changed, this);
+    //TODO: not sure if these are useful, the one for style is not
+    //but for layout it seems to make a difference. Need to test and
+    //remove the ones that are not and figure out why
+    this.model.on('change:auto_unselectify', this.value_changed, this);
+    this.model.on('change:box_selection_enabled', this.value_changed, this);
+    this.model.on('change:cytoscape_layout', this.value_changed, this);
+    this.model.on('change:cytoscape_style', this.value_changed, this);
+    this.model.on('change:elements', this.value_changed, this);
+
     this.displayed.then(() => {
       this.init_render();
     });
@@ -320,6 +326,7 @@ class CytoscapeView extends DOMWidgetView {
 
   value_changed() {
     if (this.is_rendered) {
+      console.log('value_changed')
         this.init_render();
     }
   }
