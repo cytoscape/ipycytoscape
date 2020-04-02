@@ -100,6 +100,8 @@ class EdgeModel extends WidgetModel {
 
 export
 class GraphModel extends WidgetModel {
+  i: number = 0;
+  j: number = 0;
   defaults() {
     return {...super.defaults(),
       _model_name: 'GraphModel',
@@ -107,6 +109,7 @@ class GraphModel extends WidgetModel {
       _model_module_version: GraphModel.model_module_version,
       nodes: [],
       edges: [],
+      // j: Number,
     }
   };
 
@@ -122,13 +125,11 @@ class GraphModel extends WidgetModel {
   converts_dict() {
       let graph: Array<any> = [];
 
-      console.log('🌸')
-
-      for (var i: number = 0; i < this.attributes.nodes.length; i++) {
-        graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
+      for (this.i = 0; this.i < this.attributes.nodes.length; this.i++) {
+        graph.push({group: "nodes", data: this.attributes.nodes[this.i].get('data')});
       }
-      for (var j: number = 0; j < this.attributes.edges.length; j++) {
-        graph.push({group: "edges", data: this.attributes.edges[j].get('data')});
+      for (this.j; this.j < this.attributes.edges.length; this.j++) {
+        graph.push({group: "edges", data: this.attributes.edges[this.j].get('data')});
       }
 
       return graph;
