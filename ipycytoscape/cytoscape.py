@@ -8,10 +8,11 @@
 Graph visualization in Jupyter.
 """
 
-import copy
+from spectate import mvc
+from traitlets import TraitType
 
-from ipywidgets import DOMWidget
-from traitlets import Dict, Unicode, Bool, List, Float
+from ipywidgets import DOMWidget, Widget, widget_serialization
+from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
 from ._frontend import module_name, module_version
 
 """TODO: Remove this after this is somewhat done"""
@@ -19,11 +20,201 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-class CytoscapeWidget(DOMWidget):
-    """
-    Implements the main Cytoscape Widget
-    """
+class Mutable(TraitType):
+    """A base class for mutable traits using Spectate"""
 
+    _model_type = None
+    _event_type = "change"
+
+    def instance_init(self, obj):
+        default = self._model_type()
+
+        @mvc.view(default)
+        def callback(default, events):
+            change = dict(
+                new=getattr(obj, self.name),
+                name=self.name,
+                type=self._event_type,
+            )
+            obj.notify_change(change)
+
+        setattr(obj, self.name, default)
+
+class MutableDict(Mutable):
+    """A mutable dictionary trait"""
+    _model_type = mvc.Dict
+
+class MutableList(Mutable):
+    """A mutable list trait"""
+    _model_type = mvc.List
+
+class Edge(Widget):
+    """ Edge Widget """
+    _model_name = Unicode('EdgeModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+
+    group = Unicode().tag(sync=True)
+    removed = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
+    selectable = Bool().tag(sync=True)
+    locked = Bool().tag(sync=True)
+    grabbed = Bool().tag(sync=True)
+    grabbable = Bool().tag(sync=True)
+    classes = Unicode().tag(sync=True)
+
+    data = MutableDict().tag(sync=True)
+    position = MutableDict().tag(sync=True)
+
+    def __init__(self, **kwargs):
+        super(Edge, self).__init__()
+
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
+class Node(Widget):
+    """ Node Widget """
+    _model_name = Unicode('NodeModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_name = Unicode('NodeView').tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
+
+    group = Unicode().tag(sync=True)
+    removed = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
+    selectable = Bool().tag(sync=True)
+    locked = Bool().tag(sync=True)
+    grabbed = Bool().tag(sync=True)
+    grabbable = Bool().tag(sync=True)
+    classes = Unicode().tag(sync=True)
+
+    data = MutableDict().tag(sync=True)
+    position = MutableDict().tag(sync=True)
+
+    def __init__(self, **kwargs):
+        super(Node, self).__init__()
+
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
+class Graph(Widget):
+    """ Graph Widget """
+    _model_name = Unicode('GraphModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+
+    nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
+    edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
+
+    def __init__(self):
+        super(Graph, self).__init__()
+
+    def add_node(self, node):
+        """
+        Appends node to the end of the list. Equivalent to Python's append method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node: cytoscape node
+        """
+        self.nodes.append(node)
+
+    def remove_node(self, node):
+        """
+        Removes node from the end of the list. Equivalent to Python's remove method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node: cytoscape node
+        """
+        self.nodes.remove(node)
+
+    def remove_node_by_id(self, node_id):
+        """
+        Removes node by the id specified.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node_id: numeric types and string
+        """
+        for node in self.nodes:
+            if node.data['id'] == node_id:
+                self.nodes.remove(node)
+            else:
+                print("The id doesn't exist in your graph.")
+
+    def add_edge(self, edge):
+        """
+        Appends edge from the end of the list. Equivalent to Python's append method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge: cytoscape edge
+        """
+        self.edges.append(edge)
+
+    def remove_edge(self, edge):
+        """
+        Removes edge from the end of the list.  Equivalent to Python's remove method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge: cytoscape edge
+        """
+        self.edges.remove(edge)
+
+    def remove_edge_by_id(self, edge_id):
+        """
+        Removes edge by the id specified.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edge_id: numeric types and string
+        """
+        for edge in self.edges:
+            if edge.data['id'] == edge_id:
+                self.edges.remove(edge)
+            else:
+                print("The id doesn't exist in your graph.")
+
+    def add_graph_from_networkx(self, g):
+        """
+        Converts a NetworkX graph in to a Cytoscape graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        g: nx graph
+            receives a generic NetworkX graph. more info in
+            https://networkx.github.io/documentation/
+        """
+        for node in g.nodes():
+            node_instance = Node()
+            node_instance.data = {'id': int(node)}
+            logging.debug(node_instance.data)
+            self.nodes.append(node_instance)
+
+        for edge in g.edges():
+            edge_instance = Edge()
+            edge_instance.data = {'source': edge[0],'target': edge[1]}
+            logging.debug(edge_instance.data)
+            self.edges.append(edge_instance)
+
+    def add_graph_from_json(self, json_file):
+        for node in json_file['nodes']:
+            node_instance = Node()
+            node_instance.data = node['data']
+            self.nodes.append(node_instance)
+
+        for edge in json_file['edges']:
+            edge_instance = Edge()
+            edge_instance.data = edge['data']
+            self.edges.append(edge_instance)
+
+
+class CytoscapeWidget(DOMWidget):
+    """ Implements the main Cytoscape Widget """
     _model_name = Unicode('CytoscapeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
@@ -35,67 +226,33 @@ class CytoscapeWidget(DOMWidget):
     box_selection_enabled = Bool(False).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
     cytoscape_style = List([{
-                    'selector': 'node',
-                    'css': {
-                        'background-color': 'blue'
-                        }
-                    },
-                    {
-                    'selector': 'edge',
-                    'css': {
-                        'line-color': 'blue'
-                        }
-                    }]).tag(sync=True)
-    elements = Dict({'nodes': [], 'edges': []}).tag(sync=True)
+                        'selector': 'node',
+                        'css': {
+                            'background-color': 'blue'
+                            }
+                        },
+                        {
+                        'selector': 'edge',
+                        'css': {
+                            'line-color': 'blue'
+                            }
+                        }]).tag(sync=True)
     zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
-    """
-    Graphs need to be copied because of https://github.com/ipython/traitlets/issues/495
-    """
-    def complete_graph(self, g):
-        """
-        Converts a NetworkX graph in to a Cytoscape graph.
-        Parameters
-        ----------
-        g: nx graph
-            receives a generic NetworkX graph. more info in
-            https://networkx.github.io/documentation/
-        """
-        d = copy.deepcopy(self.elements)
-        for node in g.nodes():
-            d['nodes'].append({'data': {'id': node, 'label': ""}})
-        for edge in g.edges():
-            d['edges'].append({'data': {'source': edge[0],'target': edge[1]}})
-        self.elements = d
+    graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def add_node(self, node_id, label="", parent=""):
-        d = copy.deepcopy(self.elements)
-        d['nodes'].append({'data': {'id': node_id, 'label': label}})
-        self.elements = d
+    def __init__(self):
+        super(CytoscapeWidget, self).__init__()
 
-    def add_edge(self, edge_source, edge_target):
-        d = copy.deepcopy(self.elements)
-        d['edges'].append({'data': {'source': edge_source,'target': edge_target}})
-        self.elements = d
-
-    """
-    TODO: Implement remove node and edges. Not sure how useful this will be since
-    we can use all of the NetworkX functions. Also, I'd have to implement a
-    generalist template that would deal with all the kinds of graphs and NetX
-    already does it. Don't think this is worthwhile. 
-    """
-    def remove_node(self):
-        pass
-
-    def remove_edge(self, source, target):
-        pass
+        self.graph = Graph()
 
     def set_layout(self, name=None, nodeSpacing=None, edgeLengthVal=None,
                     animate=None, randomize=None, maxSimulationTime=None,
                     padding=None):
         """
-        Sets the layout of the current object.
+        Sets the layout of the current object. You can either pass a dictionary
+        or change the parameters individually.
         Parameters
         ----------
         name: str
@@ -107,8 +264,6 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        #TODO: currently the only way of updating a layout is by returning a
-        #new copy
         dummyDict = {}
 
         if name != None:
@@ -126,35 +281,27 @@ class CytoscapeWidget(DOMWidget):
 
         self.cytoscape_layout = dummyDict
 
+
     def get_layout(self):
         """
         Gets the layout of the current object.
         """
         return self.cytoscape_layout
 
-    def set_style(self, stylesheet):
+    def set_style(self, style):
         """
-        Sets the layout of the current object.
+        Sets the layout of the current object. You can either pass a dictionary
+        or change the parameters individually.
         Parameters
         ----------
         stylesheet: dict
-            adds a complete stylesheet to the graph see https://js.cytoscape.org
-            for examples
+            See https://js.cytoscape.org for layout examples.
         """
-        self.cytoscape_style = stylesheet
+
+        self.cytoscape_style = style
 
     def get_style(self):
         """
         Gets the style of the current object.
         """
         return self.cytoscape_style
-
-    #WIP: this doesn't update the frontend, traitlets bug
-    #Implementing the solution Martin gave might be a good way to solve it
-    #so I'll look into it.
-    def set_tip(self, node_id, attrs):
-        counter = 0
-        for n in self.elements['nodes']:
-            counter += 1
-            if node_id == n['data']['id']:
-                n['data']['name'] = attrs
