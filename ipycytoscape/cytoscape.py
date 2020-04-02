@@ -179,7 +179,7 @@ class Graph(Widget):
             else:
                 print("The id doesn't exist in your graph.")
 
-    def complete_graph(self, g):
+    def add_graph_from_networkx(self, g):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
         Parameters
