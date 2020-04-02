@@ -264,7 +264,7 @@ class CytoscapeWidget(DOMWidget):
         """
         return self.cytoscape_layout
 
-    def set_style(self, **kwargs):
+    def set_style(self, style):
         """
         Sets the layout of the current object. You can either pass a dictionary
         or change the parameters individually.
@@ -274,8 +274,7 @@ class CytoscapeWidget(DOMWidget):
             See https://js.cytoscape.org for layout examples.
         """
 
-        for key, val in kwargs.items():
-            self.cytoscape_style[key] = val
+        self.cytoscape_style = style
 
     def get_style(self):
         """
