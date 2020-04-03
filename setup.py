@@ -8,7 +8,6 @@ from __future__ import print_function
 from glob import glob
 from os.path import join as pjoin
 
-
 from setupbase import (
     create_cmdclass, install_npm, ensure_targets,
     find_packages, combine_commands, ensure_python,
@@ -58,10 +57,16 @@ cmdclass['jsdeps'] = combine_commands(
     ensure_targets(jstargets),
 )
 
+# Read the contents of the README file on Pypi
+this_directory = path.abspath(path.dirname(__file__))
+with open(pjoin(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup_args = dict(
     name            = name,
-    description     = 'A Custom Jupyter Widget Library',
+    description     = 'Python implementation of the graph visualization tool Cytoscape.',
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
     version         = version,
     scripts         = glob(pjoin('scripts', '*')),
     cmdclass        = cmdclass,
@@ -87,6 +92,7 @@ setup_args = dict(
     include_package_data = True,
     install_requires = [
         'ipywidgets>=7.0.0',
+        'spectate>=0.4.1',
     ],
     extras_require = {
         'test': [
