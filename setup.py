@@ -8,7 +8,6 @@ from __future__ import print_function
 from glob import glob
 from os.path import join as pjoin
 
-
 from setupbase import (
     create_cmdclass, install_npm, ensure_targets,
     find_packages, combine_commands, ensure_python,
@@ -58,12 +57,10 @@ cmdclass['jsdeps'] = combine_commands(
     ensure_targets(jstargets),
 )
 
-# read the contents of the README file on Pypi
-from os import path
+# Read the contents of the README file on Pypi
 this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+with open(pjoin(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-
 
 setup_args = dict(
     name            = name,
