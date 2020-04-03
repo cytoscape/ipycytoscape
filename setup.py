@@ -58,10 +58,18 @@ cmdclass['jsdeps'] = combine_commands(
     ensure_targets(jstargets),
 )
 
+# read the contents of the README file on Pypi
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 
 setup_args = dict(
     name            = name,
-    description     = 'A Custom Jupyter Widget Library',
+    description     = 'Python implementation of the graph visualization tool Cytoscape.',
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
     version         = version,
     scripts         = glob(pjoin('scripts', '*')),
     cmdclass        = cmdclass,
@@ -87,6 +95,7 @@ setup_args = dict(
     include_package_data = True,
     install_requires = [
         'ipywidgets>=7.0.0',
+        'spectate>=0.4.1',
     ],
     extras_require = {
         'test': [
