@@ -1,3 +1,4 @@
+language: generic
 os:
  - linux
  - osx
@@ -19,6 +20,7 @@ before_install:
   - conda info -a
   - conda create -q -n test-environment python=$PYTHON_VERSION ipywidgets nodejs 
   - source activate test-environment
+  - conda install -c conda-forge spectate
   - if [[ $TRAVIS_OS_NAME == linux ]]; then conda install -c conda-forge jupyterlab; fi
 install:
   - pip install -e .
