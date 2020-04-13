@@ -221,27 +221,35 @@ class Graph(Widget):
             edge_instance.data = edge['data']
             self.edges.append(edge_instance)
 
-    def add_graph_from_df(self, df, groupby_cols, tip):
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[]):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
         Parameters
         ----------
         self: cytoscape graph
         df: pandas dataframe
-        groupby_cols: list of dataframe columns
-        tip: string
+        groupby_cols: list of strings (dataframe columns)
+        tip: list of strings (dataframe columns)
         """
         grouped = df.groupby(groupby_cols)
         group_nodes = {}
         for i, name in enumerate(grouped.groups):
             if not isinstance(name, tuple):
                 name = (name,)
-            group_nodes[name] = Node(data={"id": "parent-{}".format(i), "name": name})
+            group_nodes[name] = Node(data={'id': 'parent-{}'.format(i), 'name': name})
 
         line_nodes = []
         for index, row in df.iterrows():
             parent = group_nodes[tuple(row[groupby_cols])]
-            line_nodes.append(Node(data={"id": index, "parent": parent.data["id"]}))
+
+            # Includes content to tips
+            tip_content = ''
+            for attribute in attribute_list:
+                tip_content += '{}: {}\n'.format(attribute, row[attribute])
+
+            # Creates a list with all nodes adding them in the correct node parents
+            line_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
+                                        'name': tip_content}))
 
         all_nodes = list(group_nodes.values()) + line_nodes
         self.nodes.extend(all_nodes)
