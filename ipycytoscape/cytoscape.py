@@ -221,6 +221,31 @@ class Graph(Widget):
             edge_instance.data = edge['data']
             self.edges.append(edge_instance)
 
+    def add_graph_from_df(self, df, groupby_cols, tip):
+        """
+        Converts any Pandas DataFrame in to a Cytoscape graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        df: pandas dataframe
+        groupby_cols: list of dataframe columns
+        tip: string
+        """
+        grouped = df.groupby(groupby_cols)
+        group_nodes = {}
+        for i, name in enumerate(grouped.groups):
+            if not isinstance(name, tuple):
+                name = (name,)
+            group_nodes[name] = Node(data={"id": "parent-{}".format(i), "name": name})
+
+        line_nodes = []
+        for index, row in df.iterrows():
+            parent = group_nodes[tuple(row[groupby_cols])]
+            line_nodes.append(Node(data={"id": index, "parent": parent.data["id"]}))
+
+        all_nodes = list(group_nodes.values()) + line_nodes
+        self.nodes.extend(all_nodes)
+
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
     _model_name = Unicode('CytoscapeModel').tag(sync=True)
