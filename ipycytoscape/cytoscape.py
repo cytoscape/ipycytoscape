@@ -221,7 +221,7 @@ class Graph(Widget):
             edge_instance.data = edge['data']
             self.edges.append(edge_instance)
 
-    def add_graph_from_df(self, df, groupby_cols, attribute_list=[]):
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple()):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
         Parameters
@@ -229,7 +229,9 @@ class Graph(Widget):
         self: cytoscape graph
         df: pandas dataframe
         groupby_cols: list of strings (dataframe columns)
-        tip: list of strings (dataframe columns)
+        attribute_list: list of strings (dataframe columns)
+        edges: tuple in wich the first argument is the source edge and the
+            second is the target edge
         """
         grouped = df.groupby(groupby_cols)
         group_nodes = {}
@@ -238,7 +240,8 @@ class Graph(Widget):
                 name = (name,)
             group_nodes[name] = Node(data={'id': 'parent-{}'.format(i), 'name': name})
 
-        line_nodes = []
+        graph_nodes = []
+        graph_edges = []
         for index, row in df.iterrows():
             parent = group_nodes[tuple(row[groupby_cols])]
 
@@ -248,11 +251,17 @@ class Graph(Widget):
                 tip_content += '{}: {}\n'.format(attribute, row[attribute])
 
             # Creates a list with all nodes adding them in the correct node parents
-            line_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
+            graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
                                         'name': tip_content}))
 
-        all_nodes = list(group_nodes.values()) + line_nodes
+            graph_edges.append(Edge(data={'id': index, 'source': edges[0],
+                                        'target': edges[1]}))
+
+        # Adds group nodes and regular nodes to the graph object
+        all_nodes = list(group_nodes.values()) + graph_nodes
         self.nodes.extend(all_nodes)
+
+        self.edges.extend(graph_edges)
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
