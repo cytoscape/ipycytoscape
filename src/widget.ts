@@ -357,7 +357,15 @@ class CytoscapeView extends DOMWidgetView {
               theme: 'material',
               placement: 'bottom',
               content: () => {
-                //TODO: modularize this, add a function to edit this somehow
+                /*
+                  TODO:
+                  Currently this function is mapping to one attribute inside
+                  nodes[data], which in this case is name.
+                  The backend is using that to import various datas from
+                  DataFrames, the problem is that data will appear unformatted.
+                  Not even line breaks are working for some reason.
+                  Make the visualization better, see issue: #33
+                */
                 let content = document.createElement('div');
                 content.innerHTML = node.data().name;
                 return content;
