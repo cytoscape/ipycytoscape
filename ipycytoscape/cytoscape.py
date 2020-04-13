@@ -143,7 +143,7 @@ class Graph(Widget):
             if node.data['id'] == node_id:
                 self.nodes.remove(node)
             else:
-                print("The id doesn't exist in your graph.")
+                raise ValueError("The id doesn't exist in your graph.")
 
     def add_edge(self, edge):
         """
@@ -177,7 +177,7 @@ class Graph(Widget):
             if edge.data['id'] == edge_id:
                 self.edges.remove(edge)
             else:
-                print("The id doesn't exist in your graph.")
+                raise ValueError("The id doesn't exist in your graph.")
 
     def add_graph_from_networkx(self, g):
         """
@@ -202,6 +202,15 @@ class Graph(Widget):
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
+        """
+        Converts a JSON Cytoscape graph in to a ipycytoscape graph.
+        (This method only allows the conversion from a JSON that's already
+        formatted as a Cytoscape graph).
+        Parameters
+        ----------
+        self: cytoscape graph
+        json_file: json file
+        """
         for node in json_file['nodes']:
             node_instance = Node()
             node_instance.data = node['data']
@@ -211,7 +220,6 @@ class Graph(Widget):
             edge_instance = Edge()
             edge_instance.data = edge['data']
             self.edges.append(edge_instance)
-
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
@@ -225,18 +233,30 @@ class CytoscapeWidget(DOMWidget):
     auto_unselectify = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
-    cytoscape_style = List([{
-                        'selector': 'node',
-                        'css': {
-                            'background-color': 'blue'
+    cytoscape_style = List([
+                            {
+                            'selector': 'node',
+                            'css': {
+                                'background-color': '#11479e'
+                                }
+                            },
+                            {
+                            'selector': 'node:parent',
+                            'css': {
+                                'background-opacity': 0.333
+                                }
+                            },
+                            {
+                                'selector': 'edge',
+                                'style': {
+                                    'width': 4,
+                                    'target-arrow-shape': 'triangle',
+                                    'line-color': '#9dbaea',
+                                    'target-arrow-color': '#9dbaea',
+                                    'curve-style': 'bezier'
+                                }
                             }
-                        },
-                        {
-                        'selector': 'edge',
-                        'css': {
-                            'line-color': 'blue'
-                            }
-                        }]).tag(sync=True)
+                        ]).tag(sync=True)
     zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
