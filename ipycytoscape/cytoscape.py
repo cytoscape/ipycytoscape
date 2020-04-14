@@ -214,10 +214,11 @@ class Graph(Widget):
             node_instance.data = node['data']
             self.nodes.append(node_instance)
 
-        for edge in json_file['edges']:
-            edge_instance = Edge()
-            edge_instance.data = edge['data']
-            self.edges.append(edge_instance)
+        if 'edges' in json_file:
+            for edge in json_file['edges']:
+                edge_instance = Edge()
+                edge_instance.data = edge['data']
+                self.edges.append(edge_instance)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple()):
         """
@@ -315,8 +316,9 @@ class CytoscapeWidget(DOMWidget):
 
     def set_layout(self, **kwargs):
         """
-        Sets the layout of the current object. You can either pass a dictionary
-        or change the parameters individually.
+        Sets the layout of the current object. Change the parameters individually.
+        For extensive documentation on the different kinds of layout please refer
+        to https://js.cytoscape.org/#layouts
         Parameters
         ----------
         name: str
@@ -328,7 +330,6 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-
         dummyDict = {}
         dummyDict = copy.deepcopy(self.cytoscape_layout)
 
@@ -346,14 +347,12 @@ class CytoscapeWidget(DOMWidget):
 
     def set_style(self, style):
         """
-        Sets the layout of the current object. You can either pass a dictionary
-        or change the parameters individually.
+        Sets the layout of the current object. Change the parameters with a dictionary.
         Parameters
         ----------
         stylesheet: dict
             See https://js.cytoscape.org for layout examples.
         """
-
         self.cytoscape_style = style
 
     def get_style(self):
