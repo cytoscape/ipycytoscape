@@ -4,9 +4,7 @@
 # Copyright (c) Mariana Meireles.
 # Distributed under the terms of the Modified BSD License.
 
-"""
-Graph visualization in Jupyter.
-"""
+import copy
 
 from spectate import mvc
 from traitlets import TraitType
@@ -315,9 +313,7 @@ class CytoscapeWidget(DOMWidget):
 
         self.graph = Graph()
 
-    def set_layout(self, name=None, nodeSpacing=None, edgeLengthVal=None,
-                    animate=None, randomize=None, maxSimulationTime=None,
-                    padding=None):
+    def set_layout(self, **kwargs):
         """
         Sets the layout of the current object. You can either pass a dictionary
         or change the parameters individually.
@@ -332,20 +328,12 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        dummyDict = {}
 
-        if name != None:
-            dummyDict['name'] = name
-        else:
-            dummyDict['name'] = self.cytoscape_layout['name']
-        if nodeSpacing != None:
-            dummyDict['nodeSpacing'] = nodeSpacing
-        else:
-            dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
-        if edgeLengthVal != None:
-            dummyDict['edgeLengthVal'] = edgeLengthVal
-        else:
-            dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
+        dummyDict = {}
+        dummyDict = copy.deepcopy(self.cytoscape_layout)
+
+        for key, value in kwargs.items():
+            dummyDict[key] = value
 
         self.cytoscape_layout = dummyDict
 
