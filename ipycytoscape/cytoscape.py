@@ -254,14 +254,20 @@ class Graph(Widget):
             graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
                                         'name': tip_content}))
 
-            graph_edges.append(Edge(data={'id': index, 'source': edges[0],
-                                        'target': edges[1]}))
+            if not all(edges):
+                # Creates a list with all nodes adding them in the correct node parents
+                graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
+                                            'name': tip_content}))
+
+                graph_edges.append(Edge(data={'id': index, 'source': edges[0],
+                                            'target': edges[1]}))
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
         self.nodes.extend(all_nodes)
 
         self.edges.extend(graph_edges)
+
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
