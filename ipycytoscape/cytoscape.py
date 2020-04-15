@@ -51,6 +51,8 @@ class Edge(Widget):
     _model_name = Unicode('EdgeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
 
     group = Unicode().tag(sync=True)
     removed = Bool().tag(sync=True)
@@ -102,6 +104,8 @@ class Graph(Widget):
     _model_name = Unicode('GraphModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
