@@ -1,0 +1,24 @@
+[
+    {
+    'selector': 'node',
+    'css': {
+        'background-color': '#11479e'
+        }
+    },
+    {
+    'selector': 'node:parent',
+    'css': {
+        'background-opacity': 0.333
+        }
+    },
+    {
+        'selector': 'edge',
+        'style': {
+            'width': 4,
+            'target-arrow-shape': 'triangle',
+            'line-color': '#9dbaea',
+            'target-arrow-color': '#9dbaea',
+            'curve-style': 'bezier'
+        }
+    }
+]

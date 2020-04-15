@@ -4,9 +4,7 @@
 # Copyright (c) Mariana Meireles.
 # Distributed under the terms of the Modified BSD License.
 
-"""
-Graph visualization in Jupyter.
-"""
+import copy
 
 from spectate import mvc
 from traitlets import TraitType
@@ -53,6 +51,8 @@ class Edge(Widget):
     _model_name = Unicode('EdgeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
 
     group = Unicode().tag(sync=True)
     removed = Bool().tag(sync=True)
@@ -104,6 +104,8 @@ class Graph(Widget):
     _model_name = Unicode('GraphModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
@@ -143,7 +145,7 @@ class Graph(Widget):
             if node.data['id'] == node_id:
                 self.nodes.remove(node)
             else:
-                print("The id doesn't exist in your graph.")
+                raise ValueError("The id doesn't exist in your graph.")
 
     def add_edge(self, edge):
         """
@@ -177,7 +179,7 @@ class Graph(Widget):
             if edge.data['id'] == edge_id:
                 self.edges.remove(edge)
             else:
-                print("The id doesn't exist in your graph.")
+                raise ValueError("The id doesn't exist in your graph.")
 
     def add_graph_from_networkx(self, g):
         """
@@ -202,15 +204,72 @@ class Graph(Widget):
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
+        """
+        Converts a JSON Cytoscape graph in to a ipycytoscape graph.
+        (This method only allows the conversion from a JSON that's already
+        formatted as a Cytoscape graph).
+        Parameters
+        ----------
+        self: cytoscape graph
+        json_file: json file
+        """
         for node in json_file['nodes']:
             node_instance = Node()
             node_instance.data = node['data']
             self.nodes.append(node_instance)
 
-        for edge in json_file['edges']:
-            edge_instance = Edge()
-            edge_instance.data = edge['data']
-            self.edges.append(edge_instance)
+        if 'edges' in json_file:
+            for edge in json_file['edges']:
+                edge_instance = Edge()
+                edge_instance.data = edge['data']
+                self.edges.append(edge_instance)
+
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple()):
+        """
+        Converts any Pandas DataFrame in to a Cytoscape graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        df: pandas dataframe
+        groupby_cols: list of strings (dataframe columns)
+        attribute_list: list of strings (dataframe columns)
+        edges: tuple in wich the first argument is the source edge and the
+            second is the target edge
+        """
+        grouped = df.groupby(groupby_cols)
+        group_nodes = {}
+        for i, name in enumerate(grouped.groups):
+            if not isinstance(name, tuple):
+                name = (name,)
+            group_nodes[name] = Node(data={'id': 'parent-{}'.format(i), 'name': name})
+
+        graph_nodes = []
+        graph_edges = []
+        for index, row in df.iterrows():
+            parent = group_nodes[tuple(row[groupby_cols])]
+
+            # Includes content to tips
+            tip_content = ''
+            for attribute in attribute_list:
+                tip_content += '{}: {}\n'.format(attribute, row[attribute])
+
+            # Creates a list with all nodes adding them in the correct node parents
+            graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
+                                        'name': tip_content}))
+
+            if not all(edges):
+                # Creates a list with all nodes adding them in the correct node parents
+                graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
+                                            'name': tip_content}))
+
+                graph_edges.append(Edge(data={'id': index, 'source': edges[0],
+                                            'target': edges[1]}))
+
+        # Adds group nodes and regular nodes to the graph object
+        all_nodes = list(group_nodes.values()) + graph_nodes
+        self.nodes.extend(all_nodes)
+
+        self.edges.extend(graph_edges)
 
 
 class CytoscapeWidget(DOMWidget):
@@ -225,18 +284,30 @@ class CytoscapeWidget(DOMWidget):
     auto_unselectify = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
-    cytoscape_style = List([{
-                        'selector': 'node',
-                        'css': {
-                            'background-color': 'blue'
+    cytoscape_style = List([
+                            {
+                            'selector': 'node',
+                            'css': {
+                                'background-color': '#11479e'
+                                }
+                            },
+                            {
+                            'selector': 'node:parent',
+                            'css': {
+                                'background-opacity': 0.333
+                                }
+                            },
+                            {
+                                'selector': 'edge',
+                                'style': {
+                                    'width': 4,
+                                    'target-arrow-shape': 'triangle',
+                                    'line-color': '#9dbaea',
+                                    'target-arrow-color': '#9dbaea',
+                                    'curve-style': 'bezier'
+                                }
                             }
-                        },
-                        {
-                        'selector': 'edge',
-                        'css': {
-                            'line-color': 'blue'
-                            }
-                        }]).tag(sync=True)
+                        ]).tag(sync=True)
     zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
 
@@ -247,12 +318,11 @@ class CytoscapeWidget(DOMWidget):
 
         self.graph = Graph()
 
-    def set_layout(self, name=None, nodeSpacing=None, edgeLengthVal=None,
-                    animate=None, randomize=None, maxSimulationTime=None,
-                    padding=None):
+    def set_layout(self, **kwargs):
         """
-        Sets the layout of the current object. You can either pass a dictionary
-        or change the parameters individually.
+        Sets the layout of the current object. Change the parameters individually.
+        For extensive documentation on the different kinds of layout please refer
+        to https://js.cytoscape.org/#layouts
         Parameters
         ----------
         name: str
@@ -265,19 +335,10 @@ class CytoscapeWidget(DOMWidget):
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
         dummyDict = {}
+        dummyDict = copy.deepcopy(self.cytoscape_layout)
 
-        if name != None:
-            dummyDict['name'] = name
-        else:
-            dummyDict['name'] = self.cytoscape_layout['name']
-        if nodeSpacing != None:
-            dummyDict['nodeSpacing'] = nodeSpacing
-        else:
-            dummyDict['nodeSpacing'] = self.cytoscape_layout['nodeSpacing']
-        if edgeLengthVal != None:
-            dummyDict['edgeLengthVal'] = edgeLengthVal
-        else:
-            dummyDict['edgeLengthVal'] = self.cytoscape_layout['edgeLengthVal']
+        for key, value in kwargs.items():
+            dummyDict[key] = value
 
         self.cytoscape_layout = dummyDict
 
@@ -290,14 +351,12 @@ class CytoscapeWidget(DOMWidget):
 
     def set_style(self, style):
         """
-        Sets the layout of the current object. You can either pass a dictionary
-        or change the parameters individually.
+        Sets the layout of the current object. Change the parameters with a dictionary.
         Parameters
         ----------
         stylesheet: dict
             See https://js.cytoscape.org for layout examples.
         """
-
         self.cytoscape_style = style
 
     def get_style(self):

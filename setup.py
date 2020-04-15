@@ -7,6 +7,7 @@
 from __future__ import print_function
 from glob import glob
 from os.path import join as pjoin
+from os import path
 
 from setupbase import (
     create_cmdclass, install_npm, ensure_targets,
