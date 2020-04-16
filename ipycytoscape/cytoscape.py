@@ -194,13 +194,11 @@ class Graph(Widget):
         for node in g.nodes():
             node_instance = Node()
             node_instance.data = {'id': int(node)}
-            logging.debug(node_instance.data)
             self.nodes.append(node_instance)
 
         for edge in g.edges():
             edge_instance = Edge()
             edge_instance.data = {'source': edge[0],'target': edge[1]}
-            logging.debug(edge_instance.data)
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
@@ -301,10 +299,7 @@ class CytoscapeWidget(DOMWidget):
                                 'selector': 'edge',
                                 'style': {
                                     'width': 4,
-                                    'target-arrow-shape': 'triangle',
                                     'line-color': '#9dbaea',
-                                    'target-arrow-color': '#9dbaea',
-                                    'curve-style': 'bezier'
                                 }
                             }
                         ]).tag(sync=True)
