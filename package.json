@@ -1,7 +1,7 @@
 {
   "name": "jupyter-cytoscape",
   "version": "0.2.0",
-  "description": "A Custom Jupyter Widget Library",
+  "description": "A Cytoscape Jupyter Widget",
   "keywords": [
     "jupyter",
     "jupyterlab",
