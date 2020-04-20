@@ -2,6 +2,6 @@ name: bqplot
 channels:
   - conda-forge
 dependencies:
-  - ipycytoscape=0.2.0
+  - ipycytoscape=0.2.1
   - matplotlib-base
   - networkx
