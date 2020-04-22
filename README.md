@@ -1,7 +1,6 @@
 # ipycytoscape
 
 [![Build Status](https://travis-ci.org/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.org/Quantstack/ipycytoscape)
-[![codecov](https://codecov.io/gh/Quantstack/ipycytoscape/branch/master/graph/badge.svg)](https://codecov.io/gh/Quantstack/ipycytoscape)
 
 Python implementation of the graph visualization tool Cytoscape.
 
@@ -11,8 +10,8 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 #### Supports:
 
-* Conversion from NetworkX see example
-* Conversion from Pandas DataFrame see example
+* Conversion from NetworkX see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb)
+* Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/DataFrame%20interaction.ipynb)
 
 ## Installation
 
