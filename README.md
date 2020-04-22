@@ -9,11 +9,14 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 ![cytoscape screencast](https://user-images.githubusercontent.com/17600982/76328068-bbbbcf00-62e2-11ea-93ed-01ba392ac50c.gif)
 
-Offers full support to NetworkX lib. Just follow the example under `/examples/Test NetworkX methods.ipynb`.
+#### Supports:
+
+* Conversion from NetworkX see example
+* Conversion from Pandas DataFrame see example
 
 ## Installation
 
-With conda: (recommended)
+With `conda`: (recommended)
 
 ```
 conda install -c conda-forge ipycytoscape
@@ -25,7 +28,7 @@ With `pip`:
 pip install ipycytoscape
 ```
 
-Or if you use jupyterlab:
+#### For jupyterlab users:
 
 ```bash
 pip install ipycytoscape
@@ -38,16 +41,30 @@ the nbextension:
 jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 ```
 
-**For a development installation:** (requires npm)
+## For a development installation:
+**(requires npm)**
 
+```bash
+git clone https://github.com/QuantStack/ipycytoscape.git
+cd ipycytoscape
 ```
-$ git clone https://github.com/QuantStack/ipycytoscape.git
-$ cd ipycytoscape
-$ pip install -e .
-$ jupyter nbextension install --py --symlink --sys-prefix ipycytoscape
-$ jupyter nbextension enable --py --sys-prefix ipycytoscape
-$ jupyter labextension install @jupyter-widgets/jupyterlab-manager
-$ jupyter labextension install js
+
+It's recommended to create a conda environment:
+
+```bash
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs
+conda activate ipycytoscape
+```
+
+Install and enable extension for `jupyter notebook` and `jupyter lab`:
+
+```bash
+python -m pip install -e .
+npm install && npm run build
+jupyter nbextension install --py --symlink --sys-prefix ipycytoscape
+jupyter nbextension enable ipycytoscape --py --sys-prefix
+jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
+jupyter labextension install js
 ```
 
 ## License
