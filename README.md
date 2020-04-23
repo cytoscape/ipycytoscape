@@ -29,8 +29,9 @@ pip install ipycytoscape
 
 #### For jupyterlab users:
 
+There is an aditional step if you're using JupyterLab:
+
 ```bash
-pip install ipycytoscape
 jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
 ```
 
