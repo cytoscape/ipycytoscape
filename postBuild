@@ -1,0 +1,2 @@
+jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape@0.2.1
+
