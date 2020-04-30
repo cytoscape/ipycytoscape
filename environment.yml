@@ -6,3 +6,4 @@ dependencies:
   - jupyterlab=2
   - matplotlib-base
   - networkx
+  - pandas
