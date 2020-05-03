@@ -44,28 +44,53 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 ## For a development installation:
 **(requires npm)**
 
-```bash
-git clone https://github.com/QuantStack/ipycytoscape.git
-cd ipycytoscape
-```
-
-It's recommended to create a conda environment:
-
+While not required, we recommend creating a conda environment to work in:
 ```bash
 conda create -n ipycytoscape -c conda-forge jupyterlab nodejs
 conda activate ipycytoscape
+
+# clone repo
+git clone https://github.com/QuantStack/ipycytoscape.git
+cd ipycytoscape
+
+# Install python package for development, runs npm install and npm run build
+pip install -e .
 ```
 
-Install and enable extension for `jupyter notebook` and `jupyter lab`:
+When developing ipycytoscape, you need to manually enable the extension with the
+notebook / lab frontend. For lab, this is done by the command:
 
+```
+# install jupyterlab-manager and this extension
+jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
+jupyter labextension install .
+```
+
+For classic notebook, you can run:
+
+```
+jupyter nbextension install --sys-prefix --symlink --overwrite --py <your python package name>
+jupyter nbextension enable --sys-prefix --py <your python package name>
+```
+
+Note that the `--symlink` flag doesn't work on Windows, so you will here have to run
+the `install` command every time that you rebuild your extension. For certain installations
+you might also need another flag instead of `--sys-prefix`, but we won't cover the meaning
+of those flags here.
+
+### How to see your changes
+#### Typescript: 
+To continuously monitor the project for changes and automatically trigger a rebuild, start Jupyter in watch mode:
 ```bash
-python -m pip install -e .
-npm install && npm run build
-jupyter nbextension install --py --symlink --sys-prefix ipycytoscape
-jupyter nbextension enable ipycytoscape --py --sys-prefix
-jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
-jupyter labextension install js
+jupyter lab --watch
 ```
+And in a separate session, begin watching the source directory for changes:
+```bash
+npm run watch
+```
+
+#### Python:
+If you make a change to the python code then you need to restart the notebook kernel to have it take effect.
 
 ## License
 
