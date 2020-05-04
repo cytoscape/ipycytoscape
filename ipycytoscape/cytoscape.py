@@ -109,7 +109,7 @@ class Graph(Widget):
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
-
+    directed = Bool().tag(sync=True, **widget_serialization)
     def __init__(self):
         super(Graph, self).__init__()
 
@@ -181,7 +181,7 @@ class Graph(Widget):
             else:
                 raise ValueError("The id doesn't exist in your graph.")
 
-    def add_graph_from_networkx(self, g):
+    def add_graph_from_networkx(self, g, directed=False):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
         Parameters
@@ -191,6 +191,7 @@ class Graph(Widget):
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
         """
+        self.directed = directed
         for node in g.nodes():
             node_instance = Node()
             node_instance.data = {'id': int(node)}
@@ -359,3 +360,20 @@ class CytoscapeWidget(DOMWidget):
         Gets the style of the current object.
         """
         return self.cytoscape_style
+
+    def set_directed_style(self):
+        """
+        Sets the style of the current object to a DAG.
+        """
+        # find the edge attribute and manipulate only the arrow-shape
+        # target-arrow-color, curve-style and match it to the dagre example
+        # this won't change other style parameters already present.
+        def _find_edge_style(style):
+            for i, element in enumerate(style):
+                if element['selector'] == 'edge':
+                    return i
+        current_style = copy.deepcopy(self.get_style())
+        i = _find_edge_style(current_style)
+        current_style[i]['style'].update({'target-arrow-shape': 'triangle',
+        'target-arrow-color': '#9dbaea', 'curve-style': 'bezier'})
+        self.set_style(current_style)
