@@ -1,6 +1,6 @@
 # ipycytoscape
 
-[![Build Status](https://travis-ci.org/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.org/Quantstack/ipycytoscape)
+[![Build Status](https://travis-ci.com/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.com/Quantstack/ipycytoscape)
 
 Python implementation of the graph visualization tool Cytoscape.
 
