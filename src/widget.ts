@@ -123,10 +123,12 @@ class GraphModel extends WidgetModel {
       let graph: Array<any> = [];
 
       for (let i = 0; i < this.attributes.nodes.length; i++) {
-        graph.push({group: "nodes", data: this.attributes.nodes[i].get('data')});
+        const node = this.attributes.nodes[i];
+        graph.push({group: "nodes", data: node.get('data'), classes: node.get('classes')});
       }
       for (let j = 0; j < this.attributes.edges.length; j++) {
-        graph.push({group: "edges", data: this.attributes.edges[j].get('data')});
+        const edge = this.attributes.edges[j];
+        graph.push({group: "edges", data: edge.get('data'), classes: edge.get('classes')});
       }
 
       return graph;
