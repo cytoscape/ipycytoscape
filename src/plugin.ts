@@ -11,9 +11,7 @@ import {
 
 import {
   IJupyterWidgetRegistry
- } from '@jupyter-widgets/base';
-
-import * as widgetExports from './widget';
+} from '@jupyter-widgets/base';
 
 import {
   MODULE_NAME, MODULE_VERSION
@@ -41,6 +39,6 @@ function activateWidgetExtension(app: Application<Widget>, registry: IJupyterWid
   registry.registerWidget({
     name: MODULE_NAME,
     version: MODULE_VERSION,
-    exports: widgetExports,
+    exports: async () => await import(/* webpackChunkName: "jupyter-cytoscape" */ './widget'),
   });
 }
