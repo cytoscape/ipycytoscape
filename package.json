@@ -10,9 +10,9 @@
     "cytoscape"
   ],
   "files": [
-    "lib/**/*.js",
-    "dist/*.js",
-    "css/*.css"
+    "{dist,lib}/**/*.{js,ts,map}",
+    "css/*.css",
+    "LICENSE"
   ],
   "homepage": "https://github.com/Quantstack/ipycytoscape",
   "bugs": {
