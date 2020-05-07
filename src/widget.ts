@@ -9,6 +9,7 @@ import {
   WidgetView,
 } from '@jupyter-widgets/base';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const widgets = require('@jupyter-widgets/base');
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
