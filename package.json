@@ -106,7 +106,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts}": [
+    "*.ts": [
       "eslint . --ext .ts --fix"
     ]
   },
