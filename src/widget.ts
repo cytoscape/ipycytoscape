@@ -133,7 +133,7 @@ export class GraphModel extends WidgetModel {
       });
     }
     for (let j = 0; j < this.attributes.edges.length; j++) {
-      const edge = this.attributes.nodes[j];
+      const edge = this.attributes.edges[j];
       graph.push({
         group: 'edges',
         data: edge.get('data'),
@@ -345,7 +345,7 @@ export class CytoscapeView extends DOMWidgetView {
   }
 
   init_render() {
-    if (this.model.get('graph') != null) {
+    if (this.model.get('graph') !== null) {
       this.is_rendered = true;
       this.cytoscape_obj = cytoscape({
         container: this.el,
