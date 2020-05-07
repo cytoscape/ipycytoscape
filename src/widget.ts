@@ -23,7 +23,7 @@ import cola from 'cytoscape-cola';
 // @ts-ignore
 import popper from 'cytoscape-popper';
 // @ts-ignore
-import Tippy from 'tippy.js';
+import Tippy, { Instance } from 'tippy.js';
 // @ts-ignore
 import dagre from 'cytoscape-dagre';
 
@@ -384,8 +384,10 @@ export class CytoscapeView extends DOMWidgetView {
               content.innerHTML = node.data().name;
               return content;
             },
-            onCreate: (instance) => {
-              instance!.popperInstance!.reference = ref;
+            onCreate: (instance: Instance | undefined) => {
+              if (instance && instance.popperInstance) {
+                instance.popperInstance.reference = ref;
+              }
             },
           });
           tip.show();
