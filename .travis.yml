@@ -25,3 +25,6 @@ before_install:
 install:
   - pip install -e .
   - if [[ $TRAVIS_OS_NAME == linux && $PYTHON_VERSION != 2.7 ]]; then jupyter labextension install .; fi
+scripts:
+  # Linter checks
+  - npm run lint-check
