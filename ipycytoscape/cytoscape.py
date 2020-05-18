@@ -191,14 +191,28 @@ class Graph(Widget):
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
         """
-        for node in g.nodes():
+
+        cyto_attrs = ['group', 'removed', 'selected', 'selectable',
+                      'locked', 'grabbed', 'grabbable', 'classes', 'position']
+
+        def set_attributes(instance, data):
+            for k, v in data.items():
+                if k in cyto_attrs:
+                    setattr(instance, k, v)
+                else:
+                    instance.data[k] = v
+
+        for node, data in g.nodes(data=True):
             node_instance = Node()
-            node_instance.data = {'id': int(node)}
+            set_attributes(node_instance, data)
+            if 'id' not in data:
+                node_instance.data['id'] = node
             self.nodes.append(node_instance)
 
-        for edge in g.edges():
+        for source, target, data in g.edges(data=True):
             edge_instance = Edge()
-            edge_instance.data = {'source': edge[0],'target': edge[1]}
+            set_attributes(edge_instance, data)
+            edge_instance.data = {'source': source, 'target': target}
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
