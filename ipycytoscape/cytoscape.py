@@ -215,8 +215,10 @@ class Graph(Widget):
 
         for source, target, data in g.edges(data=True):
             edge_instance = Edge()
+            edge_instance.data['source'] = source
+            edge_instance.data['target'] = target
             set_attributes(edge_instance, data)
-            edge_instance.data = {'source': source, 'target': target}
+
             if directed and 'directed' not in edge_instance.classes:
                 edge_instance.classes += 'directed'
             self.edges.append(edge_instance)
