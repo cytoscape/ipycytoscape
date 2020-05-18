@@ -298,22 +298,30 @@ class CytoscapeWidget(DOMWidget):
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
     cytoscape_style = List([
                             {
-                            'selector': 'node',
-                            'css': {
-                                'background-color': '#11479e'
-                                }
-                            },
+                                'selector': 'node',
+                                'css': {
+                                    'background-color': '#11479e'
+                                    }
+                                },
                             {
-                            'selector': 'node:parent',
-                            'css': {
-                                'background-opacity': 0.333
-                                }
-                            },
+                                'selector': 'node:parent',
+                                'css': {
+                                    'background-opacity': 0.333
+                                    }
+                                },
                             {
                                 'selector': 'edge',
                                 'style': {
                                     'width': 4,
                                     'line-color': '#9dbaea',
+                                }
+                            },
+                            {
+                                'selector': 'edge.directed',
+                                'style': {
+                                    'curve-style': 'bezier',
+                                    'target-arrow-shape': 'triangle',
+                                    'target-arrow-color': '#9dbaea',
                                 }
                             }
                         ]).tag(sync=True)
