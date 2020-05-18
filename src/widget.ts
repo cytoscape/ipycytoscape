@@ -164,6 +164,7 @@ export class CytoscapeModel extends DOMWidgetModel {
       elements: [],
       zoom: 0,
       rendered_position: {},
+      tooltip_source: '',
 
       graph: null,
     };
@@ -362,7 +363,8 @@ export class CytoscapeView extends DOMWidgetView {
         const ref = node.popperRef();
         const dummyDomEle = document.createElement('div');
 
-        if (node.data().name) {
+        const tooltip_source = this.model.get('tooltip_source');
+        if (node.data()[tooltip_source]) {
           const tip = Tippy(dummyDomEle, {
             //TODO: add a pretty tippy
             trigger: 'manual',
@@ -371,17 +373,10 @@ export class CytoscapeView extends DOMWidgetView {
             theme: 'material',
             placement: 'bottom',
             content: () => {
-              /*
-                  TODO:
-                  Currently this function is mapping to one attribute inside
-                  nodes[data], which in this case is name.
-                  The backend is using that to import various datas from
-                  DataFrames, the problem is that data will appear unformatted.
-                  Not even line breaks are working for some reason.
-                  Make the visualization better, see issue: #33
-                */
               const content = document.createElement('div');
-              content.innerHTML = node.data().name;
+              content.innerHTML = node
+                .data()
+                [tooltip_source].replace(/(?:\r\n|\r|\n)/g, '<br>');
               return content;
             },
             onCreate: (instance: Instance | undefined) => {
