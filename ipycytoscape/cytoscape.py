@@ -181,7 +181,7 @@ class Graph(Widget):
             else:
                 raise ValueError("The id doesn't exist in your graph.")
 
-    def add_graph_from_networkx(self, g):
+    def add_graph_from_networkx(self, g, directed=False):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
         Parameters
@@ -190,6 +190,9 @@ class Graph(Widget):
         g: nx graph
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
+        directed: boolean
+            Whether to style the edges as directed. Equivalent to adding
+            'directed' to the 'classes' attribute of edge.data for all edges
         """
 
         cyto_attrs = ['group', 'removed', 'selected', 'selectable',
@@ -213,6 +216,8 @@ class Graph(Widget):
             edge_instance = Edge()
             set_attributes(edge_instance, data)
             edge_instance.data = {'source': source, 'target': target}
+            if directed and 'directed' not in edge_instance.classes:
+                edge_instance.classes += 'directed'
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file):
