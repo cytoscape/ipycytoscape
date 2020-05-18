@@ -191,7 +191,8 @@ class Graph(Widget):
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
         directed: boolean
-            Whether to style the edges as directed. Equivalent to adding
+            If true all edges will be given directed as class if
+            they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
 
@@ -220,7 +221,7 @@ class Graph(Widget):
                 edge_instance.classes += 'directed'
             self.edges.append(edge_instance)
 
-    def add_graph_from_json(self, json_file):
+    def add_graph_from_json(self, json_file, directed=False):
         """
         Converts a JSON Cytoscape graph in to a ipycytoscape graph.
         (This method only allows the conversion from a JSON that's already
@@ -229,6 +230,9 @@ class Graph(Widget):
         ----------
         self: cytoscape graph
         json_file: json file
+        directed: boolean
+            If True all edges will be given 'directed' as a class if
+            they do not already have it.
         """
         for node in json_file['nodes']:
             node_instance = Node()
@@ -239,9 +243,11 @@ class Graph(Widget):
             for edge in json_file['edges']:
                 edge_instance = Edge()
                 edge_instance.data = edge['data']
+                if directed and 'directed' not in edge_instance.classes:
+                    edge_instance.classes += 'directed'
                 self.edges.append(edge_instance)
 
-    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple()):
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
         Parameters
@@ -252,6 +258,9 @@ class Graph(Widget):
         attribute_list: list of strings (dataframe columns)
         edges: tuple in wich the first argument is the source edge and the
             second is the target edge
+        directed: boolean
+            If True all edges will be given 'directed' as a class if
+            they do not already have it.
         """
         grouped = df.groupby(groupby_cols)
         group_nodes = {}
@@ -279,8 +288,12 @@ class Graph(Widget):
                 graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
                                             'name': tip_content}))
 
+                if directed:
+                    classes = 'directed'
+                else:
+                    classes = ''
                 graph_edges.append(Edge(data={'id': index, 'source': edges[0],
-                                            'target': edges[1]}))
+                                            'target': edges[1], 'classes': classes}))
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
