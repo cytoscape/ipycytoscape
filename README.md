@@ -10,7 +10,7 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 #### Supports:
 
-* Conversion from NetworkX see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb)
+* Conversion from NetworkX see [example1](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%NetworkX%20methods.ipynb)[example2](https://github.com/QuantStack/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
 * Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/DataFrame%20interaction.ipynb)
 
 ## Installation
