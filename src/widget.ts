@@ -2,17 +2,20 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  DOMWidgetModel, DOMWidgetView, ISerializers, WidgetModel, WidgetView
+  DOMWidgetModel,
+  DOMWidgetView,
+  ISerializers,
+  WidgetModel,
+  WidgetView,
 } from '@jupyter-widgets/base';
 
-var widgets = require('@jupyter-widgets/base');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const widgets = require('@jupyter-widgets/base');
 
-import {
-  MODULE_NAME, MODULE_VERSION
-} from './version';
+import { MODULE_NAME, MODULE_VERSION } from './version';
 
 // Import the CSS
-import '../css/widget.css'
+import '../css/widget.css';
 
 import cytoscape from 'cytoscape';
 // @ts-ignore
@@ -20,20 +23,20 @@ import cola from 'cytoscape-cola';
 // @ts-ignore
 import popper from 'cytoscape-popper';
 // @ts-ignore
-import Tippy from 'tippy.js';
+import Tippy, { Instance } from 'tippy.js';
 // @ts-ignore
 import dagre from 'cytoscape-dagre';
 
 import 'tippy.js/themes/material.css';
 
-cytoscape.use( popper );
-cytoscape.use( dagre );
-cytoscape.use( cola );
+cytoscape.use(popper);
+cytoscape.use(dagre);
+cytoscape.use(cola);
 
-export
-class NodeModel extends WidgetModel {
+export class NodeModel extends WidgetModel {
   defaults() {
-    return {...super.defaults(),
+    return {
+      ...super.defaults(),
       _model_name: NodeModel.model_name,
       _model_module: NodeModel.model_module,
       _model_module_version: NodeModel.model_module_version,
@@ -51,8 +54,8 @@ class NodeModel extends WidgetModel {
       classes: '',
       data: {},
       position: {},
-    }
-  };
+    };
+  }
 
   static model_name = 'NodeModel';
   static model_module = MODULE_NAME;
@@ -62,10 +65,10 @@ class NodeModel extends WidgetModel {
   static view_module_version = MODULE_VERSION;
 }
 
-export
-class EdgeModel extends WidgetModel {
+export class EdgeModel extends WidgetModel {
   defaults() {
-    return {...super.defaults(),
+    return {
+      ...super.defaults(),
       _model_name: EdgeModel.model_name,
       _model_module: EdgeModel.model_module,
       _model_module_version: EdgeModel.model_module_version,
@@ -83,12 +86,12 @@ class EdgeModel extends WidgetModel {
       classes: '',
       data: {},
       position: {},
-    }
-  };
+    };
+  }
 
   static serializers: ISerializers = {
-      ...WidgetModel.serializers
-    }
+    ...WidgetModel.serializers,
+  };
 
   static model_name = 'EdgeModel';
   static model_module = MODULE_NAME;
@@ -98,47 +101,55 @@ class EdgeModel extends WidgetModel {
   // static view_module_version = MODULE_VERSION;
 }
 
-export
-class GraphModel extends WidgetModel {
+export class GraphModel extends WidgetModel {
   defaults() {
-    return {...super.defaults(),
+    return {
+      ...super.defaults(),
       _model_name: 'GraphModel',
       _model_module: GraphModel.model_module,
       _model_module_version: GraphModel.model_module_version,
       nodes: [],
       edges: [],
-    }
-  };
+    };
+  }
 
   static serializers: ISerializers = {
-      nodes: { deserialize: widgets.unpack_models },
-      edges: { deserialize: widgets.unpack_models },
-      ...WidgetModel.serializers
-    }
+    nodes: { deserialize: widgets.unpack_models },
+    edges: { deserialize: widgets.unpack_models },
+    ...WidgetModel.serializers,
+  };
 
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
 
   converts_dict() {
-      let graph: Array<any> = [];
+    const graph: Array<any> = [];
 
-      for (let i = 0; i < this.attributes.nodes.length; i++) {
-        const node = this.attributes.nodes[i];
-        graph.push({group: "nodes", data: node.get('data'), classes: node.get('classes')});
-      }
-      for (let j = 0; j < this.attributes.edges.length; j++) {
-        const edge = this.attributes.edges[j];
-        graph.push({group: "edges", data: edge.get('data'), classes: edge.get('classes')});
-      }
+    for (let i = 0; i < this.attributes.nodes.length; i++) {
+      const node = this.attributes.nodes[i];
+      graph.push({
+        group: 'nodes',
+        data: node.get('data'),
+        classes: node.get('classes'),
+      });
+    }
+    for (let j = 0; j < this.attributes.edges.length; j++) {
+      const edge = this.attributes.edges[j];
+      graph.push({
+        group: 'edges',
+        data: edge.get('data'),
+        classes: edge.get('classes'),
+      });
+    }
 
-      return graph;
+    return graph;
   }
 }
 
-export
-class CytoscapeModel extends DOMWidgetModel {
+export class CytoscapeModel extends DOMWidgetModel {
   defaults() {
-    return {...super.defaults(),
+    return {
+      ...super.defaults(),
       _model_name: CytoscapeModel.model_name,
       _model_module: CytoscapeModel.model_module,
       _model_module_version: CytoscapeModel.model_module_version,
@@ -159,9 +170,9 @@ class CytoscapeModel extends DOMWidgetModel {
   }
 
   static serializers: ISerializers = {
-      graph: { deserialize: widgets.unpack_models },
-      ...DOMWidgetModel.serializers
-    }
+    graph: { deserialize: widgets.unpack_models },
+    ...DOMWidgetModel.serializers,
+  };
 
   static model_name = 'CytoscapeModel';
   static model_module = MODULE_NAME;
@@ -169,66 +180,64 @@ class CytoscapeModel extends DOMWidgetModel {
   static view_name = 'CytoscapeView';
   static view_module = MODULE_NAME;
   static view_module_version = MODULE_VERSION;
-
 }
 
-export
-class NodeView extends WidgetView {
+export class NodeView extends WidgetView {
   parentModel: any;
 
   constructor(params: any) {
     super({
       model: params.model,
-      options: params.options
-    }); 
-  this.parentModel = this.options.parentModel;
+      options: params.options,
+    });
+    this.parentModel = this.options.parentModel;
 
-  this.model.on('change:group', this.groupChanged, this);
-  this.model.on('change:removed', this.removedChanged, this);
-  this.model.on('change:selected', this.selectedChanged, this);
-  this.model.on('change:locked', this.lockedChanged, this);
-  this.model.on('change:grabbed', this.grabbedChanged, this);
-  this.model.on('change:grabbable', this.grabbableChanged, this);
-  this.model.on('change:classes', this.classesChanged, this);
-  this.model.on('change:data', this.dataChanged, this);
-  this.model.on('change:position', this.positionChanged, this);
+    this.model.on('change:group', this.groupChanged, this);
+    this.model.on('change:removed', this.removedChanged, this);
+    this.model.on('change:selected', this.selectedChanged, this);
+    this.model.on('change:locked', this.lockedChanged, this);
+    this.model.on('change:grabbed', this.grabbedChanged, this);
+    this.model.on('change:grabbable', this.grabbableChanged, this);
+    this.model.on('change:classes', this.classesChanged, this);
+    this.model.on('change:data', this.dataChanged, this);
+    this.model.on('change:position', this.positionChanged, this);
   }
 
   //TODO: not sure if this is necessary to propagate the changes...
   groupChanged() {
-    this.parentModel.set("group", this.model.get('group'));
+    this.parentModel.set('group', this.model.get('group'));
   }
 
   removedChanged() {
-    this.parentModel.set("removed", this.model.get('removed'));
+    this.parentModel.set('removed', this.model.get('removed'));
   }
 
   selectedChanged() {
-    this.parentModel.set("selected", this.model.get('selected'));
+    this.parentModel.set('selected', this.model.get('selected'));
   }
 
   lockedChanged() {
-    this.parentModel.set("locked", this.model.get('locked'));
+    this.parentModel.set('locked', this.model.get('locked'));
   }
 
   grabbedChanged() {
-    this.parentModel.set("grabbed", this.model.get('grabbed'));
+    this.parentModel.set('grabbed', this.model.get('grabbed'));
   }
 
   grabbableChanged() {
-    this.parentModel.set("grabbable", this.model.get('grabbable'));
+    this.parentModel.set('grabbable', this.model.get('grabbable'));
   }
 
   classesChanged() {
-    this.parentModel.set("classes", this.model.get('classes'));
+    this.parentModel.set('classes', this.model.get('classes'));
   }
 
   dataChanged() {
-    this.parentModel.set("data", this.model.get('data'));
+    this.parentModel.set('data', this.model.get('data'));
   }
 
   positionChanged() {
-    this.parentModel.set("position", this.model.get('position'));
+    this.parentModel.set('position', this.model.get('position'));
   }
 }
 
@@ -240,7 +249,7 @@ class NodeView extends WidgetView {
 //     super({
 //       model: params.model,
 //       options: params.options
-//     }); 
+//     });
 //   this.parentModel = this.options.parentModel;
 
 //   this.model.on('change:group', this.groupChanged, this);
@@ -292,17 +301,20 @@ class NodeView extends WidgetView {
 //   }
 // }
 
-export
-class CytoscapeView extends DOMWidgetView {
+export class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
-  is_rendered: boolean = false;
+  is_rendered = false;
   nodeViews: any = [];
   edgeViews: any = [];
 
   render() {
     this.el.classList.add('custom-widget');
 
-    this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
+    this.nodeViews = new widgets.ViewList(
+      this.addNodeModel,
+      this.removeNodeView,
+      this
+    );
     this.nodeViews.update(this.model.get('graph').get('nodes'));
 
     // this.edgeViews = new widgets.ViewList(this.addEdgeModel, this.removeEdgeView, this);
@@ -328,38 +340,38 @@ class CytoscapeView extends DOMWidgetView {
 
   value_changed() {
     if (this.is_rendered) {
-      console.log('value_changed')
-        this.init_render();
+      console.log('value_changed');
+      this.init_render();
     }
   }
 
   init_render() {
-    if (this.model.get('graph') != null) {
-        this.is_rendered = true;
-        this.cytoscape_obj = cytoscape({
-          container: this.el,
-          autounselectify: this.model.get('auto_unselectify'),
-          boxSelectionEnabled: this.model.get('box_selection_enabled'),
-          layout: this.model.get('cytoscape_layout'),
-          style: this.model.get('cytoscape_style'),
-          elements: this.model.get('graph').converts_dict()
-        });
+    if (this.model.get('graph') !== null) {
+      this.is_rendered = true;
+      this.cytoscape_obj = cytoscape({
+        container: this.el,
+        autounselectify: this.model.get('auto_unselectify'),
+        boxSelectionEnabled: this.model.get('box_selection_enabled'),
+        layout: this.model.get('cytoscape_layout'),
+        style: this.model.get('cytoscape_style'),
+        elements: this.model.get('graph').converts_dict(),
+      });
 
-        this.cytoscape_obj.on('click', 'node', (e: any) => {
-          let node = e.target;
-          let ref = node.popperRef();
-          let dummyDomEle = document.createElement('div');
+      this.cytoscape_obj.on('click', 'node', (e: any) => {
+        const node = e.target;
+        const ref = node.popperRef();
+        const dummyDomEle = document.createElement('div');
 
-          if (node.data().name){
-            let tip = Tippy(dummyDomEle, {
-              //TODO: add a pretty tippy
-              trigger: 'manual',
-              lazy: false,
-              arrow: true,
-              theme: 'material',
-              placement: 'bottom',
-              content: () => {
-                /*
+        if (node.data().name) {
+          const tip = Tippy(dummyDomEle, {
+            //TODO: add a pretty tippy
+            trigger: 'manual',
+            lazy: false,
+            arrow: true,
+            theme: 'material',
+            placement: 'bottom',
+            content: () => {
+              /*
                   TODO:
                   Currently this function is mapping to one attribute inside
                   nodes[data], which in this case is name.
@@ -368,27 +380,31 @@ class CytoscapeView extends DOMWidgetView {
                   Not even line breaks are working for some reason.
                   Make the visualization better, see issue: #33
                 */
-                let content = document.createElement('div');
-                content.innerHTML = node.data().name;
-                return content;
-              },
-              onCreate: instance => { instance!.popperInstance!.reference = ref; }
-            });
-            tip.show();
-          }
-        });
+              const content = document.createElement('div');
+              content.innerHTML = node.data().name;
+              return content;
+            },
+            onCreate: (instance: Instance | undefined) => {
+              if (instance && instance.popperInstance) {
+                instance.popperInstance.reference = ref;
+              }
+            },
+          });
+          tip.show();
+        }
+      });
     }
   }
 
   addNodeModel(NodeModel: any) {
-      return this.create_child_view(NodeModel, {
-          cytoscapeView: this,
-          parentModel: this.model,
-      });
+    return this.create_child_view(NodeModel, {
+      cytoscapeView: this,
+      parentModel: this.model,
+    });
   }
 
   removeNodeView(nodeView: any) {
-      nodeView.remove();
+    nodeView.remove();
   }
 
   // addEdgeModel(EdgeModel: any) {
@@ -402,6 +418,4 @@ class CytoscapeView extends DOMWidgetView {
   // removeEdgeView(edgeView: any) {
   //     edgeView.remove();
   // }
-
-
 }
