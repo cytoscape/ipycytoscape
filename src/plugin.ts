@@ -33,6 +33,8 @@ function activateWidgetExtension(
   registry.registerWidget({
     name: MODULE_NAME,
     version: MODULE_VERSION,
-    exports: async () => await import(/* webpackChunkName: "jupyter-cytoscape" */ './widget'),
+
+    exports: async () =>
+      await import(/* webpackChunkName: "jupyter-cytoscape" */ './widget'),
   });
 }
