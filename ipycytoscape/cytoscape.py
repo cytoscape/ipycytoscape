@@ -305,6 +305,7 @@ class CytoscapeWidget(DOMWidget):
                         ]).tag(sync=True)
     zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
+    tooltip_source = Unicode('tooltip').tag(sync=True)
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
@@ -337,7 +338,6 @@ class CytoscapeWidget(DOMWidget):
 
         self.cytoscape_layout = dummyDict
 
-
     def get_layout(self):
         """
         Gets the layout of the current object.
@@ -346,7 +346,8 @@ class CytoscapeWidget(DOMWidget):
 
     def set_style(self, style):
         """
-        Sets the layout of the current object. Change the parameters with a dictionary.
+        Sets the layout of the current object. Change the parameters
+        with a dictionary.
         Parameters
         ----------
         stylesheet: dict
@@ -359,3 +360,12 @@ class CytoscapeWidget(DOMWidget):
         Gets the style of the current object.
         """
         return self.cytoscape_style
+
+    def set_tooltip_source(self, source):
+        """
+        Parameters
+        ----------
+        source : string
+            The key in data that will be used to populate the tooltip
+        """
+        self.tooltip_source = source
