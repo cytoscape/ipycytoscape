@@ -366,6 +366,6 @@ class CytoscapeWidget(DOMWidget):
         Parameters
         ----------
         source : string
-            The key in data that will used to populate the tooltip
+            The key in data that will be used to populate the tooltip
         """
         self.tooltip_source = source
