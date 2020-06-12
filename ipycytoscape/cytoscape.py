@@ -297,7 +297,7 @@ class CytoscapeWidget(DOMWidget):
     # rendering options
     headless = Bool(False).tag(sync=True)
     style_enabled = Bool(True).tag(sync=True)
-    hideEdges_on_viewport = Bool(False).tag(sync=True)
+    hide_edges_on_viewport = Bool(False).tag(sync=True)
     texture_on_viewport = Bool(False).tag(sync=True)
     motion_blur = Bool(False).tag(sync=True)
     motion_blur_opacity = Float(0.2).tag(sync=True)
