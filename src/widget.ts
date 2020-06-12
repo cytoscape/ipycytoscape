@@ -328,8 +328,22 @@ export class CytoscapeView extends DOMWidgetView {
     //TODO: not sure if these are useful, the one for style is not
     //but for layout it seems to make a difference. Need to test and
     //remove the ones that are not and figure out why
-    this.model.on('change:auto_unselectify', this.value_changed, this);
+    // TODO 2:
+    // some of these changes do not require re-running init_render
+    // there are cytoscapejs functions that can be called to run change
+    // these options
+    this.model.on('change:min_zoom', this.value_changed, this);
+    this.model.on('change:max_zoom', this.value_changed, this);
+    this.model.on('change:zooming_enabled', this.value_changed, this);
+    this.model.on('change:user_zooming_enabled', this.value_changed, this);
+    this.model.on('change:panning_enabled', this.value_changed, this);
     this.model.on('change:box_selection_enabled', this.value_changed, this);
+    this.model.on('change:selection_type', this.value_changed, this);
+    this.model.on('change:touch_tap_threshold', this.value_changed, this);
+    this.model.on('change:desktop_tap_threshold', this.value_changed, this);
+    this.model.on('change:autolock', this.value_changed, this);
+    this.model.on('change:auto_ungrabify', this.value_changed, this);
+    this.model.on('change:auto_unselectify', this.value_changed, this);
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
@@ -351,8 +365,25 @@ export class CytoscapeView extends DOMWidgetView {
       this.is_rendered = true;
       this.cytoscape_obj = cytoscape({
         container: this.el,
-        autounselectify: this.model.get('auto_unselectify'),
+        minZoom: this.model.get('min_zoom'),
+        maxZoom: this.model.get('max_zoom'),
+        zoomingEnabled: this.model.get('zooming_enabled'),
+        userZoomingEnabled: this.model.get('user_zooming_enabled'),
+        panningEnabled: this.model.get('panning_enabled'),
         boxSelectionEnabled: this.model.get('box_selection_enabled'),
+        selectionType: this.model.get('selection_type'),
+        touchTapThreshold: this.model.get('touch_tap_threshold'),
+        desktopTapThreshold: this.model.get('desktop_tap_threshold'),
+        autolock: this.model.get('autolock'),
+        autoungrabify: this.model.get('auto_ungrabify'),
+        autounselectify: this.model.get('auto_unselectify'),
+        headless: this.model.get('headless'),
+        styleEnabled: this.model.get('style_enabled'),
+        hideEdgesOnViewport: this.model.get('hide_edges_on_viewport'),
+        textureOnViewport: this.model.get('texture_on_viewport'),
+        motionBlur: this.model.get('motion_blur'),
+        motionBlurOpacity: this.model.get('motion_blur_opacity'),
+        wheelSensitivity: this.model.get('wheel_sensitivity'),
         layout: this.model.get('cytoscape_layout'),
         style: this.model.get('cytoscape_style'),
         elements: this.model.get('graph').converts_dict(),

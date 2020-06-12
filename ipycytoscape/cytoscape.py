@@ -279,8 +279,29 @@ class CytoscapeWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    auto_unselectify = Bool(True).tag(sync=True)
+    # interaction options
+    min_zoom = Float(1e-50).tag(sync=True)
+    max_zoom = Float(1e50).tag(sync=True)
+    zooming_enabled = Bool(True).tag(sync=True)
+    user_zooming_enabled = Bool(True).tag(sync=True)
+    panning_enabled = Bool(True).tag(sync=True)
+    user_panning_enabled = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
+    selection_type = Unicode('single').tag(sync=True)
+    touch_tap_threshold = Integer(8).tag(sync=True)
+    desktop_tap_threshold = Integer(4).tag(sync=True)
+    autolock = Bool(False).tag(sync=True)
+    auto_ungrabify = Bool(False).tag(sync=True)
+    auto_unselectify = Bool(True).tag(sync=True)
+
+    # rendering options
+    headless = Bool(False).tag(sync=True)
+    style_enabled = Bool(True).tag(sync=True)
+    hideEdges_on_viewport = Bool(False).tag(sync=True)
+    texture_on_viewport = Bool(False).tag(sync=True)
+    motion_blur = Bool(False).tag(sync=True)
+    motion_blur_opacity = Float(0.2).tag(sync=True)
+    wheel_sensitivity = Float(1).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
     cytoscape_style = List([
                             {
