@@ -130,7 +130,12 @@ export class GraphModel extends WidgetModel {
       graph.push({
         group: 'nodes',
         data: node.get('data'),
+        selected: node.get('selected'),
+        selectable: node.get('selectable'),
+        locked: node.get('locked'),
+        grabbed: node.get('grabbed'),
         classes: node.get('classes'),
+        position: node.get('position'),
       });
     }
     for (let j = 0; j < this.attributes.edges.length; j++) {
@@ -138,7 +143,12 @@ export class GraphModel extends WidgetModel {
       graph.push({
         group: 'edges',
         data: edge.get('data'),
+        selected: edge.get('selected'),
+        selectable: edge.get('selectable'),
+        locked: edge.get('locked'),
+        grabbed: edge.get('grabbed'),
         classes: edge.get('classes'),
+        position: edge.get('position'),
       });
     }
 
