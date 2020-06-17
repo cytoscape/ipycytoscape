@@ -357,6 +357,10 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
+    const layout = this.model.get('layout');
+    if (layout !== null) {
+      layout.on_some_change(['width', 'height'], this._resize, this);
+    }
 
     this.displayed.then(() => {
       this.init_render();
@@ -429,6 +433,13 @@ export class CytoscapeView extends DOMWidgetView {
           tip.show();
         }
       });
+    }
+  }
+
+  private _resize() {
+    if (this.cytoscape_obj) {
+      this.cytoscape_obj.resize();
+      this.cytoscape_obj.fit();
     }
   }
 
