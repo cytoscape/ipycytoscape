@@ -10,7 +10,7 @@ from spectate import mvc
 from traitlets import TraitType
 
 from ipywidgets import DOMWidget, Widget, widget_serialization
-from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
+from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List, Union
 from ._frontend import module_name, module_version
 
 """TODO: Remove this after this is somewhat done"""
@@ -337,6 +337,7 @@ class CytoscapeWidget(DOMWidget):
     motion_blur_opacity = Float(0.2).tag(sync=True)
     wheel_sensitivity = Float(1).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
+    pixel_ratio = Union([Unicode(), Float()], default_value='auto').tag(sync=True)
     cytoscape_style = List([
                             {
                                 'selector': 'node',

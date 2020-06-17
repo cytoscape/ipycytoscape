@@ -357,6 +357,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this.value_changed, this);
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
+    this.model.on('change:pixel_ratio', this.value_changed, this);
     const layout = this.model.get('layout');
     if (layout !== null) {
       layout.on_some_change(['width', 'height'], this._resize, this);
@@ -398,6 +399,7 @@ export class CytoscapeView extends DOMWidgetView {
         motionBlur: this.model.get('motion_blur'),
         motionBlurOpacity: this.model.get('motion_blur_opacity'),
         wheelSensitivity: this.model.get('wheel_sensitivity'),
+        pixelRatio: this.model.get('pixel_ratio'),
         layout: this.model.get('cytoscape_layout'),
         style: this.model.get('cytoscape_style'),
         elements: this.model.get('graph').converts_dict(),
