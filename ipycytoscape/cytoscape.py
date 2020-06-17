@@ -181,7 +181,7 @@ class Graph(Widget):
             else:
                 raise ValueError("The id doesn't exist in your graph.")
 
-    def add_graph_from_networkx(self, g):
+    def add_graph_from_networkx(self, g, directed=False):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
         Parameters
@@ -190,18 +190,40 @@ class Graph(Widget):
         g: nx graph
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
+        directed: boolean
+            If true all edges will be given directed as class if
+            they do not already have it. Equivalent to adding
+            'directed' to the 'classes' attribute of edge.data for all edges
         """
-        for node in g.nodes():
+
+        cyto_attrs = ['group', 'removed', 'selected', 'selectable',
+                      'locked', 'grabbed', 'grabbable', 'classes', 'position']
+
+        def set_attributes(instance, data):
+            for k, v in data.items():
+                if k in cyto_attrs:
+                    setattr(instance, k, v)
+                else:
+                    instance.data[k] = v
+
+        for node, data in g.nodes(data=True):
             node_instance = Node()
-            node_instance.data = {'id': int(node)}
+            set_attributes(node_instance, data)
+            if 'id' not in data:
+                node_instance.data['id'] = node
             self.nodes.append(node_instance)
 
-        for edge in g.edges():
+        for source, target, data in g.edges(data=True):
             edge_instance = Edge()
-            edge_instance.data = {'source': edge[0],'target': edge[1]}
+            edge_instance.data['source'] = source
+            edge_instance.data['target'] = target
+            set_attributes(edge_instance, data)
+
+            if directed and 'directed' not in edge_instance.classes:
+                edge_instance.classes += 'directed'
             self.edges.append(edge_instance)
 
-    def add_graph_from_json(self, json_file):
+    def add_graph_from_json(self, json_file, directed=False):
         """
         Converts a JSON Cytoscape graph in to a ipycytoscape graph.
         (This method only allows the conversion from a JSON that's already
@@ -210,6 +232,9 @@ class Graph(Widget):
         ----------
         self: cytoscape graph
         json_file: json file
+        directed: boolean
+            If True all edges will be given 'directed' as a class if
+            they do not already have it.
         """
         for node in json_file['nodes']:
             node_instance = Node()
@@ -220,9 +245,11 @@ class Graph(Widget):
             for edge in json_file['edges']:
                 edge_instance = Edge()
                 edge_instance.data = edge['data']
+                if directed and 'directed' not in edge_instance.classes:
+                    edge_instance.classes += 'directed'
                 self.edges.append(edge_instance)
 
-    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple()):
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
         Parameters
@@ -233,6 +260,9 @@ class Graph(Widget):
         attribute_list: list of strings (dataframe columns)
         edges: tuple in wich the first argument is the source edge and the
             second is the target edge
+        directed: boolean
+            If True all edges will be given 'directed' as a class if
+            they do not already have it.
         """
         grouped = df.groupby(groupby_cols)
         group_nodes = {}
@@ -260,8 +290,12 @@ class Graph(Widget):
                 graph_nodes.append(Node(data={'id': index, 'parent': parent.data['id'],
                                             'name': tip_content}))
 
+                if directed:
+                    classes = 'directed'
+                else:
+                    classes = ''
                 graph_edges.append(Edge(data={'id': index, 'source': edges[0],
-                                            'target': edges[1]}))
+                                            'target': edges[1], 'classes': classes}))
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
@@ -279,32 +313,62 @@ class CytoscapeWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    auto_unselectify = Bool(True).tag(sync=True)
+    # interaction options
+    min_zoom = Float(1e-50).tag(sync=True)
+    max_zoom = Float(1e50).tag(sync=True)
+    zooming_enabled = Bool(True).tag(sync=True)
+    user_zooming_enabled = Bool(True).tag(sync=True)
+    panning_enabled = Bool(True).tag(sync=True)
+    user_panning_enabled = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
+    selection_type = Unicode('single').tag(sync=True)
+    touch_tap_threshold = Integer(8).tag(sync=True)
+    desktop_tap_threshold = Integer(4).tag(sync=True)
+    autolock = Bool(False).tag(sync=True)
+    auto_ungrabify = Bool(False).tag(sync=True)
+    auto_unselectify = Bool(True).tag(sync=True)
+
+    # rendering options
+    headless = Bool(False).tag(sync=True)
+    style_enabled = Bool(True).tag(sync=True)
+    hide_edges_on_viewport = Bool(False).tag(sync=True)
+    texture_on_viewport = Bool(False).tag(sync=True)
+    motion_blur = Bool(False).tag(sync=True)
+    motion_blur_opacity = Float(0.2).tag(sync=True)
+    wheel_sensitivity = Float(1).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
     cytoscape_style = List([
                             {
-                            'selector': 'node',
-                            'css': {
-                                'background-color': '#11479e'
-                                }
-                            },
+                                'selector': 'node',
+                                'css': {
+                                    'background-color': '#11479e'
+                                    }
+                                },
                             {
-                            'selector': 'node:parent',
-                            'css': {
-                                'background-opacity': 0.333
-                                }
-                            },
+                                'selector': 'node:parent',
+                                'css': {
+                                    'background-opacity': 0.333
+                                    }
+                                },
                             {
                                 'selector': 'edge',
                                 'style': {
                                     'width': 4,
                                     'line-color': '#9dbaea',
                                 }
+                            },
+                            {
+                                'selector': 'edge.directed',
+                                'style': {
+                                    'curve-style': 'bezier',
+                                    'target-arrow-shape': 'triangle',
+                                    'target-arrow-color': '#9dbaea',
+                                }
                             }
                         ]).tag(sync=True)
     zoom = Float(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
+    tooltip_source = Unicode('tooltip').tag(sync=True)
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
@@ -337,7 +401,6 @@ class CytoscapeWidget(DOMWidget):
 
         self.cytoscape_layout = dummyDict
 
-
     def get_layout(self):
         """
         Gets the layout of the current object.
@@ -346,7 +409,8 @@ class CytoscapeWidget(DOMWidget):
 
     def set_style(self, style):
         """
-        Sets the layout of the current object. Change the parameters with a dictionary.
+        Sets the layout of the current object. Change the parameters
+        with a dictionary.
         Parameters
         ----------
         stylesheet: dict
@@ -359,3 +423,12 @@ class CytoscapeWidget(DOMWidget):
         Gets the style of the current object.
         """
         return self.cytoscape_style
+
+    def set_tooltip_source(self, source):
+        """
+        Parameters
+        ----------
+        source : string
+            The key in data that will be used to populate the tooltip
+        """
+        self.tooltip_source = source
