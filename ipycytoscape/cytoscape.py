@@ -66,11 +66,6 @@ class Edge(Widget):
     data = MutableDict().tag(sync=True)
     position = MutableDict().tag(sync=True)
 
-    def __init__(self, **kwargs):
-        super(Edge, self).__init__()
-
-        for key, val in kwargs.items():
-            setattr(self, key, val)
 
 class Node(Widget):
     """ Node Widget """
@@ -93,11 +88,6 @@ class Node(Widget):
     data = MutableDict().tag(sync=True)
     position = MutableDict().tag(sync=True)
 
-    def __init__(self, **kwargs):
-        super(Node, self).__init__()
-
-        for key, val in kwargs.items():
-            setattr(self, key, val)
 
 class Graph(Widget):
     """ Graph Widget """
@@ -109,9 +99,6 @@ class Graph(Widget):
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
-
-    def __init__(self):
-        super(Graph, self).__init__()
 
     def add_node(self, node):
         """
@@ -372,8 +359,8 @@ class CytoscapeWidget(DOMWidget):
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def __init__(self):
-        super(CytoscapeWidget, self).__init__()
+    def __init__(self, **kwargs):
+        super(CytoscapeWidget, self).__init__(**kwargs)
 
         self.graph = Graph()
 
@@ -393,13 +380,12 @@ class CytoscapeWidget(DOMWidget):
         padding: int
             adds padding to the whole graph in comparison to the Jupyter's cell
         """
-        dummyDict = {}
-        dummyDict = copy.deepcopy(self.cytoscape_layout)
+        dummy_dict = copy.deepcopy(self.cytoscape_layout)
 
         for key, value in kwargs.items():
-            dummyDict[key] = value
+            dummy_dict[key] = value
 
-        self.cytoscape_layout = dummyDict
+        self.cytoscape_layout = dummy_dict
 
     def get_layout(self):
         """
