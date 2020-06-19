@@ -10,7 +10,7 @@ from spectate import mvc
 from traitlets import TraitType
 
 from ipywidgets import DOMWidget, Widget, widget_serialization
-from traitlets import Unicode, Bool, Float, Integer, Instance, Dict, List
+from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
 from ._frontend import module_name, module_version
 
 """TODO: Remove this after this is somewhat done"""
@@ -301,8 +301,8 @@ class CytoscapeWidget(DOMWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     # interaction options
-    min_zoom = Float(1e-50).tag(sync=True)
-    max_zoom = Float(1e50).tag(sync=True)
+    min_zoom = CFloat(1e-50).tag(sync=True)
+    max_zoom = CFloat(1e50).tag(sync=True)
     zooming_enabled = Bool(True).tag(sync=True)
     user_zooming_enabled = Bool(True).tag(sync=True)
     panning_enabled = Bool(True).tag(sync=True)
@@ -321,9 +321,10 @@ class CytoscapeWidget(DOMWidget):
     hide_edges_on_viewport = Bool(False).tag(sync=True)
     texture_on_viewport = Bool(False).tag(sync=True)
     motion_blur = Bool(False).tag(sync=True)
-    motion_blur_opacity = Float(0.2).tag(sync=True)
-    wheel_sensitivity = Float(1).tag(sync=True)
+    motion_blur_opacity = CFloat(0.2).tag(sync=True)
+    wheel_sensitivity = CFloat(1).tag(sync=True)
     cytoscape_layout = Dict({'name': 'cola'}).tag(sync=True)
+    pixel_ratio = Union([Unicode(), CFloat()], default_value='auto').tag(sync=True)
     cytoscape_style = List([
                             {
                                 'selector': 'node',
@@ -353,7 +354,7 @@ class CytoscapeWidget(DOMWidget):
                                 }
                             }
                         ]).tag(sync=True)
-    zoom = Float(2.0).tag(sync=True)
+    zoom = CFloat(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
     tooltip_source = Unicode('tooltip').tag(sync=True)
 
