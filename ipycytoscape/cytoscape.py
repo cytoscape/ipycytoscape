@@ -205,7 +205,7 @@ class Graph(Widget):
             _set_attributes(edge_instance, data)
 
             if directed and 'directed' not in edge_instance.classes:
-                edge_instance.classes += 'directed'
+                edge_instance.classes += ' directed '
             self.edges.append(edge_instance)
 
     def add_graph_from_json(self, json_file, directed=False):
@@ -234,7 +234,7 @@ class Graph(Widget):
                 edge_instance = Edge()
                 _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
-                    edge_instance.classes += 'directed'
+                    edge_instance.classes += ' directed '
             self.edges.extend(edge_instance)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
@@ -279,7 +279,7 @@ class Graph(Widget):
                                             'name': tip_content}))
 
                 if directed:
-                    classes = 'directed'
+                    classes = 'directed '
                 else:
                     classes = ''
                 graph_edges.append(Edge(data={'id': index, 'source': edges[0],
