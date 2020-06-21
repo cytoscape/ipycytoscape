@@ -27,10 +27,14 @@ import Tippy, { Instance } from 'tippy.js';
 // @ts-ignore
 import dagre from 'cytoscape-dagre';
 
+// @ts-ignore
+import klay from 'cytoscape-klay';
+
 import 'tippy.js/themes/material.css';
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
+cytoscape.use(klay);
 cytoscape.use(cola);
 
 export class NodeModel extends WidgetModel {
@@ -404,6 +408,27 @@ export class CytoscapeView extends DOMWidgetView {
         style: this.model.get('cytoscape_style'),
         elements: this.model.get('graph').converts_dict(),
       });
+
+      const targets = this.model.get('monitored_types');
+      const interactions = this.model.get('monitored_interactions');
+      for (let i = 0; i < targets.length; i++) {
+        const widgtype = targets[i];
+        for (let j = 0; j < interactions.length; j++) {
+          const evnttype = interactions[j];
+          this.cytoscape_obj.on(evnttype, widgtype, (e: any) => {
+            const mon = this.model.get('monitored')[widgtype];
+            if (mon && mon.includes(evnttype)) {
+              const event = {
+                type: widgtype,
+                event: evnttype,
+                target: e.target.data(),
+              };
+              this.model.set('last_user_event', event);
+              this.touch();
+            }
+          });
+        }
+      }
 
       this.cytoscape_obj.on('click', 'node', (e: any) => {
         const node = e.target;

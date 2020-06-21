@@ -7,7 +7,7 @@
 import copy
 
 from spectate import mvc
-from traitlets import TraitType
+from traitlets import TraitType, TraitError
 
 from ipywidgets import DOMWidget, Widget, widget_serialization
 from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
@@ -17,6 +17,75 @@ from ._frontend import module_name, module_version
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
+
+
+MONITORED_USER_TYPES = (
+    'node',
+    'edge'
+)
+# LIST TAKEN FROM CYTOSCAPE DOCS:
+# https://js.cytoscape.org/#events/user-input-device-events
+MONITORED_USER_INTERACTIONS = (
+    'mousedown',  # when the mouse button is pressed
+    'mouseup',    # when the mouse button is released
+    'click',      # after mousedown then mouseup
+    'mouseover',  # when the cursor is put on top of the target
+    'mouseout',   # when the cursor is moved off of the target
+    'mousemove',  # when the cursor is moved somewhere on top of the target
+    'touchstart', # when one or more fingers starts to touch the screen
+    'touchmove',  # when one or more fingers are moved on the screen
+    'touchend',   # when one or more fingers are removed from the screen
+    'tapstart',  # normalised tap start event (either mousedown or touchstart)
+    'vmousedown',  # alias for 'tapstart'
+    'tapdrag',  # normalised move event (either touchmove or mousemove)
+    'vmousemove',  # alias for 'tapdrag'
+    'tapdragover',  # normalised over element event (either touchmove or mousemove/mouseover)
+    'tapdragout',  # normalised off of element event (either touchmove or mousemove/mouseout)
+    'tapend',  # normalised tap end event (either mouseup or touchend)
+    'vmouseup',  # alias for 'tapend'
+    'tap',  # normalised tap event (either click, or touchstart followed by touchend without touchmove)
+    'vclick',  # alias for 'tap'
+    'taphold',  # normalised tap hold event
+    'cxttapstart',  # normalised right-click mousedown or two-finger tapstart
+    'cxttapend',  # normalised right-click mouseup or two-finger tapend
+    'cxttap',  # normalised right-click or two-finger tap
+    'cxtdrag',  # normalised mousemove or two-finger drag after cxttapstart but before cxttapend
+    'cxtdragover',  # when going over a node via cxtdrag
+    'cxtdragout',  # when going off a node via cxtdrag
+    'boxstart',  # when starting box selection
+    'boxend',  # when ending box selection
+    'boxselect',  # triggered on elements when selected by box selection
+    'box',  # triggered on elements when inside the box on boxend
+)
+
+
+class CytoInteractionDict(Dict):
+    """A trait for specifying cytoscape.js user interactions."""
+    default_value = {}
+    info_text = (
+        'specify a dictionary whose keys are cytoscape model types '
+        '(pick from %s) and whose values are lists of user interaction event '
+        'types to get updates on (pick from %s)'
+    ) % (
+        MONITORED_USER_TYPES,
+        MONITORED_USER_INTERACTIONS,
+    )
+
+    def validate(self, obj, value):
+        retval = super().validate(obj, value)
+        try:
+            if not (set(value.keys()).difference(MONITORED_USER_TYPES) or
+                    any(set(v).difference(MONITORED_USER_INTERACTIONS)
+                        for v in value.values())):
+                return retval
+        except:
+            pass
+        msg = (
+            'The %s trait of %s instance must %s, but a value of %s was '
+            'specified.'
+        ) % (self.name, type(obj).__name__, self.info_text, value)
+        raise TraitError(msg)
+
 
 class Mutable(TraitType):
     """A base class for mutable traits using Spectate"""
@@ -357,6 +426,10 @@ class CytoscapeWidget(DOMWidget):
     zoom = CFloat(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
     tooltip_source = Unicode('tooltip').tag(sync=True)
+    monitored_interactions = List(MONITORED_USER_INTERACTIONS).tag(sync=True)
+    monitored_types = List(MONITORED_USER_TYPES).tag(sync=True)
+    monitored = CytoInteractionDict({}).tag(sync=True)
+    last_user_event = Dict({}).tag(sync=True)
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
