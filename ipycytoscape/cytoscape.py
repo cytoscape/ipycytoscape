@@ -89,6 +89,15 @@ class Node(Widget):
     position = MutableDict().tag(sync=True)
 
 
+def _set_attributes(instance, data):
+    cyto_attrs = ['group', 'removed', 'selected', 'selectable',
+                    'locked', 'grabbed', 'grabbable', 'classes', 'position', 'data']
+    for k, v in data.items():
+        if k in cyto_attrs:
+            setattr(instance, k, v)
+        else:
+            instance.data[k] = v
+
 class Graph(Widget):
     """ Graph Widget """
     _model_name = Unicode('GraphModel').tag(sync=True)
@@ -182,20 +191,9 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
-
-        cyto_attrs = ['group', 'removed', 'selected', 'selectable',
-                      'locked', 'grabbed', 'grabbable', 'classes', 'position']
-
-        def set_attributes(instance, data):
-            for k, v in data.items():
-                if k in cyto_attrs:
-                    setattr(instance, k, v)
-                else:
-                    instance.data[k] = v
-
         for node, data in g.nodes(data=True):
             node_instance = Node()
-            set_attributes(node_instance, data)
+            _set_attributes(node_instance, data)
             if 'id' not in data:
                 node_instance.data['id'] = node
             self.nodes.append(node_instance)
@@ -204,7 +202,7 @@ class Graph(Widget):
             edge_instance = Edge()
             edge_instance.data['source'] = source
             edge_instance.data['target'] = target
-            set_attributes(edge_instance, data)
+            _set_attributes(edge_instance, data)
 
             if directed and 'directed' not in edge_instance.classes:
                 edge_instance.classes += 'directed'
@@ -223,18 +221,21 @@ class Graph(Widget):
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
+        node_list = []
         for node in json_file['nodes']:
             node_instance = Node()
-            node_instance.data = node['data']
-            self.nodes.append(node_instance)
+            _set_attributes(node_instance, node)
+            node_list.append(node_instance)
+        self.nodes.extend(node_list)
 
+        edge_list = []
         if 'edges' in json_file:
             for edge in json_file['edges']:
                 edge_instance = Edge()
-                edge_instance.data = edge['data']
+                _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += 'directed'
-                self.edges.append(edge_instance)
+            self.edges.extend(edge_instance)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
