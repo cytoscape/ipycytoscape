@@ -76,9 +76,9 @@ export class EdgeModel extends WidgetModel {
       _model_name: EdgeModel.model_name,
       _model_module: EdgeModel.model_module,
       _model_module_version: EdgeModel.model_module_version,
-      // _view_name: EdgeModel.view_name,
-      // _view_module: EdgeModel.view_module,
-      // _view_module_version: EdgeModel.view_module_version,
+      _view_name: EdgeModel.view_name,
+      _view_module: EdgeModel.view_module,
+      _view_module_version: EdgeModel.view_module_version,
 
       group: '',
       removed: false,
@@ -93,16 +93,12 @@ export class EdgeModel extends WidgetModel {
     };
   }
 
-  static serializers: ISerializers = {
-    ...WidgetModel.serializers,
-  };
-
   static model_name = 'EdgeModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
-  // static view_name = 'EdgeView';
-  // static view_module = MODULE_NAME;
-  // static view_module_version = MODULE_VERSION;
+  static view_name = 'EdgeView';
+  static view_module = MODULE_NAME;
+  static view_module_version = MODULE_VERSION;
 }
 
 export class GraphModel extends WidgetModel {
@@ -207,114 +203,47 @@ export class NodeView extends WidgetView {
     });
     this.parentModel = this.options.parentModel;
 
-    this.model.on('change:group', this.groupChanged, this);
-    this.model.on('change:removed', this.removedChanged, this);
-    this.model.on('change:selected', this.selectedChanged, this);
-    this.model.on('change:locked', this.lockedChanged, this);
-    this.model.on('change:grabbed', this.grabbedChanged, this);
-    this.model.on('change:grabbable', this.grabbableChanged, this);
-    this.model.on('change:classes', this.classesChanged, this);
-    this.model.on('change:data', this.dataChanged, this);
-    this.model.on('change:position', this.positionChanged, this);
+    this.model.on('change:group', this.valueChanged, this);
+    this.model.on('change:removed', this.valueChanged, this);
+    this.model.on('change:selected', this.valueChanged, this);
+    this.model.on('change:locked', this.valueChanged, this);
+    this.model.on('change:grabbed', this.valueChanged, this);
+    this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:classes', this.valueChanged, this);
+    this.model.on('change:data', this.valueChanged, this);
+    this.model.on('change:position', this.valueChanged, this);
   }
 
-  //TODO: not sure if this is necessary to propagate the changes...
-  groupChanged() {
-    this.parentModel.set('group', this.model.get('group'));
-  }
-
-  removedChanged() {
-    this.parentModel.set('removed', this.model.get('removed'));
-  }
-
-  selectedChanged() {
-    this.parentModel.set('selected', this.model.get('selected'));
-  }
-
-  lockedChanged() {
-    this.parentModel.set('locked', this.model.get('locked'));
-  }
-
-  grabbedChanged() {
-    this.parentModel.set('grabbed', this.model.get('grabbed'));
-  }
-
-  grabbableChanged() {
-    this.parentModel.set('grabbable', this.model.get('grabbable'));
-  }
-
-  classesChanged() {
-    this.parentModel.set('classes', this.model.get('classes'));
-  }
-
-  dataChanged() {
-    this.parentModel.set('data', this.model.get('data'));
-  }
-
-  positionChanged() {
-    this.parentModel.set('position', this.model.get('position'));
+  valueChanged() {
+    this.parentModel.value_changed();
   }
 }
 
-// export
-// class EdgeView extends WidgetView {
-//   parentModel: any;
+export class EdgeView extends WidgetView {
+  parentModel: any;
 
-//   constructor(params: any) {
-//     super({
-//       model: params.model,
-//       options: params.options
-//     });
-//   this.parentModel = this.options.parentModel;
+  constructor(params: any) {
+    super({
+      model: params.model,
+      options: params.options,
+    });
+    this.parentModel = this.options.parentModel;
 
-//   this.model.on('change:group', this.groupChanged, this);
-//   this.model.on('change:removed', this.removedChanged, this);
-//   this.model.on('change:selected', this.selectedChanged, this);
-//   this.model.on('change:locked', this.lockedChanged, this);
-//   this.model.on('change:grabbed', this.grabbedChanged, this);
-//   this.model.on('change:grabbable', this.grabbableChanged, this);
-//   this.model.on('change:classes', this.classesChanged, this);
-//   this.model.on('change:data', this.dataChanged, this);
-//   this.model.on('change:position', this.positionChanged, this);
-//   }
+    this.model.on('change:group', this.valueChanged, this);
+    this.model.on('change:removed', this.valueChanged, this);
+    this.model.on('change:selected', this.valueChanged, this);
+    this.model.on('change:locked', this.valueChanged, this);
+    this.model.on('change:grabbed', this.valueChanged, this);
+    this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:classes', this.valueChanged, this);
+    this.model.on('change:data', this.valueChanged, this);
+    this.model.on('change:position', this.valueChanged, this);
+  }
 
-//   //TODO: not sure if this is necessary to propagate the changes...
-//   groupChanged() {
-//     this.parentModel.set("group", this.model.get('group'));
-//   }
-
-//   removedChanged() {
-//     this.parentModel.set("removed", this.model.get('removed'));
-//   }
-
-//   selectedChanged() {
-//     this.parentModel.set("selected", this.model.get('selected'));
-//   }
-
-//   lockedChanged() {
-//     this.parentModel.set("locked", this.model.get('locked'));
-//   }
-
-//   grabbedChanged() {
-//     this.parentModel.set("grabbed", this.model.get('grabbed'));
-//   }
-
-//   grabbableChanged() {
-//     this.parentModel.set("grabbable", this.model.get('grabbable'));
-//   }
-
-//   classesChanged() {
-//     this.parentModel.set("classes", this.model.get('classes'));
-//   }
-
-//   dataChanged() {
-//     this.parentModel.set("data", this.model.get('data'));
-//   }
-
-//   positionChanged() {
-//     this.parentModel.set("position", this.model.get('position'));
-//   }
-// }
+  valueChanged() {
+    this.parentModel.value_changed();
+  }
+}
 
 export class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
@@ -333,20 +262,19 @@ export class CytoscapeView extends DOMWidgetView {
     );
     this.nodeViews.update(this.model.get('graph').get('nodes'));
 
-    // this.edgeViews = new widgets.ViewList(this.addEdgeModel, this.removeEdgeView, this);
-    // this.edgeViews.update(this.model.get('graph').get('edges'));
+    this.edgeViews = new widgets.ViewList(
+      this.addEdgeModel,
+      this.removeEdgeView,
+      this
+    );
+    this.edgeViews.update(this.model.get('graph').get('edges'));
 
     this.value_changed();
 
     this.model.get('graph').on('change:nodes', this.value_changed, this);
     this.model.get('graph').on('change:edges', this.value_changed, this);
-    //TODO: not sure if these are useful, the one for style is not
-    //but for layout it seems to make a difference. Need to test and
-    //remove the ones that are not and figure out why
-    // TODO 2:
-    // some of these changes do not require re-running init_render
-    // there are cytoscapejs functions that can be called to run change
-    // these options
+
+    //Python attributes that must be sync. with frontend
     this.model.on('change:min_zoom', this.value_changed, this);
     this.model.on('change:max_zoom', this.value_changed, this);
     this.model.on('change:zooming_enabled', this.value_changed, this);
@@ -368,6 +296,7 @@ export class CytoscapeView extends DOMWidgetView {
       this.listenForUserEvents,
       this
     );
+
     const layout = this.model.get('layout');
     if (layout !== null) {
       layout.on_some_change(['width', 'height'], this._resize, this);
@@ -499,7 +428,7 @@ export class CytoscapeView extends DOMWidgetView {
   addNodeModel(NodeModel: any) {
     return this.create_child_view(NodeModel, {
       cytoscapeView: this,
-      parentModel: this.model,
+      parentModel: this,
     });
   }
 
@@ -507,15 +436,14 @@ export class CytoscapeView extends DOMWidgetView {
     nodeView.remove();
   }
 
-  // addEdgeModel(EdgeModel: any) {
-  //   console.log('adding edge model')
-  //     return this.create_child_view(EdgeModel, {
-  //         cytoscapeView: this,
-  //         parentModel: this.model,
-  //     });
-  // }
+  addEdgeModel(EdgeModel: any) {
+    return this.create_child_view(EdgeModel, {
+      cytoscapeView: this,
+      parentModel: this,
+    });
+  }
 
-  // removeEdgeView(edgeView: any) {
-  //     edgeView.remove();
-  // }
+  removeEdgeView(edgeView: any) {
+    edgeView.remove();
+  }
 }

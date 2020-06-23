@@ -134,6 +134,7 @@ class Edge(Widget):
     _model_name = Unicode('EdgeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_name = Unicode('EdgeView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
