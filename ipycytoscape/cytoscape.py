@@ -318,7 +318,8 @@ class Graph(Widget):
                 _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += ' directed '
-            self.edges.extend(edge_instance)
+                edge_list.append(edge_instance)
+            self.edges.extend(edge_list)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
