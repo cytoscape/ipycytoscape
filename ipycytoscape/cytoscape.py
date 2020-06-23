@@ -123,6 +123,21 @@ class Graph(Widget):
             self._adj[node.data['id']] = dict()
             self.nodes.append(node)
 
+    def add_nodes(self, nodes):
+        """
+        Appends nodes to the end of the list. Equivalent to Python's extend method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        nodes: list of cytoscape nodes
+        """
+        node_list = list()
+        for node in nodes:
+            if node.data['id'] not in self._adj:
+                self._adj[node.data['id']] = dict()
+                node_list.append(node)
+        self.nodes.extend(node_list)
+    
     def remove_node(self, node):
         """
         Removes node from the end of the list. Equivalent to Python's remove method.
@@ -189,6 +204,41 @@ class Graph(Widget):
             if not (directed or edge.classes == 'directed'):
                 self._adj[target][source] = dict()
 
+    def add_edges(self, edges, directed=False):
+        """
+        Appends edges from the end of the list. Equivalent to Python's extend method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edges: list of cytoscape edges
+        directed: boolean
+        """
+        node_list = list()
+        edge_list = list()
+        for edge in edges:
+            source, target = edge.data['source'], edge.data['target']
+            if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
+                pass
+            else: # if the edge is not present in the graph
+                edge_list.append(edge)
+                if source not in self._adj:
+                    node_instance = Node()
+                    # setting the id, according to current spec should be only int/str
+                    node_instance.data = {'id': source}
+                    node_list.append(node_instance)
+                    self._adj[source] = dict()
+                if target not in self._adj:
+                    node_instance = Node()
+                    # setting the id, according to current spec should be only int/str
+                    node_instance.data = {'id': target}
+                    node_list.append(node_instance)
+                    self._adj[target] = dict()
+                self._adj[source][target] = dict()
+                if not (directed or edge.classes == 'directed'):
+                    self._adj[target][source] = dict()
+        self.nodes.extend(node_list)
+        self.edges.extend(edge_list)
+
     def remove_edge(self, edge):
         """
         Removes edge from the end of the list.  Equivalent to Python's remove method.
@@ -237,14 +287,16 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
+        node_list = list()
         for node, data in g.nodes(data=True):
             node_instance = Node()
             _set_attributes(node_instance, data)
             if 'id' not in data:
                 node_instance.data['id'] = node
             # self.nodes.append(node_instance)
-            self.add_node(node_instance)
+        self.add_nodes(node_list)
 
+        edge_list = list()
         for source, target, data in g.edges(data=True):
             edge_instance = Edge()
             edge_instance.data['source'] = source
@@ -254,7 +306,8 @@ class Graph(Widget):
             if directed and 'directed' not in edge_instance.classes:
                 edge_instance.classes += ' directed '
             # self.edges.append(edge_instance)
-            self.add_edge(edge_instance)
+            edge_list.append(edge_instance)
+        self.add_edges(edge_list)
 
     def add_graph_from_json(self, json_file, directed=False):
         """
@@ -269,18 +322,21 @@ class Graph(Widget):
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
+        node_list = list()
         for node in json_file['nodes']:
             node_instance = Node()
             _set_attributes(node_instance, node)
-            self.add_node(node_instance)
-
+            node_list.append(node_instance)
+        self.add_nodes(node_list)
+        edge_list = list()
         if 'edges' in json_file:
             for edge in json_file['edges']:
                 edge_instance = Edge()
                 _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += ' directed '
-                self.add_edge(edge_instance)
+                edge_list.append(edge_instance)
+            self.add_edges(edge_list)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
@@ -332,10 +388,8 @@ class Graph(Widget):
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
-        for node in all_nodes:
-            self.add_node(node)
-        for edge in graph_edges:
-            self.add_edge(edge)
+        self.add_edges(graph_edges)
+        self.add_nodes(all_nodes)
 
 
 class CytoscapeWidget(DOMWidget):
