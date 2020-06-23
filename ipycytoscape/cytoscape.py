@@ -155,18 +155,10 @@ class Graph(Widget):
         for i, node in enumerate(self.nodes):
             if node.data['id'] == node_id:
                 node_list_id = i
-                # for target in self._adj[node_id]:
-                #     self.remove_edge_by_id(node_id, target)
-                # for source in self._adj:
-                #     for target in source:
-                #         if target == node_id:
-                #             self.remove_edge_by_id(source, node_id)
-                # del self._adj[node_id]
-                # break
         if node_list_id != -1:
             self.remove_node(self.nodes[node_list_id])
         else:
-            raise ValueError(f'{node.data["id"]} is not present in the graph.')
+            raise ValueError(f'{node_id} is not present in the graph.')
 
     def add_edge(self, edge, directed=False):
         """
@@ -194,7 +186,7 @@ class Graph(Widget):
                 node_instance.data = {'id': target}
                 self.add_node(node_instance)
             self._adj[source][target] = dict()
-            if not directed:
+            if not (directed or edge.classes == 'directed'):
                 self._adj[target][source] = dict()
 
     def remove_edge(self, edge):
@@ -224,13 +216,12 @@ class Graph(Widget):
         """
         edge_id = -1
         for i, edge in enumerate(self.edges):
-            if edge.data['source'] == source_id and edge.data['target'] == target_id:
+            if (edge.data['source'] == source_id and edge.data['target'] == target_id) or (not edge.classes == 'directed' and edge.data['source'] == target_id and edge.data['target'] == source_id):
                 edge_id = i
-        
         if edge_id != -1:
             self.remove_edge(self.edges[edge_id])
         else:
-            raise ValueError(f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph.")
+            raise ValueError(f"Edge between {source_id} and {target_id} is not present in the graph.")
 
     def add_graph_from_networkx(self, g, directed=False):
         """
