@@ -194,14 +194,14 @@ export class CytoscapeModel extends DOMWidgetModel {
 }
 
 export class NodeView extends WidgetView {
-  parentModel: any;
+  cytoscapeView: any;
 
   constructor(params: any) {
     super({
       model: params.model,
       options: params.options,
     });
-    this.parentModel = this.options.parentModel;
+    this.cytoscapeView = this.options.cytoscapeView;
 
     this.model.on('change:group', this.valueChanged, this);
     this.model.on('change:removed', this.valueChanged, this);
@@ -215,19 +215,19 @@ export class NodeView extends WidgetView {
   }
 
   valueChanged() {
-    this.parentModel.value_changed();
+    this.cytoscapeView.value_changed();
   }
 }
 
 export class EdgeView extends WidgetView {
-  parentModel: any;
+  cytoscapeView: any;
 
   constructor(params: any) {
     super({
       model: params.model,
       options: params.options,
     });
-    this.parentModel = this.options.parentModel;
+    this.cytoscapeView = this.options.cytoscapeView;
 
     this.model.on('change:group', this.valueChanged, this);
     this.model.on('change:removed', this.valueChanged, this);
@@ -241,7 +241,7 @@ export class EdgeView extends WidgetView {
   }
 
   valueChanged() {
-    this.parentModel.value_changed();
+    this.cytoscapeView.value_changed();
   }
 }
 
@@ -309,7 +309,6 @@ export class CytoscapeView extends DOMWidgetView {
 
   value_changed() {
     if (this.is_rendered) {
-      console.log('value_changed');
       // Rerendering creates a new cytoscape object, so we will need to re-add
       // interaction handlers. Set `monitored` to empty to trigger this.
       this.monitored = {};
@@ -428,7 +427,6 @@ export class CytoscapeView extends DOMWidgetView {
   addNodeModel(NodeModel: any) {
     return this.create_child_view(NodeModel, {
       cytoscapeView: this,
-      parentModel: this,
     });
   }
 
@@ -439,7 +437,6 @@ export class CytoscapeView extends DOMWidgetView {
   addEdgeModel(EdgeModel: any) {
     return this.create_child_view(EdgeModel, {
       cytoscapeView: this,
-      parentModel: this,
     });
   }
 
