@@ -409,24 +409,19 @@ export class CytoscapeView extends DOMWidgetView {
         elements: this.model.get('graph').converts_dict(),
       });
 
-      const targets = this.model.get('monitored_types');
-      const interactions = this.model.get('monitored_interactions');
-      for (let i = 0; i < targets.length; i++) {
-        const widgtype = targets[i];
-        for (let j = 0; j < interactions.length; j++) {
-          const evnttype = interactions[j];
-          this.cytoscape_obj.on(evnttype, widgtype, (e: any) => {
-            const mon = this.model.get('monitored')[widgtype];
-            if (mon && mon.includes(evnttype)) {
-              const event = {
-                type: widgtype,
+      const monitored = this.model.get('monitored');
+      for (const widgtype in monitored) {
+        if (Object.prototype.hasOwnProperty.call(monitored, widgtype)) {
+          for (let i = 0; i < monitored[widgtype].length; i++) {
+            const evnttype = monitored[widgtype][i];
+            this.cytoscape_obj.on(evnttype, widgtype, (e: any) => {
+              this.send({
                 event: evnttype,
-                target: e.target.data(),
-              };
-              this.model.set('last_user_event', event);
-              this.touch();
-            }
-          });
+                widget: widgtype,
+                data: e.target.data(),
+              });
+            });
+          }
         }
       }
 

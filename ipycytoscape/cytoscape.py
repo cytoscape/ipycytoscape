@@ -9,7 +9,7 @@ import copy
 from spectate import mvc
 from traitlets import TraitType, TraitError
 
-from ipywidgets import DOMWidget, Widget, widget_serialization
+from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
 from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
 from ._frontend import module_name, module_version
 
@@ -426,17 +426,47 @@ class CytoscapeWidget(DOMWidget):
     zoom = CFloat(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
     tooltip_source = Unicode('tooltip').tag(sync=True)
-    monitored_interactions = List(MONITORED_USER_INTERACTIONS).tag(sync=True)
-    monitored_types = List(MONITORED_USER_TYPES).tag(sync=True)
     monitored = CytoInteractionDict({}).tag(sync=True)
-    last_user_event = Dict({}).tag(sync=True)
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
     def __init__(self, **kwargs):
         super(CytoscapeWidget, self).__init__(**kwargs)
 
+        self._interaction_handlers = {
+            widget_type: {
+                event_type: CallbackDispatcher()
+                for event_type in etypes
+            }
+            for widget_type, etypes in self.monitored.items()
+        }
+        self.on_msg(self._handle_interaction)
         self.graph = Graph()
+
+    def on(self, widget_type, event_type, callback, remove=False):
+        if ((widget_type not in self._interaction_handlers) or
+                (event_type not in self._interaction_handlers[widget_type])):
+            raise ValueError("You must specify the types of widgets and "
+                             "events you wish to observe at `%s` "
+                             "instantiation with the `monitor` keyword "
+                             "argument, which would (minimally) be "
+                             "`monitored={'%s': ['%s']}` for the given "
+                             "arguments. This instance has `monitored=%s`, "
+                             "meaning the event type you specified is "
+                             "ignored." % (type(self).__name__, widget_type,
+                                           event_type, self.monitored))
+        self._interaction_handlers[widget_type][event_type] \
+            .register_callback(callback, remove=remove)
+
+    def _handle_interaction(self, _widget, content, _buffers):
+        handlers = self._interaction_handlers
+        if (
+                ('widget' in content) and
+                ('event' in content) and
+                (content['widget'] in handlers) and
+                (content['event'] in handlers[content['widget']])
+        ):
+            handlers[content['widget']][content['event']](content['data'])
 
     def set_layout(self, **kwargs):
         """
