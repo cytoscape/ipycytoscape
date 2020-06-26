@@ -23,8 +23,6 @@ MONITORED_USER_TYPES = (
     'node',
     'edge'
 )
-# LIST TAKEN FROM CYTOSCAPE DOCS:
-# https://js.cytoscape.org/#events/user-input-device-events
 MONITORED_USER_INTERACTIONS = (
     'mousedown',  # when the mouse button is pressed
     'mouseup',    # when the mouse button is released
@@ -454,13 +452,6 @@ class CytoscapeWidget(DOMWidget):
     def __init__(self, **kwargs):
         super(CytoscapeWidget, self).__init__(**kwargs)
 
-        # self._interaction_handlers = {
-        #     widget_type: {
-        #         event_type: CallbackDispatcher()
-        #         for event_type in etypes
-        #     }
-        #     for widget_type, etypes in self.monitored.items()
-        # }
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
 
@@ -471,6 +462,28 @@ class CytoscapeWidget(DOMWidget):
     # serialized version to propagate to the frontend, where the client code
     # will add event handlers to the DOM graph.
     def on(self, widget_type, event_type, callback, remove=False):
+        """
+        Register a callback to execute when the user interacts with the graph.
+
+        Parameters
+        ----------
+        widget_type : str
+            Specify the widget type to monitor. Pick from:
+            - %s
+        event_type : str
+            Specify the type of event to monitor. See documentation on these
+            event types on the cytoscape documentation homepage,
+            (https://js.cytoscape.org/#events/user-input-device-events). Pick
+            from:
+            - %s
+        callback : func
+            Callback to run in the kernel when the user has an `event_type`
+            interaction with any element of type `widget_type`. `callback`
+            will be called with one argument: the dictionary of the element the
+            user interacted with.
+        remove : bool, optional
+            Set to true to remove the callback from the list of callbacks.
+        """
         if widget_type not in self._interaction_handlers:
             self._interaction_handlers = dict([
                 *self._interaction_handlers.items(),
@@ -491,19 +504,12 @@ class CytoscapeWidget(DOMWidget):
                     ])
                 ),
             ])
-        # if ((widget_type not in self._interaction_handlers) or
-        #         (event_type not in self._interaction_handlers[widget_type])):
-        #     raise ValueError("You must specify the types of widgets and "
-        #                      "events you wish to observe at `%s` "
-        #                      "instantiation with the `monitor` keyword "
-        #                      "argument, which would (minimally) be "
-        #                      "`monitored={'%s': ['%s']}` for the given "
-        #                      "arguments. This instance has `monitored=%s`, "
-        #                      "meaning the event type you specified is "
-        #                      "ignored." % (type(self).__name__, widget_type,
-        #                                    event_type, self.monitored))
         self._interaction_handlers[widget_type][event_type] \
             .register_callback(callback, remove=remove)
+    on.__doc__ = on.__doc__ % (
+        '\n            - '.join(MONITORED_USER_TYPES),
+        '\n            - '.join(MONITORED_USER_INTERACTIONS)
+    )
 
     def _handle_interaction(self, _widget, content, _buffers):
         handlers = self._interaction_handlers
