@@ -64,8 +64,8 @@ class CytoInteractionDict(Dict):
     default_value = {}
     info_text = (
         'specify a dictionary whose keys are cytoscape model types '
-        '(pick from %s) and whose values are lists of user interaction event '
-        'types to get updates on (pick from %s)'
+        '(pick from %s) and whose values are iterables of user interaction '
+        'event types to get updates on (pick from %s)'
     ) % (
         MONITORED_USER_TYPES,
         MONITORED_USER_INTERACTIONS,
@@ -85,6 +85,26 @@ class CytoInteractionDict(Dict):
             'specified.'
         ) % (self.name, type(obj).__name__, self.info_text, value)
         raise TraitError(msg)
+
+
+def _interaction_handlers_to_json(pydt, _widget):
+    try:
+        return {k: list(v) for k, v in pydt.items()}
+    except:
+        print('COULD NOT HANDLE PYDT:', pydt)
+        raise
+
+
+def _interaction_handlers_from_json(js, widget):
+    raise ValueError('Do not set ``_interaction_handlers`` from the client. '
+                     'Widget %s received JSON: %s' % (widget, js))
+    #return {wt: {et: self[wt][et] for et in ets} for wt, ets in js.items()}
+
+
+interaction_serialization = {
+    'to_json': _interaction_handlers_to_json,
+    'from_json': _interaction_handlers_from_json,
+}
 
 
 class Mutable(TraitType):
@@ -426,35 +446,62 @@ class CytoscapeWidget(DOMWidget):
     zoom = CFloat(2.0).tag(sync=True)
     rendered_position = Dict({'renderedPosition': { 'x': 100, 'y': 100 }}).tag(sync=True)
     tooltip_source = Unicode('tooltip').tag(sync=True)
-    monitored = CytoInteractionDict({}).tag(sync=True)
+    _interaction_handlers = CytoInteractionDict({}).tag(
+        sync=True, **interaction_serialization)
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
     def __init__(self, **kwargs):
         super(CytoscapeWidget, self).__init__(**kwargs)
 
-        self._interaction_handlers = {
-            widget_type: {
-                event_type: CallbackDispatcher()
-                for event_type in etypes
-            }
-            for widget_type, etypes in self.monitored.items()
-        }
+        # self._interaction_handlers = {
+        #     widget_type: {
+        #         event_type: CallbackDispatcher()
+        #         for event_type in etypes
+        #     }
+        #     for widget_type, etypes in self.monitored.items()
+        # }
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
 
+    # Make sure we have a callback dispatcher for this widget and event type;
+    # since _interaction_handlers is synced with the frontend and changes to
+    # mutable values don't automatically propagate, we need to explicitly set
+    # the value of `_interaction_handlers` through the traitlet and allow the
+    # serialized version to propagate to the frontend, where the client code
+    # will add event handlers to the DOM graph.
     def on(self, widget_type, event_type, callback, remove=False):
-        if ((widget_type not in self._interaction_handlers) or
-                (event_type not in self._interaction_handlers[widget_type])):
-            raise ValueError("You must specify the types of widgets and "
-                             "events you wish to observe at `%s` "
-                             "instantiation with the `monitor` keyword "
-                             "argument, which would (minimally) be "
-                             "`monitored={'%s': ['%s']}` for the given "
-                             "arguments. This instance has `monitored=%s`, "
-                             "meaning the event type you specified is "
-                             "ignored." % (type(self).__name__, widget_type,
-                                           event_type, self.monitored))
+        if widget_type not in self._interaction_handlers:
+            self._interaction_handlers = dict([
+                *self._interaction_handlers.items(),
+                (widget_type, {event_type: CallbackDispatcher()}),
+            ])
+        elif event_type not in self._interaction_handlers[widget_type]:
+            self._interaction_handlers = dict([
+                *(
+                    (wt, v)
+                    for wt, v in self._interaction_handlers.items()
+                    if wt != widget_type
+                ),
+                (
+                    widget_type,
+                    dict([
+                        *self._interaction_handlers[widget_type].items(),
+                        (event_type, CallbackDispatcher()),
+                    ])
+                ),
+            ])
+        # if ((widget_type not in self._interaction_handlers) or
+        #         (event_type not in self._interaction_handlers[widget_type])):
+        #     raise ValueError("You must specify the types of widgets and "
+        #                      "events you wish to observe at `%s` "
+        #                      "instantiation with the `monitor` keyword "
+        #                      "argument, which would (minimally) be "
+        #                      "`monitored={'%s': ['%s']}` for the given "
+        #                      "arguments. This instance has `monitored=%s`, "
+        #                      "meaning the event type you specified is "
+        #                      "ignored." % (type(self).__name__, widget_type,
+        #                                    event_type, self.monitored))
         self._interaction_handlers[widget_type][event_type] \
             .register_callback(callback, remove=remove)
 
