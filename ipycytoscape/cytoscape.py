@@ -76,7 +76,7 @@ class CytoInteractionDict(Dict):
                     any(set(v).difference(MONITORED_USER_INTERACTIONS)
                         for v in value.values())):
                 return retval
-        except:
+        except (AttributeError, TypeError):
             pass
         msg = (
             'The %s trait of %s instance must %s, but a value of %s was '
@@ -86,11 +86,7 @@ class CytoInteractionDict(Dict):
 
 
 def _interaction_handlers_to_json(pydt, _widget):
-    try:
-        return {k: list(v) for k, v in pydt.items()}
-    except:
-        print('COULD NOT HANDLE PYDT:', pydt)
-        raise
+    return {k: list(v) for k, v in pydt.items()}
 
 
 def _interaction_handlers_from_json(js, widget):
@@ -479,8 +475,9 @@ class CytoscapeWidget(DOMWidget):
         callback : func
             Callback to run in the kernel when the user has an `event_type`
             interaction with any element of type `widget_type`. `callback`
-            will be called with one argument: the dictionary of the element the
-            user interacted with.
+            will be called with one argument: the JSON-dictionary of the target
+            the user interacted with (which includes a `data` key for the
+            user-provided data in the node).
         remove : bool, optional
             Set to true to remove the callback from the list of callbacks.
         """

@@ -400,7 +400,7 @@ export class CytoscapeView extends DOMWidgetView {
       if (Object.prototype.hasOwnProperty.call(new_monitored, widgtype)) {
         for (let i = 0; i < new_monitored[widgtype].length; i++) {
           const evnttype = new_monitored[widgtype][i];
-          if (Object.prototype.hasOwnProperty.call(this.monitored, widgtype)) {
+          if (this.monitored[widgtype]) {
             if (this.monitored[widgtype].includes(evnttype)) {
               return;
             } else {
@@ -413,7 +413,7 @@ export class CytoscapeView extends DOMWidgetView {
             this.send({
               event: evnttype,
               widget: widgtype,
-              data: e.target.data(),
+              data: e.target.json(),
             });
           });
         }
