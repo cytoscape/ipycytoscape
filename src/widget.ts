@@ -195,6 +195,7 @@ export class CytoscapeModel extends DOMWidgetModel {
 
 export class NodeView extends WidgetView {
   cytoscapeView: any;
+  private cyId: string;
 
   constructor(params: any) {
     super({
