@@ -130,6 +130,25 @@ class MutableList(Mutable):
     """A mutable list trait"""
     _model_type = mvc.List
 
+class Element(Widget):
+    _model_name = Unicode('ElementModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_name = Unicode('Element').tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
+
+    group = Unicode().tag(sync=True)
+    removed = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
+    selectable = Bool().tag(sync=True)
+    locked = Bool().tag(sync=True)
+    grabbed = Bool().tag(sync=True)
+    grabbable = Bool().tag(sync=True)
+    classes = Unicode().tag(sync=True)
+    position = MutableDict().tag(sync=True)
+    data = MutableDict().tag(sync=True)
+
 class Edge(Widget):
     """ Edge Widget """
     _model_name = Unicode('EdgeModel').tag(sync=True)
@@ -147,12 +166,12 @@ class Edge(Widget):
     grabbed = Bool().tag(sync=True)
     grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
-
-    data = MutableDict().tag(sync=True)
     position = MutableDict().tag(sync=True)
+    data = MutableDict().tag(sync=True)
 
 
-class Node(Widget):
+
+class Node(Element):
     """ Node Widget """
     _model_name = Unicode('NodeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -160,19 +179,6 @@ class Node(Widget):
     _view_name = Unicode('NodeView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
-
-    group = Unicode().tag(sync=True)
-    removed = Bool().tag(sync=True)
-    selected = Bool().tag(sync=True)
-    selectable = Bool().tag(sync=True)
-    locked = Bool().tag(sync=True)
-    grabbed = Bool().tag(sync=True)
-    grabbable = Bool().tag(sync=True)
-    classes = Unicode().tag(sync=True)
-
-    data = MutableDict().tag(sync=True)
-    position = MutableDict().tag(sync=True)
-
 
 def _set_attributes(instance, data):
     cyto_attrs = ['group', 'removed', 'selected', 'selectable',

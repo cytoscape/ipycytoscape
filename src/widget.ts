@@ -40,16 +40,16 @@ cytoscape.use(dagre);
 cytoscape.use(klay);
 cytoscape.use(cola);
 
-export class NodeModel extends WidgetModel {
+export class ElementModel extends WidgetModel {
   defaults() {
     return {
       ...super.defaults(),
-      _model_name: NodeModel.model_name,
-      _model_module: NodeModel.model_module,
-      _model_module_version: NodeModel.model_module_version,
-      _view_name: NodeModel.view_name,
-      _view_module: NodeModel.view_module,
-      _view_module_version: NodeModel.view_module_version,
+      _model_name: ElementModel.model_name,
+      _model_module: ElementModel.model_module,
+      _model_module_version: ElementModel.model_module_version,
+      _view_name: ElementModel.view_name,
+      _view_module: ElementModel.view_module,
+      _view_module_version: ElementModel.view_module_version,
 
       group: '',
       removed: false,
@@ -61,6 +61,27 @@ export class NodeModel extends WidgetModel {
       classes: '',
       data: {},
       position: {},
+    };
+  }
+
+  static model_name = 'ElementModel';
+  static model_module = MODULE_NAME;
+  static model_module_version = MODULE_VERSION;
+  static view_name = 'ElementView';
+  static view_module = MODULE_NAME;
+  static view_module_version = MODULE_VERSION;
+}
+
+export class NodeModel extends ElementModel {
+  defaults() {
+    return {
+      ...super.defaults(),
+      _model_name: NodeModel.model_name,
+      _model_module: NodeModel.model_module,
+      _model_module_version: NodeModel.model_module_version,
+      _view_name: NodeModel.view_name,
+      _view_module: NodeModel.view_module,
+      _view_module_version: NodeModel.view_module_version,
     };
   }
 
@@ -196,9 +217,9 @@ export class CytoscapeModel extends DOMWidgetModel {
   static view_module_version = MODULE_VERSION;
 }
 
-export class NodeView extends WidgetView {
+export class ElementView extends WidgetView {
   cytoscapeView: CytoscapeView;
-  private elem: NodeSingular;
+  private elem: NodeSingular | EdgeSingular;
 
   constructor(params: any) {
     super({
@@ -206,18 +227,25 @@ export class NodeView extends WidgetView {
       options: params.options,
     });
     this.cytoscapeView = this.options.cytoscapeView;
+    const cyId = this.model.get('data')['id'];
+    this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
 
     this.model.on('change:group', this.valueChanged, this);
     this.model.on('change:removed', this.valueChanged, this);
     this.model.on('change:selected', this.valueChanged, this);
     this.model.on('change:locked', this.valueChanged, this);
     this.model.on('change:grabbed', this.valueChanged, this);
-    this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:grabbable', () => {
+      const oy = this.elem as any;
+      oy.grabbable(this.model.get('grabbable'));
+    });
     this.model.on('change:classes', this._updateClasses, this);
-    this.model.on('change:data', this.valueChanged, this);
+    this.model.on('change:data', this._updateData, this);
     this.model.on('change:position', this.valueChanged, this);
-    const cyId = this.model.get('data')['id'];
-    this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
+  }
+
+  private _updateData() {
+    this.elem.data(this.model.get('data'));
   }
 
   private _updateClasses() {
@@ -226,6 +254,14 @@ export class NodeView extends WidgetView {
 
   valueChanged() {
     this.cytoscapeView.value_changed();
+  }
+}
+export class NodeView extends ElementView {
+  constructor(params: any) {
+    super({
+      model: params.model,
+      options: params.options,
+    });
   }
 }
 
