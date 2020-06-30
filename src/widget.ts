@@ -20,7 +20,7 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 // Import the CSS
 import '../css/widget.css';
 
-import cytoscape from 'cytoscape';
+import cytoscape, { EdgeSingular, NodeSingular } from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
 // @ts-ignore
@@ -197,8 +197,8 @@ export class CytoscapeModel extends DOMWidgetModel {
 }
 
 export class NodeView extends WidgetView {
-  cytoscapeView: any;
-  private cyId: string;
+  cytoscapeView: CytoscapeView;
+  private elem: NodeSingular;
 
   constructor(params: any) {
     super({
@@ -216,12 +216,12 @@ export class NodeView extends WidgetView {
     this.model.on('change:classes', this._updateClasses, this);
     this.model.on('change:data', this.valueChanged, this);
     this.model.on('change:position', this.valueChanged, this);
-    this.cyId = this.model.get('data')['id'];
+    const cyId = this.model.get('data')['id'];
+    this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
   }
 
   private _updateClasses() {
-    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
-    elem.classes(this.model.get('classes'));
+    this.elem.classes(this.model.get('classes'));
   }
 
   valueChanged() {
@@ -230,8 +230,8 @@ export class NodeView extends WidgetView {
 }
 
 export class EdgeView extends WidgetView {
-  cytoscapeView: any;
-  private cyId: string;
+  cytoscapeView: CytoscapeView;
+  private elem: EdgeSingular;
 
   constructor(params: any) {
     super({
@@ -249,11 +249,11 @@ export class EdgeView extends WidgetView {
     this.model.on('change:classes', this._updateClasses, this);
     this.model.on('change:data', this.valueChanged, this);
     this.model.on('change:position', this.valueChanged, this);
-    this.cyId = this.model.get('data')['id'];
+    const cyId = this.model.get('data')['id'];
+    this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
   }
   private _updateClasses() {
-    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
-    elem.classes(this.model.get('classes'));
+    this.elem.classes(this.model.get('classes'));
   }
 
   valueChanged() {
