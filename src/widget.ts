@@ -209,9 +209,15 @@ export class NodeView extends WidgetView {
     this.model.on('change:locked', this.valueChanged, this);
     this.model.on('change:grabbed', this.valueChanged, this);
     this.model.on('change:grabbable', this.valueChanged, this);
-    this.model.on('change:classes', this.valueChanged, this);
+    this.model.on('change:classes', this._updateClasses, this);
     this.model.on('change:data', this.valueChanged, this);
     this.model.on('change:position', this.valueChanged, this);
+    this.cyId = this.model.get('data')['id'];
+  }
+
+  private _updateClasses() {
+    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
+    elem.classes(this.model.get('classes'));
   }
 
   valueChanged() {
