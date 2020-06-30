@@ -27,10 +27,14 @@ import Tippy, { Instance } from 'tippy.js';
 // @ts-ignore
 import dagre from 'cytoscape-dagre';
 
+// @ts-ignore
+import klay from 'cytoscape-klay';
+
 import 'tippy.js/themes/material.css';
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
+cytoscape.use(klay);
 cytoscape.use(cola);
 
 export class NodeModel extends WidgetModel {
@@ -317,6 +321,7 @@ export class CytoscapeView extends DOMWidgetView {
   is_rendered = false;
   nodeViews: any = [];
   edgeViews: any = [];
+  monitored: any = {};
 
   render() {
     this.el.classList.add('custom-widget');
@@ -358,6 +363,11 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
     this.model.on('change:pixel_ratio', this.value_changed, this);
+    this.model.on(
+      'change:_interaction_handlers',
+      this.listenForUserEvents,
+      this
+    );
     const layout = this.model.get('layout');
     if (layout !== null) {
       layout.on_some_change(['width', 'height'], this._resize, this);
@@ -371,7 +381,43 @@ export class CytoscapeView extends DOMWidgetView {
   value_changed() {
     if (this.is_rendered) {
       console.log('value_changed');
+      // Rerendering creates a new cytoscape object, so we will need to re-add
+      // interaction handlers. Set `monitored` to empty to trigger this.
+      this.monitored = {};
       this.init_render();
+    }
+  }
+
+  listenForUserEvents() {
+    const new_monitored = this.model.get('_interaction_handlers');
+    // If the plot hasn't been displayed yet, we can't add handlers yet. By
+    // returning immediately, we avoid marking them as set, so we'll end up
+    // setting them when the graph is finally displayed.
+    if (!this.cytoscape_obj) {
+      return;
+    }
+    for (const widgtype in new_monitored) {
+      if (Object.prototype.hasOwnProperty.call(new_monitored, widgtype)) {
+        for (let i = 0; i < new_monitored[widgtype].length; i++) {
+          const evnttype = new_monitored[widgtype][i];
+          if (this.monitored[widgtype]) {
+            if (this.monitored[widgtype].includes(evnttype)) {
+              return;
+            } else {
+              this.monitored[widgtype].push(evnttype);
+            }
+          } else {
+            this.monitored[widgtype] = [evnttype];
+          }
+          this.cytoscape_obj.on(evnttype, widgtype, (e: any) => {
+            this.send({
+              event: evnttype,
+              widget: widgtype,
+              data: e.target.json(),
+            });
+          });
+        }
+      }
     }
   }
 
@@ -404,6 +450,11 @@ export class CytoscapeView extends DOMWidgetView {
         style: this.model.get('cytoscape_style'),
         elements: this.model.get('graph').converts_dict(),
       });
+
+      // we need to set listeners at initial render in case interaction was
+      // added before the graph was displayed.
+      // const monitored = this.model.get('monitored');
+      this.listenForUserEvents();
 
       this.cytoscape_obj.on('click', 'node', (e: any) => {
         const node = e.target;
