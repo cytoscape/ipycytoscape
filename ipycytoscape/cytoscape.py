@@ -722,6 +722,13 @@ class CytoscapeWidget(DOMWidget):
         Gets the layout of the current object.
         """
         return self.cytoscape_layout
+    
+    def relayout(self):
+        """
+        Cause the graph run the layout algorithm again. 
+        https://js.cytoscape.org/#cy.layout
+        """
+        self.send({'name': 'layout'})
 
     def set_style(self, style):
         """

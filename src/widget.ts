@@ -65,10 +65,31 @@ export class CytoscapeModel extends DOMWidgetModel {
     };
   }
 
+  initialize(attributes: any, options: any) {
+    super.initialize(attributes, options);
+    this.on('msg:custom', this.processMessage.bind(this));
+  }
+
   static serializers: ISerializers = {
     graph: { deserialize: widgets.unpack_models },
     ...DOMWidgetModel.serializers,
   };
+
+  private processMessage(command: any, buffers: any) {
+    if (command.name === 'layout') {
+      this.forEachView((view) => {
+        view.cytoscape_obj.layout(this.get('cytoscape_layout')).run();
+      });
+    }
+  }
+
+  private forEachView(callback: (view: CytoscapeView) => void) {
+    for (const view_id in this.views) {
+      this.views[view_id].then((view: CytoscapeView) => {
+        callback(view);
+      });
+    }
+  }
 
   static model_name = 'CytoscapeModel';
   static model_module = MODULE_NAME;
@@ -76,6 +97,7 @@ export class CytoscapeModel extends DOMWidgetModel {
   static view_name = 'CytoscapeView';
   static view_module = MODULE_NAME;
   static view_module_version = MODULE_VERSION;
+  views: Dict<Promise<CytoscapeView>>;
 }
 
 export class CytoscapeView extends DOMWidgetView {
