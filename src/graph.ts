@@ -114,39 +114,6 @@ export class GraphModel extends WidgetModel {
 
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
-
-  converts_dict() {
-    const graph: Array<any> = [];
-
-    for (let i = 0; i < this.attributes.nodes.length; i++) {
-      const node = this.attributes.nodes[i];
-      graph.push({
-        group: 'nodes',
-        data: node.get('data'),
-        selected: node.get('selected'),
-        selectable: node.get('selectable'),
-        locked: node.get('locked'),
-        grabbed: node.get('grabbed'),
-        classes: node.get('classes'),
-        position: node.get('position'),
-      });
-    }
-    for (let j = 0; j < this.attributes.edges.length; j++) {
-      const edge = this.attributes.edges[j];
-      graph.push({
-        group: 'edges',
-        data: edge.get('data'),
-        selected: edge.get('selected'),
-        selectable: edge.get('selectable'),
-        locked: edge.get('locked'),
-        grabbed: edge.get('grabbed'),
-        classes: edge.get('classes'),
-        position: edge.get('position'),
-      });
-    }
-
-    return graph;
-  }
 }
 
 export class ElementView extends WidgetView {

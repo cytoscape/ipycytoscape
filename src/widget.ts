@@ -224,7 +224,7 @@ export class CytoscapeView extends DOMWidgetView {
         wheelSensitivity: this.model.get('wheel_sensitivity'),
         pixelRatio: this.model.get('pixel_ratio'),
         style: this.model.get('cytoscape_style'),
-        elements: [], // this.model.get('graph').converts_dict(),
+        elements: [],
       });
 
       // we need to set listeners at initial render in case interaction was
