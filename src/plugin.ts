@@ -38,6 +38,6 @@ function activateWidgetExtension(
     version: MODULE_VERSION,
 
     exports: async () =>
-      await import(/* webpackChunkName: "jupyter-cytoscape" */ './widget'),
+      await import(/* webpackChunkName: "jupyter-cytoscape" */ './index'),
   });
 }
