@@ -228,6 +228,7 @@ export class NodeView extends WidgetView {
 
 export class EdgeView extends WidgetView {
   cytoscapeView: any;
+  private cyId: string;
 
   constructor(params: any) {
     super({
@@ -242,9 +243,14 @@ export class EdgeView extends WidgetView {
     this.model.on('change:locked', this.valueChanged, this);
     this.model.on('change:grabbed', this.valueChanged, this);
     this.model.on('change:grabbable', this.valueChanged, this);
-    this.model.on('change:classes', this.valueChanged, this);
+    this.model.on('change:classes', this._updateClasses, this);
     this.model.on('change:data', this.valueChanged, this);
     this.model.on('change:position', this.valueChanged, this);
+    this.cyId = this.model.get('data')['id'];
+  }
+  private _updateClasses() {
+    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
+    elem.classes(this.model.get('classes'));
   }
 
   valueChanged() {
@@ -282,20 +288,33 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.get('graph').on('change:edges', this.value_changed, this);
 
     //Python attributes that must be sync. with frontend
-    this.model.on('change:min_zoom', this.value_changed, this);
-    this.model.on('change:max_zoom', this.value_changed, this);
-    this.model.on('change:zooming_enabled', this.value_changed, this);
-    this.model.on('change:user_zooming_enabled', this.value_changed, this);
-    this.model.on('change:panning_enabled', this.value_changed, this);
-    this.model.on('change:box_selection_enabled', this.value_changed, this);
-    this.model.on('change:selection_type', this.value_changed, this);
+    this.model.on('change:min_zoom', this._updateMinZoom, this);
+    this.model.on('change:max_zoom', this._updateMaxZoom, this);
+    this.model.on('change:zooming_enabled', this._updateZoomingEnabled, this);
+    this.model.on(
+      'change:user_zooming_enabled',
+      this._updateUserZoomingEnabled,
+      this
+    );
+    this.model.on('change:panning_enabled', this._updatePanningEnabled, this);
+    this.model.on(
+      'change:user_panning_enabled',
+      this._updateUserPanningEnabled,
+      this
+    );
+    this.model.on(
+      'change:box_selection_enabled',
+      this._updateBoxSelectionEnabled,
+      this
+    );
+    this.model.on('change:selection_type', this._updateSelectionType, this);
     this.model.on('change:touch_tap_threshold', this.value_changed, this);
     this.model.on('change:desktop_tap_threshold', this.value_changed, this);
-    this.model.on('change:autolock', this.value_changed, this);
-    this.model.on('change:auto_ungrabify', this.value_changed, this);
-    this.model.on('change:auto_unselectify', this.value_changed, this);
-    this.model.on('change:cytoscape_layout', this.value_changed, this);
-    this.model.on('change:cytoscape_style', this.value_changed, this);
+    this.model.on('change:autolock', this._updateAutolock, this);
+    this.model.on('change:auto_ungrabify', this._updateAutoUngrabify, this);
+    this.model.on('change:auto_unselectify', this._updateAutoUnselectify, this);
+    this.model.on('change:cytoscape_layout', this._updateLayout, this);
+    this.model.on('change:cytoscape_style', this._updateStyle, this);
     this.model.on('change:elements', this.value_changed, this);
     this.model.on('change:pixel_ratio', this.value_changed, this);
     this.model.on(
@@ -422,6 +441,51 @@ export class CytoscapeView extends DOMWidgetView {
         }
       });
     }
+  }
+  private _updateMinZoom() {
+    this.cytoscape_obj.minZoom(this.model.get('min_zoom'));
+  }
+  private _updateMaxZoom() {
+    this.cytoscape_obj.maxZoom(this.model.get('max_zoom'));
+  }
+  private _updateZoomingEnabled() {
+    this.cytoscape_obj.zoomingEnabled(this.model.get('zooming_enabled'));
+  }
+  private _updateUserZoomingEnabled() {
+    this.cytoscape_obj.userZoomingEnabled(
+      this.model.get('user_zooming_enabled')
+    );
+  }
+  private _updatePanningEnabled() {
+    this.cytoscape_obj.panningEnabled(this.model.get('panning_enabled'));
+  }
+  private _updateUserPanningEnabled() {
+    this.cytoscape_obj.UserPanningEnabled(
+      this.model.get('user_panning_enabled')
+    );
+  }
+  private _updateBoxSelectionEnabled() {
+    this.cytoscape_obj.boxSelectionEnabled(
+      this.model.get('box_selection_enabled')
+    );
+  }
+  private _updateSelectionType() {
+    this.cytoscape_obj.selectionType(this.model.get('selection_type'));
+  }
+  private _updateAutolock() {
+    this.cytoscape_obj.autolock(this.model.get('autolock'));
+  }
+  private _updateAutoUngrabify() {
+    this.cytoscape_obj.autoungrabify(this.model.get('auto_ungrabify'));
+  }
+  private _updateAutoUnselectify() {
+    this.cytoscape_obj.autounselectify(this.model.get('auto_unselectify'));
+  }
+  private _updateLayout() {
+    this.cytoscape_obj.layout(this.model.get('layout'));
+  }
+  private _updateStyle() {
+    this.cytoscape_obj.style(this.model.get('cytoscape_style'));
   }
 
   private _resize() {
