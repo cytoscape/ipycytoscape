@@ -19,6 +19,15 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+__all__ = [
+    'MONITORED_USER_TYPES',
+    'MONITORED_USER_INTERACTIONS',
+    'Node',
+    'Edge',
+    'Graph',
+    'CytoscapeWidget'
+]
+
 
 MONITORED_USER_TYPES = (
     'node',
