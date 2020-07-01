@@ -14,7 +14,7 @@ export class ElementModel extends WidgetModel {
       ...super.defaults(),
       removed: false,
       selected: false,
-      selectable: false,
+      selectable: true,
       classes: '',
       data: {},
     };
@@ -41,9 +41,9 @@ export class NodeModel extends ElementModel {
 
       group: 'nodes',
       position: {},
-      grabbed: false,
-      grabbable: false,
       locked: false,
+      grabbable: false,
+      pannable: false,
     };
   }
 
@@ -52,6 +52,9 @@ export class NodeModel extends ElementModel {
       ...super.asCyObj(),
       group: this.get('group'),
       position: this.get('position'),
+      locked: this.get('locked'),
+      grabbable: this.get('grabbable'),
+      pannable: this.get('pannable'),
     };
   }
 
@@ -75,6 +78,7 @@ export class EdgeModel extends ElementModel {
       _view_module_version: EdgeModel.view_module_version,
 
       group: 'edges',
+      pannable: true,
     };
   }
 
@@ -82,7 +86,7 @@ export class EdgeModel extends ElementModel {
     return {
       ...super.asCyObj(),
       group: this.get('group'),
-      position: this.get('position'),
+      pannable: this.get('pannable'),
     };
   }
 
@@ -138,6 +142,17 @@ export class ElementView extends WidgetView {
     this.model.on('change:data', () => {
       this.elem.data(this.model.get('data'));
     });
+    this.model.on('change:pannable', () => {
+      // I think @types/cytoscape is missing panify and unpanify
+      this.model.get('pannable')
+        ? (this.elem as any).panify()
+        : (this.elem as any).unpanify();
+    });
+    this.model.on('change:selectable', () => {
+      this.model.get('selectable')
+        ? this.elem.selectify()
+        : this.elem.unselectify();
+    });
   }
 
   valueChanged() {
@@ -154,6 +169,12 @@ export class NodeView extends ElementView {
     this.node = this.elem as NodeSingular;
     this.model.on('change:position', () => {
       this.node.position(this.model.get('position'));
+    });
+    this.model.on('change:locked', () => {
+      this.model.get('locked') ? this.node.lock() : this.node.unlock();
+    });
+    this.model.on('change:grabbable', () => {
+      this.model.get('grabbable') ? this.node.grabify() : this.node.ungrabify();
     });
   }
 }
