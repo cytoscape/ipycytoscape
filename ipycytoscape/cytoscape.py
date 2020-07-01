@@ -151,6 +151,7 @@ class Element(Widget):
     classes = Unicode().tag(sync=True)
     data = MutableDict().tag(sync=True)
     pannable = Bool().tag(sync=True)
+    _base_cyto_attrs = ['removed', 'selected', 'selectable', 'classes', 'data', 'pannable']
 
 class Edge(Element):
     """ Edge Widget """
@@ -162,6 +163,9 @@ class Edge(Element):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     pannable = Bool(True).tag(sync=True)
+
+    # currently we don't sync anything for edges outside of the base Element
+    _cyto_attrs = []
 
 class Node(Element):
     """ Node Widget """
@@ -177,10 +181,10 @@ class Node(Element):
     grabbable = Bool(True).tag(sync=True)
     pannable = Bool(False).tag(sync=True)
 
+    _cyto_attrs = ['position', 'locked', 'grabbable']
 
 def _set_attributes(instance, data):
-    cyto_attrs = ['group', 'removed', 'selected', 'selectable',
-                    'locked', 'grabbed', 'grabbable', 'classes', 'position', 'data']
+    cyto_attrs = instance._cyto_attrs + instance._base_cyto_attrs
     for k, v in data.items():
         if k in cyto_attrs:
             setattr(instance, k, v)
