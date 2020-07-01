@@ -192,6 +192,8 @@ class Graph(Widget):
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
+    # dictionary for syncing graph structure
+    _adj = dict()
 
     def add_node(self, node):
         """
@@ -201,8 +203,25 @@ class Graph(Widget):
         self: cytoscape graph
         node: cytoscape node
         """
-        self.nodes.append(node)
+        if node.data['id'] not in self._adj:
+            self._adj[node.data['id']] = dict()
+            self.nodes.append(node)
 
+    def add_nodes(self, nodes):
+        """
+        Appends nodes to the end of the list. Equivalent to Python's extend method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        nodes: list of cytoscape nodes
+        """
+        node_list = list()
+        for node in nodes:
+            if node.data['id'] not in self._adj:
+                self._adj[node.data['id']] = dict()
+                node_list.append(node)
+        self.nodes.extend(node_list)
+    
     def remove_node(self, node):
         """
         Removes node from the end of the list. Equivalent to Python's remove method.
@@ -211,7 +230,17 @@ class Graph(Widget):
         self: cytoscape graph
         node: cytoscape node
         """
-        self.nodes.remove(node)
+        try:
+            self.nodes.remove(node)
+            for target in list(self._adj[node.data['id']]):
+                self.remove_edge_by_id(node.data['id'], target)
+            for source in list(self._adj):
+                for target in list(self._adj[source]):
+                    if target == node.data['id']:
+                        self.remove_edge_by_id(source, node.data['id'])
+            del self._adj[node.data['id']]
+        except ValueError:
+            raise ValueError(f'{node.data["id"]} is not present in the graph.')
 
     def remove_node_by_id(self, node_id):
         """
@@ -221,21 +250,78 @@ class Graph(Widget):
         self: cytoscape graph
         node_id: numeric types and string
         """
-        for node in self.nodes:
+        node_list_id = -1
+        for i, node in enumerate(self.nodes):
             if node.data['id'] == node_id:
-                self.nodes.remove(node)
-            else:
-                raise ValueError("The id doesn't exist in your graph.")
+                node_list_id = i
+        if node_list_id != -1:
+            self.remove_node(self.nodes[node_list_id])
+        else:
+            raise ValueError(f'{node_id} is not present in the graph.')
 
-    def add_edge(self, edge):
+    def add_edge(self, edge, directed=False):
         """
         Appends edge from the end of the list. Equivalent to Python's append method.
         Parameters
         ----------
         self: cytoscape graph
         edge: cytoscape edge
+        directed: boolean
         """
-        self.edges.append(edge)
+        source, target = edge.data['source'], edge.data['target']
+        
+        if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
+            pass
+        else: # if the edge is not present in the graph
+            self.edges.append(edge)
+            if source not in self._adj:
+                node_instance = Node()
+                # setting the id, according to current spec should be only int/str
+                node_instance.data = {'id': source}
+                self.add_node(node_instance)
+            if target not in self._adj:
+                node_instance = Node()
+                # setting the id, according to current spec should be only int/str
+                node_instance.data = {'id': target}
+                self.add_node(node_instance)
+            self._adj[source][target] = dict()
+            if not (directed or edge.classes == 'directed'):
+                self._adj[target][source] = dict()
+
+    def add_edges(self, edges, directed=False):
+        """
+        Appends edges from the end of the list. Equivalent to Python's extend method.
+        Parameters
+        ----------
+        self: cytoscape graph
+        edges: list of cytoscape edges
+        directed: boolean
+        """
+        node_list = list()
+        edge_list = list()
+        for edge in edges:
+            source, target = edge.data['source'], edge.data['target']
+            if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
+                pass
+            else: # if the edge is not present in the graph
+                edge_list.append(edge)
+                if source not in self._adj:
+                    node_instance = Node()
+                    # setting the id, according to current spec should be only int/str
+                    node_instance.data = {'id': source}
+                    node_list.append(node_instance)
+                    self._adj[source] = dict()
+                if target not in self._adj:
+                    node_instance = Node()
+                    # setting the id, according to current spec should be only int/str
+                    node_instance.data = {'id': target}
+                    node_list.append(node_instance)
+                    self._adj[target] = dict()
+                self._adj[source][target] = dict()
+                if not (directed or edge.classes == 'directed'):
+                    self._adj[target][source] = dict()
+        self.nodes.extend(node_list)
+        self.edges.extend(edge_list)
 
     def remove_edge(self, edge):
         """
@@ -245,21 +331,31 @@ class Graph(Widget):
         self: cytoscape graph
         edge: cytoscape edge
         """
-        self.edges.remove(edge)
+        try:
+            self.edges.remove(edge)
+            del self._adj[edge.data['source']][edge.data['target']]
+            if not edge.classes == 'directed':
+                 del self._adj[edge.data['target']][edge.data['source']]
+        except ValueError:
+            raise ValueError(f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph.")
 
-    def remove_edge_by_id(self, edge_id):
+    def remove_edge_by_id(self, source_id, target_id):
         """
         Removes edge by the id specified.
         Parameters
         ----------
         self: cytoscape graph
-        edge_id: numeric types and string
+        source_id: numeric types and string
+        target_id: numeric types and string
         """
-        for edge in self.edges:
-            if edge.data['id'] == edge_id:
-                self.edges.remove(edge)
-            else:
-                raise ValueError("The id doesn't exist in your graph.")
+        edge_id = -1
+        for i, edge in enumerate(self.edges):
+            if (edge.data['source'] == source_id and edge.data['target'] == target_id) or (not edge.classes == 'directed' and edge.data['source'] == target_id and edge.data['target'] == source_id):
+                edge_id = i
+        if edge_id != -1:
+            self.remove_edge(self.edges[edge_id])
+        else:
+            raise ValueError(f"Edge between {source_id} and {target_id} is not present in the graph.")
 
     def add_graph_from_networkx(self, g, directed=False):
         """
@@ -275,13 +371,16 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
+        node_list = list()
         for node, data in g.nodes(data=True):
             node_instance = Node()
             _set_attributes(node_instance, data)
             if 'id' not in data:
                 node_instance.data['id'] = node
-            self.nodes.append(node_instance)
+            # self.nodes.append(node_instance)
+        self.add_nodes(node_list)
 
+        edge_list = list()
         for source, target, data in g.edges(data=True):
             edge_instance = Edge()
             edge_instance.data['source'] = source
@@ -290,7 +389,9 @@ class Graph(Widget):
 
             if directed and 'directed' not in edge_instance.classes:
                 edge_instance.classes += ' directed '
-            self.edges.append(edge_instance)
+            # self.edges.append(edge_instance)
+            edge_list.append(edge_instance)
+        self.add_edges(edge_list)
 
     def add_graph_from_json(self, json_file, directed=False):
         """
@@ -305,14 +406,13 @@ class Graph(Widget):
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
-        node_list = []
+        node_list = list()
         for node in json_file['nodes']:
             node_instance = Node()
             _set_attributes(node_instance, node)
             node_list.append(node_instance)
-        self.nodes.extend(node_list)
-
-        edge_list = []
+        self.add_nodes(node_list)
+        edge_list = list()
         if 'edges' in json_file:
             for edge in json_file['edges']:
                 edge_instance = Edge()
@@ -320,7 +420,7 @@ class Graph(Widget):
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += ' directed '
                 edge_list.append(edge_instance)
-            self.edges.extend(edge_list)
+            self.add_edges(edge_list)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
@@ -372,9 +472,8 @@ class Graph(Widget):
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
-        self.nodes.extend(all_nodes)
-
-        self.edges.extend(graph_edges)
+        self.add_edges(graph_edges)
+        self.add_nodes(all_nodes)
 
 
 class CytoscapeWidget(DOMWidget):
