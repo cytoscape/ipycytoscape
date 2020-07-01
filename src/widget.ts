@@ -27,10 +27,14 @@ import Tippy, { Instance } from 'tippy.js';
 // @ts-ignore
 import dagre from 'cytoscape-dagre';
 
+// @ts-ignore
+import klay from 'cytoscape-klay';
+
 import 'tippy.js/themes/material.css';
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
+cytoscape.use(klay);
 cytoscape.use(cola);
 
 export class NodeModel extends WidgetModel {
@@ -72,9 +76,9 @@ export class EdgeModel extends WidgetModel {
       _model_name: EdgeModel.model_name,
       _model_module: EdgeModel.model_module,
       _model_module_version: EdgeModel.model_module_version,
-      // _view_name: EdgeModel.view_name,
-      // _view_module: EdgeModel.view_module,
-      // _view_module_version: EdgeModel.view_module_version,
+      _view_name: EdgeModel.view_name,
+      _view_module: EdgeModel.view_module,
+      _view_module_version: EdgeModel.view_module_version,
 
       group: '',
       removed: false,
@@ -89,16 +93,12 @@ export class EdgeModel extends WidgetModel {
     };
   }
 
-  static serializers: ISerializers = {
-    ...WidgetModel.serializers,
-  };
-
   static model_name = 'EdgeModel';
   static model_module = MODULE_NAME;
   static model_module_version = MODULE_VERSION;
-  // static view_name = 'EdgeView';
-  // static view_module = MODULE_NAME;
-  // static view_module_version = MODULE_VERSION;
+  static view_name = 'EdgeView';
+  static view_module = MODULE_NAME;
+  static view_module_version = MODULE_VERSION;
 }
 
 export class GraphModel extends WidgetModel {
@@ -194,129 +194,70 @@ export class CytoscapeModel extends DOMWidgetModel {
 }
 
 export class NodeView extends WidgetView {
-  parentModel: any;
+  cytoscapeView: any;
+  private cyId: string;
 
   constructor(params: any) {
     super({
       model: params.model,
       options: params.options,
     });
-    this.parentModel = this.options.parentModel;
+    this.cytoscapeView = this.options.cytoscapeView;
 
-    this.model.on('change:group', this.groupChanged, this);
-    this.model.on('change:removed', this.removedChanged, this);
-    this.model.on('change:selected', this.selectedChanged, this);
-    this.model.on('change:locked', this.lockedChanged, this);
-    this.model.on('change:grabbed', this.grabbedChanged, this);
-    this.model.on('change:grabbable', this.grabbableChanged, this);
-    this.model.on('change:classes', this.classesChanged, this);
-    this.model.on('change:data', this.dataChanged, this);
-    this.model.on('change:position', this.positionChanged, this);
+    this.model.on('change:group', this.valueChanged, this);
+    this.model.on('change:removed', this.valueChanged, this);
+    this.model.on('change:selected', this.valueChanged, this);
+    this.model.on('change:locked', this.valueChanged, this);
+    this.model.on('change:grabbed', this.valueChanged, this);
+    this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:classes', this._updateClasses, this);
+    this.model.on('change:data', this.valueChanged, this);
+    this.model.on('change:position', this.valueChanged, this);
+    this.cyId = this.model.get('data')['id'];
   }
 
-  //TODO: not sure if this is necessary to propagate the changes...
-  groupChanged() {
-    this.parentModel.set('group', this.model.get('group'));
+  private _updateClasses() {
+    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
+    elem.classes(this.model.get('classes'));
   }
 
-  removedChanged() {
-    this.parentModel.set('removed', this.model.get('removed'));
-  }
-
-  selectedChanged() {
-    this.parentModel.set('selected', this.model.get('selected'));
-  }
-
-  lockedChanged() {
-    this.parentModel.set('locked', this.model.get('locked'));
-  }
-
-  grabbedChanged() {
-    this.parentModel.set('grabbed', this.model.get('grabbed'));
-  }
-
-  grabbableChanged() {
-    this.parentModel.set('grabbable', this.model.get('grabbable'));
-  }
-
-  classesChanged() {
-    this.parentModel.set('classes', this.model.get('classes'));
-  }
-
-  dataChanged() {
-    this.parentModel.set('data', this.model.get('data'));
-  }
-
-  positionChanged() {
-    this.parentModel.set('position', this.model.get('position'));
+  valueChanged() {
+    this.cytoscapeView.value_changed();
   }
 }
 
-// export
-// class EdgeView extends WidgetView {
-//   parentModel: any;
+export class EdgeView extends WidgetView {
+  cytoscapeView: any;
 
-//   constructor(params: any) {
-//     super({
-//       model: params.model,
-//       options: params.options
-//     });
-//   this.parentModel = this.options.parentModel;
+  constructor(params: any) {
+    super({
+      model: params.model,
+      options: params.options,
+    });
+    this.cytoscapeView = this.options.cytoscapeView;
 
-//   this.model.on('change:group', this.groupChanged, this);
-//   this.model.on('change:removed', this.removedChanged, this);
-//   this.model.on('change:selected', this.selectedChanged, this);
-//   this.model.on('change:locked', this.lockedChanged, this);
-//   this.model.on('change:grabbed', this.grabbedChanged, this);
-//   this.model.on('change:grabbable', this.grabbableChanged, this);
-//   this.model.on('change:classes', this.classesChanged, this);
-//   this.model.on('change:data', this.dataChanged, this);
-//   this.model.on('change:position', this.positionChanged, this);
-//   }
+    this.model.on('change:group', this.valueChanged, this);
+    this.model.on('change:removed', this.valueChanged, this);
+    this.model.on('change:selected', this.valueChanged, this);
+    this.model.on('change:locked', this.valueChanged, this);
+    this.model.on('change:grabbed', this.valueChanged, this);
+    this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:classes', this.valueChanged, this);
+    this.model.on('change:data', this.valueChanged, this);
+    this.model.on('change:position', this.valueChanged, this);
+  }
 
-//   //TODO: not sure if this is necessary to propagate the changes...
-//   groupChanged() {
-//     this.parentModel.set("group", this.model.get('group'));
-//   }
-
-//   removedChanged() {
-//     this.parentModel.set("removed", this.model.get('removed'));
-//   }
-
-//   selectedChanged() {
-//     this.parentModel.set("selected", this.model.get('selected'));
-//   }
-
-//   lockedChanged() {
-//     this.parentModel.set("locked", this.model.get('locked'));
-//   }
-
-//   grabbedChanged() {
-//     this.parentModel.set("grabbed", this.model.get('grabbed'));
-//   }
-
-//   grabbableChanged() {
-//     this.parentModel.set("grabbable", this.model.get('grabbable'));
-//   }
-
-//   classesChanged() {
-//     this.parentModel.set("classes", this.model.get('classes'));
-//   }
-
-//   dataChanged() {
-//     this.parentModel.set("data", this.model.get('data'));
-//   }
-
-//   positionChanged() {
-//     this.parentModel.set("position", this.model.get('position'));
-//   }
-// }
+  valueChanged() {
+    this.cytoscapeView.value_changed();
+  }
+}
 
 export class CytoscapeView extends DOMWidgetView {
   cytoscape_obj: any;
   is_rendered = false;
   nodeViews: any = [];
   edgeViews: any = [];
+  monitored: any = {};
 
   render() {
     this.el.classList.add('custom-widget');
@@ -328,20 +269,19 @@ export class CytoscapeView extends DOMWidgetView {
     );
     this.nodeViews.update(this.model.get('graph').get('nodes'));
 
-    // this.edgeViews = new widgets.ViewList(this.addEdgeModel, this.removeEdgeView, this);
-    // this.edgeViews.update(this.model.get('graph').get('edges'));
+    this.edgeViews = new widgets.ViewList(
+      this.addEdgeModel,
+      this.removeEdgeView,
+      this
+    );
+    this.edgeViews.update(this.model.get('graph').get('edges'));
 
     this.value_changed();
 
     this.model.get('graph').on('change:nodes', this.value_changed, this);
     this.model.get('graph').on('change:edges', this.value_changed, this);
-    //TODO: not sure if these are useful, the one for style is not
-    //but for layout it seems to make a difference. Need to test and
-    //remove the ones that are not and figure out why
-    // TODO 2:
-    // some of these changes do not require re-running init_render
-    // there are cytoscapejs functions that can be called to run change
-    // these options
+
+    //Python attributes that must be sync. with frontend
     this.model.on('change:min_zoom', this.value_changed, this);
     this.model.on('change:max_zoom', this.value_changed, this);
     this.model.on('change:zooming_enabled', this.value_changed, this);
@@ -358,6 +298,12 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_style', this.value_changed, this);
     this.model.on('change:elements', this.value_changed, this);
     this.model.on('change:pixel_ratio', this.value_changed, this);
+    this.model.on(
+      'change:_interaction_handlers',
+      this.listenForUserEvents,
+      this
+    );
+
     const layout = this.model.get('layout');
     if (layout !== null) {
       layout.on_some_change(['width', 'height'], this._resize, this);
@@ -370,8 +316,43 @@ export class CytoscapeView extends DOMWidgetView {
 
   value_changed() {
     if (this.is_rendered) {
-      console.log('value_changed');
+      // Rerendering creates a new cytoscape object, so we will need to re-add
+      // interaction handlers. Set `monitored` to empty to trigger this.
+      this.monitored = {};
       this.init_render();
+    }
+  }
+
+  listenForUserEvents() {
+    const new_monitored = this.model.get('_interaction_handlers');
+    // If the plot hasn't been displayed yet, we can't add handlers yet. By
+    // returning immediately, we avoid marking them as set, so we'll end up
+    // setting them when the graph is finally displayed.
+    if (!this.cytoscape_obj) {
+      return;
+    }
+    for (const widgtype in new_monitored) {
+      if (Object.prototype.hasOwnProperty.call(new_monitored, widgtype)) {
+        for (let i = 0; i < new_monitored[widgtype].length; i++) {
+          const evnttype = new_monitored[widgtype][i];
+          if (this.monitored[widgtype]) {
+            if (this.monitored[widgtype].includes(evnttype)) {
+              return;
+            } else {
+              this.monitored[widgtype].push(evnttype);
+            }
+          } else {
+            this.monitored[widgtype] = [evnttype];
+          }
+          this.cytoscape_obj.on(evnttype, widgtype, (e: any) => {
+            this.send({
+              event: evnttype,
+              widget: widgtype,
+              data: e.target.json(),
+            });
+          });
+        }
+      }
     }
   }
 
@@ -404,6 +385,11 @@ export class CytoscapeView extends DOMWidgetView {
         style: this.model.get('cytoscape_style'),
         elements: this.model.get('graph').converts_dict(),
       });
+
+      // we need to set listeners at initial render in case interaction was
+      // added before the graph was displayed.
+      // const monitored = this.model.get('monitored');
+      this.listenForUserEvents();
 
       this.cytoscape_obj.on('click', 'node', (e: any) => {
         const node = e.target;
@@ -448,7 +434,6 @@ export class CytoscapeView extends DOMWidgetView {
   addNodeModel(NodeModel: any) {
     return this.create_child_view(NodeModel, {
       cytoscapeView: this,
-      parentModel: this.model,
     });
   }
 
@@ -456,15 +441,13 @@ export class CytoscapeView extends DOMWidgetView {
     nodeView.remove();
   }
 
-  // addEdgeModel(EdgeModel: any) {
-  //   console.log('adding edge model')
-  //     return this.create_child_view(EdgeModel, {
-  //         cytoscapeView: this,
-  //         parentModel: this.model,
-  //     });
-  // }
+  addEdgeModel(EdgeModel: any) {
+    return this.create_child_view(EdgeModel, {
+      cytoscapeView: this,
+    });
+  }
 
-  // removeEdgeView(edgeView: any) {
-  //     edgeView.remove();
-  // }
+  removeEdgeView(edgeView: any) {
+    edgeView.remove();
+  }
 }
