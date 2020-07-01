@@ -87,12 +87,11 @@ class CytoInteractionDict(Dict):
                         for v in value.values())):
                 return retval
         except (AttributeError, TypeError):
-            pass
-        msg = (
-            'The %s trait of %s instance must %s, but a value of %s was '
-            'specified.'
-        ) % (self.name, type(obj).__name__, self.info_text, value)
-        raise TraitError(msg)
+            msg = (
+                'The %s trait of %s instance must %s, but a value of %s was '
+                'specified.'
+            ) % (self.name, type(obj).__name__, self.info_text, value)
+            raise TraitError(msg)
 
 
 def _interaction_handlers_to_json(pydt, _widget):
@@ -102,7 +101,6 @@ def _interaction_handlers_to_json(pydt, _widget):
 def _interaction_handlers_from_json(js, widget):
     raise ValueError('Do not set ``_interaction_handlers`` from the client. '
                      'Widget %s received JSON: %s' % (widget, js))
-    #return {wt: {et: self[wt][et] for et in ets} for wt, ets in js.items()}
 
 
 interaction_serialization = {
