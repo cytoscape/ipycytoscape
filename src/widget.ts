@@ -8,6 +8,7 @@ import {
   DOMWidgetModel,
   DOMWidgetView,
   ISerializers,
+  Dict,
 } from '@jupyter-widgets/base';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -133,8 +134,9 @@ export class CytoscapeView extends DOMWidgetView {
         .run();
     });
 
-    this.model.get('graph').on('change:nodes', this.value_changed, this);
-    this.model.get('graph').on('change:edges', this.value_changed, this);
+    this.model
+      .get('graph')
+      .on_some_change(['nodes', 'edges'], this._updateViewLists, this);
 
     //Python attributes that must be sync. with frontend
     this.model.on('change:min_zoom', this._updateMinZoom, this);
@@ -185,6 +187,19 @@ export class CytoscapeView extends DOMWidgetView {
       this.monitored = {};
       this.init_render();
     }
+  }
+
+  private _updateViewLists() {
+    // should consider what happens with layouting here.
+    // Should the entire graph go through layouting again?
+    // Should we lock all the original nodes and then layout so only the new ones move?
+    // basically the question is: is it worth maintaining the extant positions
+    this.nodeViews.update(this.model.get('graph').get('nodes'));
+    this.edgeViews.update(this.model.get('graph').get('edges'));
+    this.cytoscape_obj
+      .elements()
+      .layout(this.model.get('cytoscape_layout'))
+      .run();
   }
 
   listenForUserEvents() {
