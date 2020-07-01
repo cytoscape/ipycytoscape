@@ -134,7 +134,7 @@ class Element(Widget):
     _model_name = Unicode('ElementModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
-    _view_name = Unicode('Element').tag(sync=True)
+    _view_name = Unicode('ElementView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
@@ -142,14 +142,10 @@ class Element(Widget):
     removed = Bool().tag(sync=True)
     selected = Bool().tag(sync=True)
     selectable = Bool().tag(sync=True)
-    locked = Bool().tag(sync=True)
-    grabbed = Bool().tag(sync=True)
-    grabbable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
-    position = MutableDict().tag(sync=True)
     data = MutableDict().tag(sync=True)
 
-class Edge(Widget):
+class Edge(Element):
     """ Edge Widget """
     _model_name = Unicode('EdgeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -157,18 +153,6 @@ class Edge(Widget):
     _view_name = Unicode('EdgeView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
-
-    group = Unicode().tag(sync=True)
-    removed = Bool().tag(sync=True)
-    selected = Bool().tag(sync=True)
-    selectable = Bool().tag(sync=True)
-    locked = Bool().tag(sync=True)
-    grabbed = Bool().tag(sync=True)
-    grabbable = Bool().tag(sync=True)
-    classes = Unicode().tag(sync=True)
-    position = MutableDict().tag(sync=True)
-    data = MutableDict().tag(sync=True)
-
 
 
 class Node(Element):
@@ -179,6 +163,11 @@ class Node(Element):
     _view_name = Unicode('NodeView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
+
+    position = MutableDict().tag(sync=True)
+    locked = Bool().tag(sync=True)
+    grabbed = Bool().tag(sync=True)
+    grabbable = Bool().tag(sync=True)
 
 def _set_attributes(instance, data):
     cyto_attrs = ['group', 'removed', 'selected', 'selectable',

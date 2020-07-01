@@ -139,19 +139,14 @@ export class ElementView extends WidgetView {
 
     this.model.on('change:group', this.valueChanged, this);
     this.model.on('change:removed', this.valueChanged, this);
-    this.model.on('change:selected', this.valueChanged, this);
+    // this.model.on('change:selected', this.valueChanged, this);
     this.model.on('change:locked', this.valueChanged, this);
-    this.model.on('change:classes', this._updateClasses, this);
-    this.model.on('change:data', this._updateData, this);
-    this.model.on('change:position', this.valueChanged, this);
-  }
-
-  private _updateData() {
-    this.elem.data(this.model.get('data'));
-  }
-
-  private _updateClasses() {
-    this.elem.classes(this.model.get('classes'));
+    this.model.on('change:classes', () => {
+      this.elem.classes(this.model.get('classes'));
+    });
+    this.model.on('change:data', () => {
+      this.elem.data(this.model.get('data'));
+    });
   }
 
   valueChanged() {
@@ -159,50 +154,31 @@ export class ElementView extends WidgetView {
   }
 }
 export class NodeView extends ElementView {
+  private node: NodeSingular;
   constructor(params: any) {
-    console.log('node constructor');
     super({
       model: params.model,
       options: params.options,
     });
-    this.model.on('change:grabbed', () => {
-      (this.elem as NodeSingular).grabbed();
-    });
-    // this.model.on('change:grabbable', () => {
-    //   // this casting may be due to an issue with @types/cytoscapejs
-    //   // or it may be due to an issue with my understanding of typescript
-    //   (this.elem as NodeSingular).grabbable(this.model.get('grabbable'));
+    this.node = this.elem as NodeSingular;
+    // this.model.on('change:grabbed', () => {
+    //   this.node.grabbed();
     // });
-    this.model.on('change:grabbed', this.valueChanged, this);
-    this.model.on('change:grabbable', this.valueChanged, this);
+    // this.model.on('change:grabbed', this.valueChanged, this);
+    // this.model.on('change:grabbable', this.valueChanged, this);
+    this.model.on('change:position', () => {
+      this.node.position(this.model.get('position'));
+    });
   }
 }
 
-export class EdgeView extends WidgetView {
-  cytoscapeView: CytoscapeView;
-  private elem: EdgeSingular;
-
+export class EdgeView extends ElementView {
+  //   private edge: EdgeSingular;
   constructor(params: any) {
     super({
       model: params.model,
       options: params.options,
     });
-    this.cytoscapeView = this.options.cytoscapeView;
-
-    this.model.on('change:group', this.valueChanged, this);
-    this.model.on('change:removed', this.valueChanged, this);
-    this.model.on('change:selected', this.valueChanged, this);
-    this.model.on('change:classes', this._updateClasses, this);
-    this.model.on('change:data', this.valueChanged, this);
-    this.model.on('change:position', this.valueChanged, this);
-    const cyId = this.model.get('data')['id'];
-    this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
-  }
-  private _updateClasses() {
-    this.elem.classes(this.model.get('classes'));
-  }
-
-  valueChanged() {
-    this.cytoscapeView.value_changed();
+    // this.edge = this.elem as EdgeSingular;
   }
 }
