@@ -18,7 +18,7 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 // Import the CSS
 import '../css/widget.css';
 
-import cytoscape from 'cytoscape';
+import cytoscape, { Core } from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
 // @ts-ignore
@@ -32,6 +32,9 @@ import dagre from 'cytoscape-dagre';
 import klay from 'cytoscape-klay';
 
 import 'tippy.js/themes/material.css';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { NodeModel, EdgeModel } from './graph';
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
@@ -76,7 +79,7 @@ export class CytoscapeModel extends DOMWidgetModel {
 }
 
 export class CytoscapeView extends DOMWidgetView {
-  cytoscape_obj: any;
+  cytoscape_obj: Core;
   is_rendered = false;
   nodeViews: any = [];
   edgeViews: any = [];
@@ -87,6 +90,7 @@ export class CytoscapeView extends DOMWidgetView {
 
     this.displayed.then(() => {
       this.init_render();
+      this.cytoscape_obj.startBatch();
       this.nodeViews = new widgets.ViewList(
         this.addNodeModel,
         this.removeNodeView,
@@ -100,6 +104,11 @@ export class CytoscapeView extends DOMWidgetView {
         this
       );
       this.edgeViews.update(this.model.get('graph').get('edges'));
+      this.cytoscape_obj.endBatch();
+      this.cytoscape_obj
+        .elements()
+        .layout(this.model.get('cytoscape_layout'))
+        .run();
     });
 
     this.model.get('graph').on('change:nodes', this.value_changed, this);
@@ -190,9 +199,7 @@ export class CytoscapeView extends DOMWidgetView {
   }
 
   init_render() {
-    console.log('in init render');
     if (this.model.get('graph') !== null) {
-      console.log('in if in init_render');
       this.is_rendered = true;
       this.cytoscape_obj = cytoscape({
         container: this.el,
@@ -216,9 +223,8 @@ export class CytoscapeView extends DOMWidgetView {
         motionBlurOpacity: this.model.get('motion_blur_opacity'),
         wheelSensitivity: this.model.get('wheel_sensitivity'),
         pixelRatio: this.model.get('pixel_ratio'),
-        layout: this.model.get('cytoscape_layout'),
         style: this.model.get('cytoscape_style'),
-        elements: this.model.get('graph').converts_dict(),
+        elements: [], // this.model.get('graph').converts_dict(),
       });
 
       // we need to set listeners at initial render in case interaction was
@@ -276,7 +282,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.cytoscape_obj.panningEnabled(this.model.get('panning_enabled'));
   }
   private _updateUserPanningEnabled() {
-    this.cytoscape_obj.UserPanningEnabled(
+    this.cytoscape_obj.userPanningEnabled(
       this.model.get('user_panning_enabled')
     );
   }
@@ -286,7 +292,8 @@ export class CytoscapeView extends DOMWidgetView {
     );
   }
   private _updateSelectionType() {
-    this.cytoscape_obj.selectionType(this.model.get('selection_type'));
+    // I think that @types may have gotten this wrong?
+    (this.cytoscape_obj as any).selectionType(this.model.get('selection_type'));
   }
   private _updateAutolock() {
     this.cytoscape_obj.autolock(this.model.get('autolock'));
@@ -311,7 +318,8 @@ export class CytoscapeView extends DOMWidgetView {
     }
   }
 
-  addNodeModel(NodeModel: any) {
+  addNodeModel(NodeModel: NodeModel) {
+    this.cytoscape_obj.add(NodeModel.asCyObj());
     return this.create_child_view(NodeModel, {
       cytoscapeView: this,
     });
@@ -321,7 +329,8 @@ export class CytoscapeView extends DOMWidgetView {
     nodeView.remove();
   }
 
-  addEdgeModel(EdgeModel: any) {
+  addEdgeModel(EdgeModel: EdgeModel) {
+    this.cytoscape_obj.add(EdgeModel.asCyObj());
     return this.create_child_view(EdgeModel, {
       cytoscapeView: this,
     });

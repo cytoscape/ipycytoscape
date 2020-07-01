@@ -12,13 +12,18 @@ export class ElementModel extends WidgetModel {
   defaults() {
     return {
       ...super.defaults(),
-      group: '',
       removed: false,
       selected: false,
       selectable: false,
-      locked: false,
       classes: '',
       data: {},
+    };
+  }
+  asCyObj() {
+    return {
+      data: this.get('data'),
+      selectable: this.get('selectable'),
+      classes: this.get('classes'),
     };
   }
 }
@@ -34,9 +39,19 @@ export class NodeModel extends ElementModel {
       _view_module: NodeModel.view_module,
       _view_module_version: NodeModel.view_module_version,
 
+      group: 'nodes',
       position: {},
       grabbed: false,
       grabbable: false,
+      locked: false,
+    };
+  }
+
+  asCyObj() {
+    return {
+      ...super.asCyObj(),
+      group: this.get('group'),
+      position: this.get('position'),
     };
   }
 
@@ -58,6 +73,16 @@ export class EdgeModel extends ElementModel {
       _view_name: EdgeModel.view_name,
       _view_module: EdgeModel.view_module,
       _view_module_version: EdgeModel.view_module_version,
+
+      group: 'edges',
+    };
+  }
+
+  asCyObj() {
+    return {
+      ...super.asCyObj(),
+      group: this.get('group'),
+      position: this.get('position'),
     };
   }
 
@@ -139,7 +164,6 @@ export class ElementView extends WidgetView {
 
     this.model.on('change:group', this.valueChanged, this);
     this.model.on('change:removed', this.valueChanged, this);
-    // this.model.on('change:selected', this.valueChanged, this);
     this.model.on('change:locked', this.valueChanged, this);
     this.model.on('change:classes', () => {
       this.elem.classes(this.model.get('classes'));
@@ -161,11 +185,6 @@ export class NodeView extends ElementView {
       options: params.options,
     });
     this.node = this.elem as NodeSingular;
-    // this.model.on('change:grabbed', () => {
-    //   this.node.grabbed();
-    // });
-    // this.model.on('change:grabbed', this.valueChanged, this);
-    // this.model.on('change:grabbable', this.valueChanged, this);
     this.model.on('change:position', () => {
       this.node.position(this.model.get('position'));
     });
