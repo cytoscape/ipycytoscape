@@ -160,9 +160,6 @@ class Edge(Element):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    group = Unicode('edges').tag(sync=True)
-
-
 class Node(Element):
     """ Node Widget """
     _model_name = Unicode('NodeModel').tag(sync=True)
@@ -172,7 +169,6 @@ class Node(Element):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    group = Unicode('nodes').tag(sync=True)
     position = MutableDict().tag(sync=True)
     locked = Bool().tag(sync=True)
 
