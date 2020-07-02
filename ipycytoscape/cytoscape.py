@@ -10,7 +10,7 @@ from spectate import mvc
 from traitlets import TraitType, TraitError
 
 from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
-from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
+from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union, CaselessStringEnum
 from ._frontend import module_name, module_version
 
 import networkx as nx
@@ -570,7 +570,7 @@ class CytoscapeWidget(DOMWidget):
     panning_enabled = Bool(True).tag(sync=True)
     user_panning_enabled = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
-    selection_type = Unicode('single').tag(sync=True)
+    selection_type = CaselessStrEnum(['single', 'additive'], default_value='single').tag(sync=True)
     touch_tap_threshold = Integer(8).tag(sync=True)
     desktop_tap_threshold = Integer(4).tag(sync=True)
     autolock = Bool(False).tag(sync=True)
