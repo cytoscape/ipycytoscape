@@ -2,7 +2,7 @@ name: ipycytoscape
 channels:
   - conda-forge
 dependencies:
-  - ipycytoscape=1.0.0
+  - ipycytoscape=1.0.1
   - jupyterlab=2
   - matplotlib-base
   - networkx
