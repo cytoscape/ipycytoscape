@@ -193,7 +193,7 @@ class Graph(Widget):
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
     # dictionary for syncing graph structure
-    _adj = dict()
+    _adj = MutableDict().tag(sync=True)
 
     def add_node(self, node):
         """
