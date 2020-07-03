@@ -482,7 +482,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.cytoscape_obj.autounselectify(this.model.get('auto_unselectify'));
   }
   private _updateLayout() {
-    this.cytoscape_obj.layout(this.model.get('layout'));
+    this.cytoscape_obj.layout(this.model.get('cytoscape_layout')).run();
   }
   private _updateStyle() {
     this.cytoscape_obj.style(this.model.get('cytoscape_style'));
