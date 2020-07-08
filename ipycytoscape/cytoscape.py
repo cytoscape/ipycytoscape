@@ -377,7 +377,7 @@ class Graph(Widget):
             _set_attributes(node_instance, data)
             if 'id' not in data:
                 node_instance.data['id'] = node
-            # self.nodes.append(node_instance)
+            node_list.append(node_instance)
         self.add_nodes(node_list)
 
         edge_list = list()
