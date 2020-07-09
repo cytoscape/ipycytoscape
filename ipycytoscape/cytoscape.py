@@ -376,15 +376,15 @@ class Graph(Widget):
             node_instance = Node()
             _set_attributes(node_instance, data)
             if 'id' not in data:
-                node_instance.data['id'] = node
+                node_instance.data['id'] = str(node)
             node_list.append(node_instance)
         self.add_nodes(node_list)
 
         edge_list = list()
         for source, target, data in g.edges(data=True):
             edge_instance = Edge()
-            edge_instance.data['source'] = source
-            edge_instance.data['target'] = target
+            edge_instance.data['source'] = str(source)
+            edge_instance.data['target'] = str(target)
             _set_attributes(edge_instance, data)
 
             if directed and 'directed' not in edge_instance.classes:
