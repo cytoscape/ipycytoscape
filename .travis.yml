@@ -23,8 +23,8 @@ before_install:
   - conda install -c conda-forge spectate
   - if [[ $TRAVIS_OS_NAME == linux ]]; then conda install -c conda-forge jupyterlab; fi
 install:
-  - pip install -e .
+  - pip install -e .[test]
   - if [[ $TRAVIS_OS_NAME == linux && $PYTHON_VERSION != 2.7 ]]; then jupyter labextension install .; fi
 scripts:
-  # Linter checks
   - npm run lint-check
+  - pytest
