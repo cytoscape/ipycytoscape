@@ -100,8 +100,12 @@ setup_args = dict(
             'pytest>4.6',
             'pytest-cov',
             'nbval',
+            'networkx',
+            'pandas'
         ],
         'examples': [
+            'networkx',
+            'pandas'
             # Any requirements for the examples to run
         ],
         'docs': [
