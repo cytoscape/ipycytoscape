@@ -391,7 +391,7 @@ class Graph(Widget):
                 edge_instance.classes += ' directed '
             # self.edges.append(edge_instance)
             edge_list.append(edge_instance)
-        self.add_edges(edge_list)
+        self.add_edges(edge_list, directed)
 
     def add_graph_from_json(self, json_file, directed=False):
         """
@@ -420,7 +420,7 @@ class Graph(Widget):
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += ' directed '
                 edge_list.append(edge_instance)
-            self.add_edges(edge_list)
+            self.add_edges(edge_list, directed)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
         """
@@ -472,7 +472,7 @@ class Graph(Widget):
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
-        self.add_edges(graph_edges)
+        self.add_edges(graph_edges, directed)
         self.add_nodes(all_nodes)
 
 
