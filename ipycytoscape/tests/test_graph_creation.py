@@ -10,6 +10,18 @@ from ipycytoscape.cytoscape import Graph, Node, Edge
 import networkx as nx
 
 
+def compare_nodes(expected_nodes, actual_nodes):
+    for expected, actual in zip(expected_nodes, actual_nodes):
+        assert expected.data == actual.data
+        assert expected.classes == actual.classes
+        assert expected.position == actual.position
+
+def compare_edges(expected_edges, actual_edges):
+    for expected, actual in zip(expected_edges, actual_edges):
+        assert expected.data == actual.data
+        assert expected.position == actual.position
+        assert expected.classes == actual.classes
+
 class TestNetworkx:
     def test_lonely_nodes(self):
         """
@@ -19,9 +31,9 @@ class TestNetworkx:
         G2 = nx.Graph()
         G2.add_node('unconnected_node')
         G2 = nx.complete_graph(1)
-        undirected = Graph()
-        undirected.add_graph_from_networkx(G1)
-        undirected.add_graph_from_networkx(G2)
+        graph = Graph()
+        graph.add_graph_from_networkx(G1)
+        graph.add_graph_from_networkx(G2)
         expected_nodes = [
             Node(data={'id': '0'}, position={}),
             Node(data={'id': '1'}, position={}),
@@ -42,12 +54,8 @@ class TestNetworkx:
             Edge(data={'source': '2', 'target': '4'}, position={}),
             Edge(data={'source': '3', 'target': '4'}, position={})
         ] 
-        for expected, actual in zip(expected_nodes, undirected.nodes):
-            assert expected.data == actual.data
-            assert expected.position == actual.position
-        for expected, actual in zip(expected_edges, undirected.edges):
-            assert expected.data == actual.data
-            assert expected.position == actual.position
+        compare_edges(expected_nodes, graph.nodes)
+        compare_edges(expected_edges, graph.edges)
 
     def test_classes(self):
         """
@@ -57,8 +65,8 @@ class TestNetworkx:
         G.add_node('separate node 1', classes='class1')
         G.add_node('separate node 2', classes='class2')
         G.add_edge('separate node 1', 'separate node 2')
-        undirected = Graph()
-        undirected.add_graph_from_networkx(G)
+        graph = Graph()
+        graph.add_graph_from_networkx(G)
 
         expected_nodes = [
             Node(classes='class1', data={'id': 'separate node 1'}, position={}),
@@ -68,12 +76,8 @@ class TestNetworkx:
             Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, position={})
         ]
 
-        for expected, actual in zip(expected_nodes, undirected.nodes):
-            assert expected.data == actual.data
-            assert expected.position == actual.position
-        for expected, actual in zip(expected_edges, undirected.edges):
-            assert expected.data == actual.data
-            assert expected.position == actual.position
+        compare_edges(expected_nodes, graph.nodes)
+        compare_edges(expected_edges, graph.edges)
 
     def test_directed(self):
         """
@@ -94,14 +98,8 @@ class TestNetworkx:
             Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, classes = ' directed ', position={})
         ]
 
-        for expected, actual in zip(expected_nodes, graph.nodes):
-            assert expected.data == actual.data
-            assert expected.classes == actual.classes
-            assert expected.position == actual.position
-        for expected, actual in zip(expected_edges, graph.edges):
-            assert expected.data == actual.data
-            assert expected.classes == actual.classes
-            assert expected.position == actual.position
+        compare_edges(expected_nodes, graph.nodes)
+        compare_edges(expected_edges, graph.edges)
     
     def test_custom_node(self):
         class custom_node:
@@ -129,14 +127,8 @@ class TestNetworkx:
             Edge(data={'source': 'Node: node 1', 'target': 'Node: node 2'}, classes = '', position={})
         ]
 
-        for expected, actual in zip(expected_nodes, graph.nodes):
-            assert expected.data == actual.data
-            assert expected.classes == actual.classes
-            assert expected.position == actual.position
-        for expected, actual in zip(expected_edges, graph.edges):
-            assert expected.data == actual.data
-            assert expected.classes == actual.classes
-            assert expected.position == actual.position
+        compare_edges(expected_nodes, graph.nodes)
+        compare_edges(expected_edges, graph.edges)
 
     def test_subclassed_node(self):
         class CustomNode(Node):
@@ -163,7 +155,4 @@ class TestNetworkx:
 
         for expected, actual in zip(expected_nodes, graph.nodes):
             assert expected is actual
-        for expected, actual in zip(expected_edges, graph.edges):
-            assert expected.data == actual.data
-            assert expected.classes == actual.classes
-            assert expected.position == actual.position
+        compare_edges(expected_edges, graph.edges)
