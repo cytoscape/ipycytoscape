@@ -55,9 +55,7 @@ script:
   - |
     if [[ $GROUP == python ]]; then
       EXIT_STATUS=0
-      pushd $(mktemp -d)
-      py.test -l --cov-report xml:$TRAVIS_BUILD_DIR/coverage.xml --cov=ipycytoscape || EXIT_STATUS=$?
-      popd
+      pytest -l --cov-report xml:$TRAVIS_BUILD_DIR/coverage.xml --cov=ipycytoscape || EXIT_STATUS=$?
       (exit $EXIT_STATUS)
     elif [[ $GROUP == js ]]; then
       npm run lint-check
