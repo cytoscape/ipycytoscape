@@ -373,16 +373,31 @@ class Graph(Widget):
         """
         node_list = list()
         for node, data in g.nodes(data=True):
-            node_instance = Node()
-            _set_attributes(node_instance, data)
-            if 'id' not in data:
-                node_instance.data['id'] = str(node)
+            if issubclass(type(node), Node):
+                node_instance = node
+            else:
+                node_instance = Node()
+                _set_attributes(node_instance, data)
+                if 'id' not in data:
+                    node_instance.data['id'] = str(node)
             node_list.append(node_instance)
         self.add_nodes(node_list)
 
         edge_list = list()
         for source, target, data in g.edges(data=True):
+            #print(source)
+            #print(target)
             edge_instance = Edge()
+
+            # if issubclass(type(source), Node):
+            #     edge_instance.data['source'] = source
+            # else:    
+            #     edge_instance.data['source'] = str(source)
+            # if issubclass(type(target), Node):
+            #     edge_instance.data['target'] = target
+            # else:    
+            #     edge_instance.data['target'] = str(target)
+            
             edge_instance.data['source'] = str(source)
             edge_instance.data['target'] = str(target)
             _set_attributes(edge_instance, data)
