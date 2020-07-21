@@ -102,3 +102,68 @@ class TestNetworkx:
             assert expected.data == actual.data
             assert expected.classes == actual.classes
             assert expected.position == actual.position
+    
+    def test_custom_node(self):
+        class custom_node:
+            def __init__(self, name):
+                self.name = name
+                
+            def __str__(self):
+                return "Node: " + str(self.name)
+
+        n1 = custom_node("node 1")
+        n2 = custom_node("node 2")
+                
+        G = nx.Graph()
+        G.add_node(n1)
+        G.add_node(n2)
+        G.add_edge(n1, n2)
+        graph =  Graph()
+        graph.add_graph_from_networkx(G)
+
+        expected_nodes = [
+            Node(classes='', data={'id': 'Node: node 1'}, position={}),
+            Node(classes='', data={'id': 'Node: node 2'}, position={})
+        ]
+        expected_edges = [
+            Edge(data={'source': 'Node: node 1', 'target': 'Node: node 2'}, classes = '', position={})
+        ]
+
+        for expected, actual in zip(expected_nodes, graph.nodes):
+            assert expected.data == actual.data
+            assert expected.classes == actual.classes
+            assert expected.position == actual.position
+        for expected, actual in zip(expected_edges, graph.edges):
+            assert expected.data == actual.data
+            assert expected.classes == actual.classes
+            assert expected.position == actual.position
+
+    def test_subclassed_node(self):
+        class CustomNode(Node):
+            def __init__(self, name, classes='', custom_variable=1234):
+                super().__init__()
+                self.data['id'] = name
+                self.classes = classes
+                self.custom_variable = custom_variable
+        n1 = CustomNode("node 1", classes='class1')
+        n2 = CustomNode("node 2", classes='class2')
+        G = nx.Graph()
+        G.add_node(n1)
+        G.add_node(n2)
+        G.add_edge(n1, n2)
+        graph = Graph()
+        graph.add_graph_from_networkx(G)
+
+        expected_nodes = [
+            n1, n2
+        ]
+        expected_edges = [
+            Edge(data={'source': 'node 1', 'target': 'node 2'}, classes = '', position={})
+        ]
+
+        for expected, actual in zip(expected_nodes, graph.nodes):
+            assert expected is actual
+        for expected, actual in zip(expected_edges, graph.edges):
+            assert expected.data == actual.data
+            assert expected.classes == actual.classes
+            assert expected.position == actual.position
