@@ -21,10 +21,10 @@ before_install:
   - conda create -q -n test-environment python=$PYTHON_VERSION ipywidgets nodejs 
   - source activate test-environment
   - conda install -c conda-forge spectate
-  - if [[ $TRAVIS_OS_NAME == linux ]]; then conda install -c conda-forge jupyterlab; fi
+  - conda install -c conda-forge jupyterlab
 install:
   - pip install -e .[test]
-  - if [[ $TRAVIS_OS_NAME == linux && $PYTHON_VERSION != 2.7 ]]; then jupyter labextension install .; fi
+  - jupyter labextension install
 scripts:
   - npm run lint-check
   - pytest
