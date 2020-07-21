@@ -23,24 +23,24 @@ class TestNetworkx:
         undirected.add_graph_from_networkx(G1)
         undirected.add_graph_from_networkx(G2)
         expected_nodes = [
-            Node(data={'id': 0}, position={}),
-            Node(data={'id': 1}, position={}),
-            Node(data={'id': 2}, position={}),
-            Node(data={'id': 3}, position={}),
-            Node(data={'id': 4}, position={}),
+            Node(data={'id': '0'}, position={}),
+            Node(data={'id': '1'}, position={}),
+            Node(data={'id': '2'}, position={}),
+            Node(data={'id': '3'}, position={}),
+            Node(data={'id': '4'}, position={}),
             Node(data={'id': 'unconnected_node'}, position={})
             ] 
         expected_edges = [
-            Edge(data={'source': 0, 'target': 1}, position={}),
-            Edge(data={'source': 0, 'target': 2}, position={}),
-            Edge(data={'source': 0, 'target': 3}, position={}),
-            Edge(data={'source': 0, 'target': 4}, position={}),
-            Edge(data={'source': 1, 'target': 2}, position={}),
-            Edge(data={'source': 1, 'target': 3}, position={}),
-            Edge(data={'source': 1, 'target': 4}, position={}),
-            Edge(data={'source': 2, 'target': 3}, position={}),
-            Edge(data={'source': 2, 'target': 4}, position={}),
-            Edge(data={'source': 3, 'target': 4}, position={})
+            Edge(data={'source': '0', 'target': '1'}, position={}),
+            Edge(data={'source': '0', 'target': '2'}, position={}),
+            Edge(data={'source': '0', 'target': '3'}, position={}),
+            Edge(data={'source': '0', 'target': '4'}, position={}),
+            Edge(data={'source': '1', 'target': '2'}, position={}),
+            Edge(data={'source': '1', 'target': '3'}, position={}),
+            Edge(data={'source': '1', 'target': '4'}, position={}),
+            Edge(data={'source': '2', 'target': '3'}, position={}),
+            Edge(data={'source': '2', 'target': '4'}, position={}),
+            Edge(data={'source': '3', 'target': '4'}, position={})
         ] 
         for expected, actual in zip(expected_nodes, undirected.nodes):
             assert expected.data == actual.data
