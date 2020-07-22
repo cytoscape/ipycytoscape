@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Mariana Meireles Ian Hunt-Isaak
+# Copyright (c) Mariana Meireles, Ian Hunt-Isaak
 # Distributed under the terms of the Modified BSD License.
 
 import pytest
@@ -41,7 +41,7 @@ class TestNetworkx:
             Node(data={'id': '3'}, position={}),
             Node(data={'id': '4'}, position={}),
             Node(data={'id': 'unconnected_node'}, position={})
-            ] 
+            ]
         expected_edges = [
             Edge(data={'source': '0', 'target': '1'}, position={}),
             Edge(data={'source': '0', 'target': '2'}, position={}),
@@ -53,7 +53,7 @@ class TestNetworkx:
             Edge(data={'source': '2', 'target': '3'}, position={}),
             Edge(data={'source': '2', 'target': '4'}, position={}),
             Edge(data={'source': '3', 'target': '4'}, position={})
-        ] 
+        ]
         compare_edges(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
 
@@ -81,7 +81,7 @@ class TestNetworkx:
 
     def test_directed(self):
         """
-        Check that the ' directed ' class is added approriately
+        Check that the ' directed ' class is added appropriately
         """
         G = nx.Graph()
         G.add_node('separate node 1')
@@ -100,12 +100,12 @@ class TestNetworkx:
 
         compare_edges(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
-    
+
     def test_custom_node(self):
         class custom_node:
             def __init__(self, name):
                 self.name = name
-                
+
             def __str__(self):
                 return "Node: " + str(self.name)
 
