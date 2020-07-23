@@ -97,11 +97,15 @@ setup_args = dict(
     ],
     extras_require = {
         'test': [
-            'pytest>=3.6',
+            'pytest>4.6',
             'pytest-cov',
             'nbval',
+            'networkx',
+            'pandas'
         ],
         'examples': [
+            'networkx',
+            'pandas'
             # Any requirements for the examples to run
         ],
         'docs': [

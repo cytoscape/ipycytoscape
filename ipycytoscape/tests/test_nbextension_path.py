@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Mariana Meireles.
+# Copyright (c) Mariana Meireles, Ian Hunt-Isaak
 # Distributed under the terms of the Modified BSD License.
 
 
