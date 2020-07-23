@@ -15,7 +15,13 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 ## Installation
 
-With `conda`: (recommended)
+With `mamba`:
+
+```
+mamba install -c conda-forge ipycytoscape
+```
+
+With `conda`:
 
 ```
 conda install -c conda-forge ipycytoscape
@@ -91,6 +97,31 @@ npm run watch
 
 #### Python:
 If you make a change to the python code then you need to restart the notebook kernel to have it take effect.
+
+### How to run tests locally
+Install necessary dependencies with mamba:
+
+```
+mamba -c conda-forge install networkx pandas matplotlib nbval pytest
+```
+
+With conda:
+
+```
+conda -c conda-forge install networkx pandas matplotlib nbval pytest
+```
+
+With pip:
+
+```
+pip install networkx pandas matplotlib nbval pytest
+```
+
+And to run it:
+
+```
+pytest
+```
 
 ## License
 
