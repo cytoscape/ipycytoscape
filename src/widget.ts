@@ -410,7 +410,7 @@ export class CytoscapeView extends DOMWidgetView {
       // const monitored = this.model.get('monitored');
       this.listenForUserEvents();
 
-      this.cytoscape_obj.on('click', 'node', (e: any) => {
+      this.cytoscape_obj.on('click', (e: any) => {
         const node = e.target;
         const ref = node.popperRef();
         const dummyDomEle = document.createElement('div');
