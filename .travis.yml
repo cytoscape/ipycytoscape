@@ -39,7 +39,7 @@ install:
     if [[ $GROUP == python ]]; then
       pip install --upgrade ".[test]" -v
     elif [[ $GROUP == js ]]; then
-      pip install --upgrade -e ".[test]" -v
+      pip install --upgrade -e ".[test]"
     elif [[ $GROUP == docs ]]; then
       pip install --upgrade ".[test, examples, docs]" -v
     fi
@@ -59,6 +59,7 @@ script:
       (exit $EXIT_STATUS)
     elif [[ $GROUP == js ]]; then
       npm run lint-check
+      jupyter lab build
     elif [[ $GROUP == docs ]]; then
       EXIT_STATUS=0
       cd docs
