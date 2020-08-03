@@ -85,6 +85,7 @@ you might also need another flag instead of `--sys-prefix`, but we won't cover t
 of those flags here.
 
 ### How to see your changes
+
 #### Typescript: 
 To continuously monitor the project for changes and automatically trigger a rebuild, start Jupyter in watch mode:
 ```bash
@@ -99,25 +100,26 @@ npm run watch
 If you make a change to the python code then you need to restart the notebook kernel to have it take effect.
 
 ### How to run tests locally
-Install necessary dependencies with mamba:
+
+Install necessary dependencies with pip:
+
+```
+pip install -e .[test]
+```
+
+Or with mamba:
 
 ```
 mamba -c conda-forge install networkx pandas matplotlib nbval pytest
 ```
 
-With conda:
+Or with conda:
 
 ```
 conda -c conda-forge install networkx pandas matplotlib nbval pytest
 ```
 
-With pip:
-
-```
-pip install networkx pandas matplotlib nbval pytest
-```
-
-And to run it:
+#### And to run it:
 
 ```
 pytest
