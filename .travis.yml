@@ -41,6 +41,7 @@ install:
     elif [[ $GROUP == js ]]; then
       pip install --upgrade -e ".[test]"
       pip install --upgrade jupyterlab
+      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
     elif [[ $GROUP == docs ]]; then
       pip install --upgrade ".[test, examples, docs]" -v
     fi
