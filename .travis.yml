@@ -61,6 +61,11 @@ script:
     elif [[ $GROUP == js ]]; then
       npm run lint-check
       jupyter lab build
+      jupyter serverextension list 1>serverextensions 2>&1
+      cat serverextensions | grep "jupyter-cytoscape.*OK"
+      jupyter labextension list 1>labextensions 2>&1
+      cat labextensions | grep "jupyter-cytoscape.*OK"
+      python -m jupyterlab.browser_check
     elif [[ $GROUP == docs ]]; then
       EXIT_STATUS=0
       cd docs
