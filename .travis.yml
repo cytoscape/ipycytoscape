@@ -39,7 +39,7 @@ install:
     if [[ $GROUP == python ]]; then
       pip install --upgrade ".[test]" -v
     elif [[ $GROUP == js ]]; then
-      pip install --upgrade -e ".[test]"
+      pip install --upgrade ".[test]"
       pip install --upgrade jupyterlab
       jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
     elif [[ $GROUP == docs ]]; then
