@@ -27,10 +27,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'sphinx.ext.todo',
-    'nbsphinx',
     'jupyter_sphinx.embed_widgets',
-    'nbsphinx_link',
 ]
 
 # Ensure our extension is available:
