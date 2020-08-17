@@ -7,3 +7,5 @@ dependencies:
   - matplotlib-base
   - networkx
   - pandas
+  - traitlets
+  - spectate
