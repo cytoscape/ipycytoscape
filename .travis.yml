@@ -39,7 +39,9 @@ install:
     if [[ $GROUP == python ]]; then
       pip install --upgrade ".[test]" -v
     elif [[ $GROUP == js ]]; then
-      pip install --upgrade -e ".[test]" -v
+      pip install --upgrade ".[test]"
+      pip install --upgrade jupyterlab
+      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
     elif [[ $GROUP == docs ]]; then
       pip install --upgrade ".[test, examples, docs]" -v
     fi
@@ -59,6 +61,12 @@ script:
       (exit $EXIT_STATUS)
     elif [[ $GROUP == js ]]; then
       npm run lint-check
+      jupyter lab build
+      jupyter serverextension list 1>serverextensions 2>&1
+      cat serverextensions | grep "jupyter-cytoscape.*OK"
+      jupyter labextension list 1>labextensions 2>&1
+      cat labextensions | grep "jupyter-cytoscape.*OK"
+      python -m jupyterlab.browser_check
     elif [[ $GROUP == docs ]]; then
       EXIT_STATUS=0
       cd docs
