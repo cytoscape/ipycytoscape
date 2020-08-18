@@ -1,11 +1,8 @@
-
 name: ipycytoscape_docs
 channels:
-  - conda-forge
+ - conda-forge
 dependencies:
-- python=3.5
-- nodejs
-- numpy
-- sphinx
-- nbsphinx
-- jupyter_sphinx
+ - python=3.6
+ - ipycytoscape=1.0.3
+ - sphinx
+ - sphinx_rtd_theme
