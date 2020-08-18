@@ -90,6 +90,7 @@ class TestNetworkx:
         G.add_node('separate node 1')
         G.add_node('separate node 2')
         G.add_edge('separate node 1', 'separate node 2')
+        G.add_edge('separate node 2', 'separate node 1')
         graph = Graph()
         graph.add_graph_from_networkx(G, directed=True)
 
@@ -98,7 +99,8 @@ class TestNetworkx:
             Node(classes='', data={'id': 'separate node 2'}, position={})
             ]
         expected_edges = [
-            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, classes = ' directed ', position={})
+            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, classes = ' directed ', position={}),
+            Edge(data={'source': 'separate node 2', 'target': 'separate node 1'}, classes = ' directed ', position={})
         ]
 
         compare_edges(expected_nodes, graph.nodes)
