@@ -1,30 +1,80 @@
-language: generic
-os:
- - linux
- - osx
+language: python
+python:
+  - 3.8
+  - 3.7
+  - 3.6
+sudo: false
+dist: xenial
+services:
+  - xvfb
 addons:
- chrome: beta
+  apt_packages:
+    - pandoc
 env:
- matrix:
-  - PYTHON_VERSION=3.6
-  - PYTHON_VERSION=3.7
+  matrix:
+    - GROUP=python
+matrix:
+  include:
+    - python: 3.6
+      env: GROUP=js
+  # include:
+  #   - python: 3.6
+  #     env: GROUP=docs
+cache:
+  pip: true
+  directories:
+    - node_modules # NPM packages
+    - $HOME/.npm
 before_install:
-  - if [[ $TRAVIS_OS_NAME == linux ]]; then sudo apt-get update; fi
-  - if [[ $TRAVIS_OS_NAME == linux ]]; then wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; fi
-  - if [[ $TRAVIS_OS_NAME == osx ]]; then wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda info -a
-  - conda create -q -n test-environment python=$PYTHON_VERSION ipywidgets nodejs 
-  - source activate test-environment
-  - conda install -c conda-forge spectate
-  - if [[ $TRAVIS_OS_NAME == linux ]]; then conda install -c conda-forge jupyterlab; fi
+  - pip install -U pip setuptools
+  - nvm install 12
+  - |
+    if [[ $GROUP == python ]]; then
+      pip install codecov
+    elif [[ $GROUP == js ]]; then
+      npm install -g codecov
+    fi
 install:
-  - pip install -e .
-  - if [[ $TRAVIS_OS_NAME == linux && $PYTHON_VERSION != 2.7 ]]; then jupyter labextension install .; fi
-scripts:
-  # Linter checks
-  - npm run lint-check
+  - |
+    if [[ $GROUP == python ]]; then
+      pip install --upgrade ".[test]" -v
+    elif [[ $GROUP == js ]]; then
+      pip install --upgrade ".[test]"
+      pip install --upgrade jupyterlab
+      jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
+    elif [[ $GROUP == docs ]]; then
+      pip install --upgrade ".[test, examples, docs]" -v
+    fi
+before_script:
+  # Set up a virtual screen for Firefox browser testing:
+  - |
+    if [[ $GROUP == js ]]; then
+      export CHROME_BIN=chromium-browser
+    fi
+    git config --global user.email travis@fake.com
+    git config --global user.name "Travis CI"
+script:
+  - |
+    if [[ $GROUP == python ]]; then
+      EXIT_STATUS=0
+      pytest -l --cov-report xml:$TRAVIS_BUILD_DIR/coverage.xml --cov=ipycytoscape || EXIT_STATUS=$?
+      (exit $EXIT_STATUS)
+    elif [[ $GROUP == js ]]; then
+      npm run lint-check
+      jupyter lab build
+      jupyter serverextension list 1>serverextensions 2>&1
+      cat serverextensions | grep "jupyter-cytoscape.*OK"
+      jupyter labextension list 1>labextensions 2>&1
+      cat labextensions | grep "jupyter-cytoscape.*OK"
+      python -m jupyterlab.browser_check
+    elif [[ $GROUP == docs ]]; then
+      EXIT_STATUS=0
+      cd docs
+      make html || EXIT_STATUS=$?
+      make linkcheck || EXIT_STATUS=$?
+      cd ..
+      python -m pytest_check_links --links-ext=.md -o testpaths=. -o addopts= || EXIT_STATUS=$?
+      (exit $EXIT_STATUS)
+    fi
+after_success:
+  - codecov
