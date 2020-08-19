@@ -268,6 +268,7 @@ class Graph(Widget):
         self: cytoscape graph
         edge: cytoscape edge
         directed: boolean
+        multiple_edges: boolean
         """
         source, target = edge.data['source'], edge.data['target']
 
@@ -275,15 +276,17 @@ class Graph(Widget):
             edge.classes += ' directed '
         if multiple_edges and 'multiple_edges' not in edge.classes:
             edge.classes += ' multiple_edges '
-    
-        # logic to add a new edge or not, make this more pretty?
-        new_edge = None
+
+        # If multiple edges are allowed, it's okay to add more edges between the source and target
         if multiple_edges:
             new_edge = True
+        # Check to see if the edge source -> target exists in the graph (don't add it again)
         elif (source in self._adj and target in self._adj[source]):
             new_edge = False
+        # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
         elif (not directed and target in self._adj and source in self._adj[target]):
             new_edge = False
+        # If the edge doesn't exist already
         else:
             new_edge = True
         
@@ -320,21 +323,24 @@ class Graph(Widget):
         self: cytoscape graph
         edges: list of cytoscape edges
         directed: boolean
+        multiple_edges: boolean
         """
         node_list = list()
         edge_list = list()
         for edge in edges:
             source, target = edge.data['source'], edge.data['target']
+            # If multiple edges are allowed, it's okay to add more edges between the source and target
             if multiple_edges:
                 new_edge = True
+            # Check to see if the edge source -> target exists in the graph (don't add it again)
             elif (source in self._adj and target in self._adj[source]):
                 new_edge = False
+            # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
             elif (not directed and target in self._adj and source in self._adj[target]):
                 new_edge = False
+            # If the edge doesn't exist already
             else:
                 new_edge = True
-            # if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
-            #     pass
             if new_edge: # if the edge is not present in the graph
                 edge_list.append(edge)
                 if source not in self._adj:
@@ -359,7 +365,7 @@ class Graph(Widget):
                         self._adj[target][source] += 1
                     else:
                         self._adj[target][source] = 1
-            else:
+            else: # Don't add this edge, already present
                 pass
         self.nodes.extend(node_list)
         self.edges.extend(edge_list)
