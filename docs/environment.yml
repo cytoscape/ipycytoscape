@@ -6,3 +6,4 @@ dependencies:
  - ipycytoscape=1.0.3
  - sphinx
  - sphinx_rtd_theme
+ - sphinx-autobuild
