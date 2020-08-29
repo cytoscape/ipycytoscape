@@ -27,6 +27,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'jupyter_sphinx',
+    'sphinx_copybutton',
 ]
 
 # Ensure our extension is available:

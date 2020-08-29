@@ -4,7 +4,12 @@ ipycytoscape
 
 Version: |release|
 
-A Custom Jupyter Widget Library
+Create and display `Cytoscape.js <https://js.cytoscape.org/>`_ in a Jupyter Notebook. You
+can either create graphs using the ipycytoscape API or create them from:
+
+- `NetworkX <https://networkx.github.io/>`_
+- JSON
+- `Pandas <https://pandas.pydata.org/>`_ Dataframes
 
 
 Quickstart
@@ -18,6 +23,18 @@ or with conda::
 
     conda install ipycytoscape
 
+
+Simple Example
+--------------
+
+.. jupyter-execute::
+
+   from ipycytoscape import CytoscapeWidget
+   import networkx as nx
+   G = nx.complete_graph(5)
+   cyto = CytoscapeWidget()
+   cyto.graph.add_graph_from_networkx(G)
+   display(cyto)
 
 Contents
 --------

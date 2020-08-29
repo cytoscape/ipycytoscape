@@ -7,3 +7,5 @@ dependencies:
  - sphinx
  - sphinx_rtd_theme
  - sphinx-autobuild
+ - jupyter-sphinx>=0.2.4
+ - sphinx-copybutton
