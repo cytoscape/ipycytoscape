@@ -10,6 +10,8 @@ dependencies:
  - jupyter-sphinx>=0.3.1
  - sphinx-copybutton
  - nbsphinx
+ - networkx
+ - pandas
  - pip
  - pip:
     - nbsphinx_link
