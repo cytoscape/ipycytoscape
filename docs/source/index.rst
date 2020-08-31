@@ -1,10 +1,9 @@
-
 ipycytoscape
-=====================================
+============
 
 Version: |release|
 
-Create and display `Cytoscape.js <https://js.cytoscape.org/>`_ in a Jupyter Notebook. You
+Visualize graphs using `Cytoscape.js <https://js.cytoscape.org/>`_ in a Jupyter Notebook. You
 can either create graphs using the ipycytoscape API or create them from:
 
 - `NetworkX <https://networkx.github.io/>`_
@@ -41,7 +40,6 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Installation and usage
 
    installing
 
