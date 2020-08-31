@@ -488,6 +488,7 @@ class Graph(Widget):
                     edge_instance.classes += ' directed '
                 if multiple_edges and 'multiple_edges' not in edge_instance.classes:
                     edge_instance.classes += ' multiple_edges '
+                edge_list.append(edge_instance)
             self.add_edges(edge_list, directed, multiple_edges)
 
     def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False, multiple_edges=False):
