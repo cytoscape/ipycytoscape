@@ -112,8 +112,11 @@ setup_args = dict(
             'sphinx',
             'sphinx_rtd_theme',
             'sphinx-autobuild',
-            'jupyter-sphinx>=0.2.4',
+            'jupyter-sphinx>=0.3.1',
             'sphinx-copybutton',
+            'nbsphinx',
+            'nbsphinx-link'
+
         ]
     },
     entry_points = {

@@ -44,19 +44,35 @@ Contents
    :caption: Installation and usage
 
    installing
-   introduction
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :caption: Graph Creation
 
-   examples/index
+   examples/networkx
+   examples/json
+   examples/pandas
 
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Customization and Styling
+
+   examples/node-text
+   examples/labels
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Advanced Usage
+
+   examples/interaction
 
 .. toctree::
    :maxdepth: 2
    :caption: Development
 
    develop-install
+   contributing
 
 
 .. links

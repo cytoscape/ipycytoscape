@@ -29,6 +29,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'jupyter_sphinx',
     'sphinx_copybutton',
+    'nbsphinx',
+    'nbsphinx_link',
 ]
 
 # Ensure our extension is available:
@@ -47,9 +49,12 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
-
 # The master toctree document.
 master_doc = 'index'
+
+# ensure widget output is not duplicated
+# see https://github.com/spatialaudio/nbsphinx/issues/378
+nbsphinx_widgets_path = ''
 
 # General information about the project.
 project = 'ipycytoscape'
