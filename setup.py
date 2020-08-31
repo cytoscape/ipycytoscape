@@ -94,17 +94,16 @@ setup_args = dict(
     install_requires = [
         'ipywidgets>=7.0.0',
         'spectate>=0.4.1',
+        'networkx',
     ],
     extras_require = {
         'test': [
             'pytest>4.6',
             'pytest-cov',
             'nbval',
-            'networkx',
             'pandas'
         ],
         'examples': [
-            'networkx',
             'pandas'
             # Any requirements for the examples to run
         ],
