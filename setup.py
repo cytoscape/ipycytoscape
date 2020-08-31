@@ -116,7 +116,8 @@ setup_args = dict(
             'sphinx-copybutton',
             'nbsphinx',
             'nbsphinx-link'
-
+            'networkx',
+            'pandas',
         ]
     },
     entry_points = {
