@@ -111,7 +111,7 @@ setup_args = dict(
         'docs': [
             'sphinx',
             'sphinx_rtd_theme',
-            'sphinx-autobuild',
+            'sphinx-autobuild>=2020.9.1',
             'jupyter-sphinx>=0.3.1',
             'sphinx-copybutton',
             'nbsphinx',

@@ -5,13 +5,15 @@ Installation
 ============
 
 
-The simplest way to install ipycytoscape is via pip::
+To get started with ipycytoscape, install with pip::
 
     pip install ipycytoscape
 
-or via conda::
+or with conda/`mamba <https://github.com/TheSnakePit/mamba>`_::
 
-    conda install ipycytoscape
+    conda install -c conda-forge ipycytoscape
+    # or with mamba
+    mamba install -c conda-forge ipycytoscape
 
 
 JupyterLab
