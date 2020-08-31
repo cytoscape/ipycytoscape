@@ -9,7 +9,7 @@ on things you find unclear, and requesting new features, are all super valuable 
 Code Improvements
 -----------------
 
-All development for this library happens on Github at `mpl_interactions <https://github.com/quantstack/ipycytoscape>`_.
+All development for this library happens on Github at `ipycytoscape <https://github.com/quantstack/ipycytoscape>`_.
 
 Seeing your changes
 ^^^^^^^^^^^^^^^^^^^
@@ -24,7 +24,7 @@ If you are working in a Jupyter Notebook, then in order to see your code changes
     %load_ext autoreload
     %autoreload 2
 
-    from mpl_interactions import ....
+    from ipycytoscape import ....
 
 Working with Git
 ^^^^^^^^^^^^^^^^
