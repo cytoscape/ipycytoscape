@@ -418,15 +418,12 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
-        if isinstance(g, nx.MultiDiGraph):
+        # override type infering if directed is provided by the user
+        if isinstance(g, nx.DiGraph) and directed is None:
             directed = True
+        # override type infering if multiple_edges is provided by the user
+        if isinstance(g, nx.MultiGraph) and multiple_edges is None:
             multiple_edges = True
-        if isinstance(g, nx.DiGraph):
-            directed = True
-        if isinstance(g, nx.MultiGraph):
-            multiple_edges = True
-        directed = False if directed is None else directed
-        multiple_edges = False if multiple_edges is None else multiple_edges
     
         node_list = list()
         for node, data in g.nodes(data=True):

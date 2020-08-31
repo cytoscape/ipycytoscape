@@ -57,7 +57,7 @@ class TestNetworkx:
             Edge(data={'source': '2', 'target': '4'}, position={}),
             Edge(data={'source': '3', 'target': '4'}, position={})
         ]
-        compare_edges(expected_nodes, graph.nodes)
+        compare_nodes(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
 
     def test_classes(self):
@@ -79,7 +79,7 @@ class TestNetworkx:
             Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, position={})
         ]
 
-        compare_edges(expected_nodes, graph.nodes)
+        compare_nodes(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
 
     def test_directed(self):
@@ -103,7 +103,100 @@ class TestNetworkx:
             Edge(data={'source': 'separate node 2', 'target': 'separate node 1'}, classes = ' directed ', position={})
         ]
 
-        compare_edges(expected_nodes, graph.nodes)
+        compare_nodes(expected_nodes, graph.nodes)
+        compare_edges(expected_edges, graph.edges)
+    
+    def test_multigraphs(self):
+        '''
+        Test to ensure multigraphs are generated correctly.
+        '''
+        G = nx.MultiGraph()
+        G.add_edge(1, 2,weight=15)
+        G.add_edge(1, 2,weight=15)
+        G.add_edge(1, 2,weight=1)
+        G.add_edge(2, 1,weight=10)
+        G.add_edge(2, 4)
+        graph = Graph()
+        graph.add_graph_from_networkx(G)
+
+        expected_edges = [
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 10}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'}, position={})]
+        
+        expected_nodes = [Node(data={'id': '1'}, position={}),
+                          Node(data={'id': '2'}, position={}),
+                          Node(data={'id': '4'}, position={})]
+        
+        compare_edges(expected_edges, graph.edges)
+        compare_nodes(expected_nodes, graph.nodes)
+
+        graph = Graph()
+        # override default behavior
+        graph.add_graph_from_networkx(G, multiple_edges=False)
+        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+                          Edge(data={'source': '2', 'target': '4'}, position={})]
+
+        compare_edges(expected_edges, graph.edges)
+
+    def test_multidigraphs(self):
+        '''
+        Test to ensure multidigraphs are generated correctly.
+        '''
+        G = nx.MultiDiGraph()
+        G.add_edge(1, 2,weight=15)
+        G.add_edge(1, 2,weight=15)
+        G.add_edge(1, 2,weight=1)
+        G.add_edge(2, 1,weight=10)
+        G.add_edge(2, 4)
+        graph = Graph()
+        graph.add_graph_from_networkx(G)
+
+        expected_edges = [
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}, position={}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '1', 'weight': 10}, position={}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '4'}, position={})]
+        
+        expected_nodes = [Node(data={'id': '1'}, position={}),
+                          Node(data={'id': '2'}, position={}),
+                          Node(data={'id': '4'}, position={})]
+        
+        compare_edges(expected_edges, graph.edges)
+        compare_nodes(expected_nodes, graph.nodes)
+
+        graph = Graph()
+        # override default behavior
+        graph.add_graph_from_networkx(G, multiple_edges=False, directed=False)
+        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+                          Edge(data={'source': '2', 'target': '4'}, position={})]
+
+        compare_edges(expected_edges, graph.edges)
+
+    def test_hybridgraphs(self):
+        '''
+        Test graphs with both directed and undirected edges.
+        '''
+        G = nx.MultiGraph()
+        G.add_edge(1, 2, weight=15)
+        G.add_edge(1, 2, weight=15)
+        G.add_edge(2, 4)
+        graph = Graph()
+        graph.add_graph_from_networkx(G)
+        # a custom directed edge in an undirected networkx multigraph 
+        e = Edge()
+        e.data['source'] = '1'
+        e.data['target'] = '4'
+        graph.add_edge(e, directed=True)
+
+        expected_edges  = [
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
+            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'}, position={}),
+            Edge(classes=' directed ', data={'source': '1', 'target': '4'}, position={})]
         compare_edges(expected_edges, graph.edges)
 
     def test_custom_node(self):
