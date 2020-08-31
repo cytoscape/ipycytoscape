@@ -108,6 +108,16 @@ setup_args = dict(
             'pandas'
             # Any requirements for the examples to run
         ],
+        'docs': [
+            'sphinx',
+            'sphinx_rtd_theme',
+            'sphinx-autobuild>=2020.9.1',
+            'jupyter-sphinx>=0.3.1',
+            'sphinx-copybutton',
+            'nbsphinx',
+            'nbsphinx-link'
+
+        ]
     },
     entry_points = {
     },
