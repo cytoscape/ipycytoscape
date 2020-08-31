@@ -58,8 +58,8 @@ nbsphinx_widgets_path = ''
 
 # General information about the project.
 project = 'ipycytoscape'
-copyright = '2020, Mariana Meireles'
-author = 'Mariana Meireles'
+copyright = '2020, QuantStack and ipycytoscape Contributors'
+author = 'ipyctyoscape Contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
