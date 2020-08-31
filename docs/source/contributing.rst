@@ -54,7 +54,7 @@ Following changes to the source files, you can view recent adjustments by buildi
     cd docs
     make html
 
-If you open the ``index.html`` file in your browser you should now be able to see the rendered documentation.
+If you open the ``build/html/index.html`` file in your browser you should now be able to see the rendered documentation.
 
 Autobuild the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,5 +67,6 @@ Sphinx-autobuild will be installed automatically by the above ``pip`` command, a
     cd docs
     make watch
 
-In a few seconds your web browser should open up the documentation. Now whenever you save a file
-the documentation will automatically regenerate and the webpage will refresh for you!
+In a few seconds your web browser should open up the documentation. Now whenever you save a source ``rst`` file
+the documentation will automatically regenerate and the webpage will refresh for you! However, if you are writing a notebook
+that is included in the documentation via ``nblink`` then you will need to manually rebuild to capture the changes to that file.
