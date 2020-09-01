@@ -114,7 +114,7 @@ setup_args = dict(
             'jupyter-sphinx>=0.3.1',
             'sphinx-copybutton',
             'nbsphinx',
-            'nbsphinx-link'
+            'nbsphinx-link',
             'networkx',
             'pandas',
         ]
