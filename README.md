@@ -1,6 +1,6 @@
 # ipycytoscape
 
-[![Build Status](https://travis-ci.com/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.com/Quantstack/ipycytoscape)[![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.com/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.com/Quantstack/ipycytoscape)[![Documentation Status](https://readthedocs.org/projects/ipycytoscape/badge/?version=latest)](https://ipycytoscape.readthedocs.io/en/latest/?badge=latest) [![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A widget enabling interactive graph visualization with [cytoscape.js](https://js.cytoscape.org/) in JupyterLab and the Jupyter notebook.
 
@@ -15,7 +15,13 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 ## Installation
 
-With `conda`: (recommended)
+With `mamba`:
+
+```
+mamba install -c conda-forge ipycytoscape
+```
+
+With `conda`:
 
 ```
 conda install -c conda-forge ipycytoscape
@@ -79,6 +85,7 @@ you might also need another flag instead of `--sys-prefix`, but we won't cover t
 of those flags here.
 
 ### How to see your changes
+
 #### Typescript: 
 To continuously monitor the project for changes and automatically trigger a rebuild, start Jupyter in watch mode:
 ```bash
@@ -91,6 +98,32 @@ npm run watch
 
 #### Python:
 If you make a change to the python code then you need to restart the notebook kernel to have it take effect.
+
+### How to run tests locally
+
+Install necessary dependencies with pip:
+
+```
+pip install -e .[test]
+```
+
+Or with mamba:
+
+```
+mamba -c conda-forge install networkx pandas matplotlib nbval pytest
+```
+
+Or with conda:
+
+```
+conda -c conda-forge install networkx pandas matplotlib nbval pytest
+```
+
+#### And to run it:
+
+```
+pytest
+```
 
 ## License
 

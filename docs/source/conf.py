@@ -27,9 +27,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'sphinx.ext.todo',
+    'jupyter_sphinx',
+    'sphinx_copybutton',
     'nbsphinx',
-    'jupyter_sphinx.embed_widgets',
     'nbsphinx_link',
 ]
 
@@ -49,14 +49,17 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
-
 # The master toctree document.
 master_doc = 'index'
 
+# ensure widget output is not duplicated
+# see https://github.com/spatialaudio/nbsphinx/issues/378
+nbsphinx_widgets_path = ''
+
 # General information about the project.
 project = 'ipycytoscape'
-copyright = '2020, Mariana Meireles'
-author = 'Mariana Meireles'
+copyright = '2020, QuantStack and ipycytoscape Contributors'
+author = 'ipyctyoscape Contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -199,10 +202,4 @@ nbsphinx_allow_errors = True # exception ipstruct.py ipython_genutils
 
 
 def setup(app):
-    app.setup_extension('jupyter_sphinx.embed_widgets')
-    def add_scripts(app):
-        for fname in ['helper.js', 'embed-bundle.js']:
-            if not os.path.exists(os.path.join(here, '_static', fname)):
-                app.warn('missing javascript file: %s' % fname)
-            app.add_javascript(fname)
-    app.connect('builder-inited', add_scripts)
+    pass

@@ -13,6 +13,7 @@ from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatch
 from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
 from ._frontend import module_name, module_version
 
+import networkx as nx
 """TODO: Remove this after this is somewhat done"""
 import logging
 logger = logging.getLogger()
@@ -259,7 +260,7 @@ class Graph(Widget):
         else:
             raise ValueError(f'{node_id} is not present in the graph.')
 
-    def add_edge(self, edge, directed=False):
+    def add_edge(self, edge, directed=False, multiple_edges=False):
         """
         Appends edge from the end of the list. Equivalent to Python's append method.
         Parameters
@@ -267,12 +268,29 @@ class Graph(Widget):
         self: cytoscape graph
         edge: cytoscape edge
         directed: boolean
+        multiple_edges: boolean
         """
         source, target = edge.data['source'], edge.data['target']
+
+        if directed and 'directed' not in edge.classes:
+            edge.classes += ' directed '
+        if multiple_edges and 'multiple_edges' not in edge.classes:
+            edge.classes += ' multiple_edges '
+
+        # If multiple edges are allowed, it's okay to add more edges between the source and target
+        if multiple_edges:
+            new_edge = True
+        # Check to see if the edge source -> target exists in the graph (don't add it again)
+        elif (source in self._adj and target in self._adj[source]):
+            new_edge = False
+        # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
+        elif (not directed and target in self._adj and source in self._adj[target]):
+            new_edge = False
+        # If the edge doesn't exist already
+        else:
+            new_edge = True
         
-        if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
-            pass
-        else: # if the edge is not present in the graph
+        if new_edge: # if the edge is not present in the graph
             self.edges.append(edge)
             if source not in self._adj:
                 node_instance = Node()
@@ -284,11 +302,20 @@ class Graph(Widget):
                 # setting the id, according to current spec should be only int/str
                 node_instance.data = {'id': target}
                 self.add_node(node_instance)
-            self._adj[source][target] = dict()
+            
+            if multiple_edges and target in self._adj[source]:
+                self._adj[source][target] += 1
+            else:
+                self._adj[source][target] = 1
             if not (directed or edge.classes == 'directed'):
-                self._adj[target][source] = dict()
+                if multiple_edges and source in self._adj[target]:
+                    self._adj[target][source] += 1
+                else:
+                    self._adj[target][source] = 1
+        else: # Don't add a new edge
+            pass
 
-    def add_edges(self, edges, directed=False):
+    def add_edges(self, edges, directed=False, multiple_edges=False):
         """
         Appends edges from the end of the list. Equivalent to Python's extend method.
         Parameters
@@ -296,14 +323,25 @@ class Graph(Widget):
         self: cytoscape graph
         edges: list of cytoscape edges
         directed: boolean
+        multiple_edges: boolean
         """
         node_list = list()
         edge_list = list()
         for edge in edges:
             source, target = edge.data['source'], edge.data['target']
-            if (source in self._adj and target in self._adj[source]) or (not directed and target in self._adj and source in self._adj[target]):
-                pass
-            else: # if the edge is not present in the graph
+            # If multiple edges are allowed, it's okay to add more edges between the source and target
+            if multiple_edges:
+                new_edge = True
+            # Check to see if the edge source -> target exists in the graph (don't add it again)
+            elif (source in self._adj and target in self._adj[source]):
+                new_edge = False
+            # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
+            elif (not directed and target in self._adj and source in self._adj[target]):
+                new_edge = False
+            # If the edge doesn't exist already
+            else:
+                new_edge = True
+            if new_edge: # if the edge is not present in the graph
                 edge_list.append(edge)
                 if source not in self._adj:
                     node_instance = Node()
@@ -317,9 +355,18 @@ class Graph(Widget):
                     node_instance.data = {'id': target}
                     node_list.append(node_instance)
                     self._adj[target] = dict()
-                self._adj[source][target] = dict()
+                
+                if multiple_edges and target in self._adj[source]:
+                    self._adj[source][target] += 1
+                else:
+                    self._adj[source][target] = 1
                 if not (directed or edge.classes == 'directed'):
-                    self._adj[target][source] = dict()
+                    if multiple_edges and source in self._adj[target]:
+                        self._adj[target][source] += 1
+                    else:
+                        self._adj[target][source] = 1
+            else: # Don't add this edge, already present
+                pass
         self.nodes.extend(node_list)
         self.edges.extend(edge_list)
 
@@ -357,7 +404,7 @@ class Graph(Widget):
         else:
             raise ValueError(f"Edge between {source_id} and {target_id} is not present in the graph.")
 
-    def add_graph_from_networkx(self, g, directed=False):
+    def add_graph_from_networkx(self, g, directed=None, multiple_edges=None):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
         Parameters
@@ -371,29 +418,49 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
+        # override type infering if directed is provided by the user
+        if isinstance(g, nx.DiGraph) and directed is None:
+            directed = True
+        # override type infering if multiple_edges is provided by the user
+        if isinstance(g, nx.MultiGraph) and multiple_edges is None:
+            multiple_edges = True
+    
         node_list = list()
         for node, data in g.nodes(data=True):
-            node_instance = Node()
-            _set_attributes(node_instance, data)
-            if 'id' not in data:
-                node_instance.data['id'] = node
+            if issubclass(type(node), Node):
+                node_instance = node
+            else:
+                node_instance = Node()
+                _set_attributes(node_instance, data)
+                if 'id' not in data:
+                    node_instance.data['id'] = str(node)
             node_list.append(node_instance)
         self.add_nodes(node_list)
 
         edge_list = list()
         for source, target, data in g.edges(data=True):
             edge_instance = Edge()
-            edge_instance.data['source'] = source
-            edge_instance.data['target'] = target
+
+            if issubclass(type(source), Node):
+                edge_instance.data['source'] = source.data['id']
+            else:
+                edge_instance.data['source'] = str(source)
+            
+            if issubclass(type(target), Node):
+                edge_instance.data['target'] = target.data['id']
+            else:
+                edge_instance.data['target'] = str(target)
+
             _set_attributes(edge_instance, data)
 
             if directed and 'directed' not in edge_instance.classes:
                 edge_instance.classes += ' directed '
-            # self.edges.append(edge_instance)
+            if multiple_edges and 'multiple_edges' not in edge_instance.classes:
+                edge_instance.classes += ' multiple_edges '
             edge_list.append(edge_instance)
-        self.add_edges(edge_list)
+        self.add_edges(edge_list, directed, multiple_edges)
 
-    def add_graph_from_json(self, json_file, directed=False):
+    def add_graph_from_json(self, json_file, directed=False, multiple_edges=False):
         """
         Converts a JSON Cytoscape graph in to a ipycytoscape graph.
         (This method only allows the conversion from a JSON that's already
@@ -419,10 +486,12 @@ class Graph(Widget):
                 _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
                     edge_instance.classes += ' directed '
+                if multiple_edges and 'multiple_edges' not in edge_instance.classes:
+                    edge_instance.classes += ' multiple_edges '
                 edge_list.append(edge_instance)
-            self.add_edges(edge_list)
+            self.add_edges(edge_list, directed, multiple_edges)
 
-    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False):
+    def add_graph_from_df(self, df, groupby_cols, attribute_list=[], edges=tuple(), directed=False, multiple_edges=False):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
         Parameters
@@ -472,7 +541,7 @@ class Graph(Widget):
 
         # Adds group nodes and regular nodes to the graph object
         all_nodes = list(group_nodes.values()) + graph_nodes
-        self.add_edges(graph_edges)
+        self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
 
@@ -536,6 +605,12 @@ class CytoscapeWidget(DOMWidget):
                                     'curve-style': 'bezier',
                                     'target-arrow-shape': 'triangle',
                                     'target-arrow-color': '#9dbaea',
+                                }
+                            },
+                            {
+                                'selector': 'edge.multiple_edges',
+                                'style': {
+                                    'curve-style': 'bezier',
                                 }
                             }
                         ]).tag(sync=True)

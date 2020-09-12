@@ -1,9 +1,12 @@
-type: sphinx
+version: 2
 python:
-  version: 3.5
-  pip_install: true
-  extra_requirements:
-    - examples
-    - docs
-conda:
-  file: docs/environment.yml
+    version: 3.7
+    install:
+      - method: pip
+        path: .
+        extra_requirements:
+          - docs
+
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+  configuration: docs/source/conf.py
