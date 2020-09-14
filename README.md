@@ -52,7 +52,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 
 While not required, we recommend creating a conda environment to work in:
 ```bash
-conda create -n ipycytoscape -c conda-forge jupyterlab nodejs
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
 conda activate ipycytoscape
 
 # clone repo
