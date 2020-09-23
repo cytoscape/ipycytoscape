@@ -381,7 +381,7 @@ class Graph(Widget):
         try:
             self.edges.remove(edge)
             del self._adj[edge.data['source']][edge.data['target']]
-            if not 'directed' in edge.classes :
+            if not 'directed' in edge.classes:
                  del self._adj[edge.data['target']][edge.data['source']]
         except ValueError:
             raise ValueError(f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph.")
