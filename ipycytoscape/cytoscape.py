@@ -307,7 +307,7 @@ class Graph(Widget):
                 self._adj[source][target] += 1
             else:
                 self._adj[source][target] = 1
-            if not (directed or edge.classes == 'directed'):
+            if not (directed or 'directed' in edge.classes):
                 if multiple_edges and source in self._adj[target]:
                     self._adj[target][source] += 1
                 else:
@@ -360,7 +360,7 @@ class Graph(Widget):
                     self._adj[source][target] += 1
                 else:
                     self._adj[source][target] = 1
-                if not (directed or edge.classes == 'directed'):
+                if not (directed or 'directed' in edge.classes):
                     if multiple_edges and source in self._adj[target]:
                         self._adj[target][source] += 1
                     else:
@@ -381,7 +381,7 @@ class Graph(Widget):
         try:
             self.edges.remove(edge)
             del self._adj[edge.data['source']][edge.data['target']]
-            if not edge.classes == 'directed':
+            if not 'directed' in edge.classes :
                  del self._adj[edge.data['target']][edge.data['source']]
         except ValueError:
             raise ValueError(f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph.")
