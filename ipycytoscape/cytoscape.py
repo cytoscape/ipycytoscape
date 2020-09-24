@@ -454,9 +454,9 @@ class Graph(Widget):
             _set_attributes(edge_instance, data)
 
             if directed and 'directed' not in edge_instance.classes:
-                edge_instance.classes += ' directed '
+                edge_instance.classes.append('directed')
             if multiple_edges and 'multiple_edges' not in edge_instance.classes:
-                edge_instance.classes += ' multiple_edges '
+                edge_instance.classes.append('multiple_edges')
             edge_list.append(edge_instance)
         self.add_edges(edge_list, directed, multiple_edges)
 
@@ -485,9 +485,9 @@ class Graph(Widget):
                 edge_instance = Edge()
                 _set_attributes(edge_instance, edge)
                 if directed and 'directed' not in edge_instance.classes:
-                    edge_instance.classes += ' directed '
+                    edge_instance.classes.append('directed')
                 if multiple_edges and 'multiple_edges' not in edge_instance.classes:
-                    edge_instance.classes += ' multiple_edges '
+                    edge_instance.classes.append('multiple_edges')
                 edge_list.append(edge_instance)
             self.add_edges(edge_list, directed, multiple_edges)
 
@@ -533,9 +533,9 @@ class Graph(Widget):
                                             'name': tip_content}))
 
                 if directed:
-                    classes = 'directed '
+                    classes = ['directed']
                 else:
-                    classes = ''
+                    classes = []
                 graph_edges.append(Edge(data={'id': index, 'source': edges[0],
                                             'target': edges[1], 'classes': classes}))
 
