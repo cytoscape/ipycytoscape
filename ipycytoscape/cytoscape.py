@@ -397,7 +397,7 @@ class Graph(Widget):
         """
         edge_id = -1
         for i, edge in enumerate(self.edges):
-            if (edge.data['source'] == source_id and edge.data['target'] == target_id) or (not edge.classes == 'directed' and edge.data['source'] == target_id and edge.data['target'] == source_id):
+            if (edge.data['source'] == source_id and edge.data['target'] == target_id) or (not 'directed' in edge.classes and edge.data['source'] == target_id and edge.data['target'] == source_id):
                 edge_id = i
         if edge_id != -1:
             self.remove_edge(self.edges[edge_id])
