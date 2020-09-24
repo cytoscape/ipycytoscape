@@ -146,7 +146,7 @@ class Edge(Widget):
     locked = Bool().tag(sync=True)
     grabbed = Bool().tag(sync=True)
     grabbable = Bool().tag(sync=True)
-    classes = Unicode().tag(sync=True)
+    classes = List().tag(sync=True)
 
     data = MutableDict().tag(sync=True)
     position = MutableDict().tag(sync=True)
@@ -273,9 +273,9 @@ class Graph(Widget):
         source, target = edge.data['source'], edge.data['target']
 
         if directed and 'directed' not in edge.classes:
-            edge.classes += ' directed '
+            edge.classes.append('directed')
         if multiple_edges and 'multiple_edges' not in edge.classes:
-            edge.classes += ' multiple_edges '
+            edge.classes.append('multiple_edges')
 
         # If multiple edges are allowed, it's okay to add more edges between the source and target
         if multiple_edges:
