@@ -41,6 +41,8 @@ There is an aditional step if you're using JupyterLab:
 jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
 ```
 
+And make sure you have an updated version of `nodejs` (>13) and Jupyter Lab in your environment.
+
 If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
 the nbextension:
 ```bash
