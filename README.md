@@ -131,11 +131,11 @@ pytest
 
 Install the following dependencies:
 
-`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx nbsphinx_link`
+`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx`
 
 and
 
-`pip install nbsphinx_linkpi`
+`pip install nbsphinx_link`
 
 Go to the docs directory:
 
