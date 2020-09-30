@@ -127,6 +127,24 @@ conda -c conda-forge install networkx pandas matplotlib nbval pytest
 pytest
 ```
 
+### How to build the docs
+
+Install the following dependencies:
+
+`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx nbsphinx_link`
+
+and
+
+`pip install nbsphinx_linkpi`
+
+Go to the docs directory:
+
+`cd docs`
+
+And build them: 
+
+`make html`
+
 ## License
 
 We use a shared copyright model that enables all contributors to maintain the
