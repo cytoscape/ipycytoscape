@@ -10,7 +10,7 @@ from spectate import mvc
 from traitlets import TraitType, TraitError
 
 from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
-from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union, CaselessStringEnum
+from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union, CaselessStrEnum
 from ._frontend import module_name, module_version
 
 import networkx as nx
