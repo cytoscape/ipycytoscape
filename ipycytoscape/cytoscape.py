@@ -146,7 +146,7 @@ class Element(Widget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     removed = Bool().tag(sync=True)
-    # selected = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
     selectable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
     data = MutableDict().tag(sync=True)
@@ -179,6 +179,7 @@ class Node(Element):
     position = MutableDict().tag(sync=True)
     locked = Bool(False).tag(sync=True)
     grabbable = Bool(True).tag(sync=True)
+    grabbed = Bool(False).tag(sync=True)
     pannable = Bool(False).tag(sync=True)
 
     _cyto_attrs = ['position', 'locked', 'grabbable']

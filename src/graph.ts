@@ -151,6 +151,11 @@ export class ElementView extends WidgetView {
         ? this.elem.selectify()
         : this.elem.unselectify();
     });
+    this.model.on('change:selected', () => {
+      this.model.get('selected')
+        ? this.elem.selectify()
+        : this.elem.unselectify();
+    });
   }
 
   valueChanged() {

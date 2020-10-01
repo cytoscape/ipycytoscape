@@ -355,22 +355,56 @@ export class CytoscapeView extends DOMWidgetView {
     }
   }
 
-  addNodeModel(NodeModel: NodeModel) {
-    this.cytoscape_obj.add(NodeModel.asCyObj());
-    return this.create_child_view(NodeModel, {
+  /**
+   * Add the listeners for traits that are common to nodes and edges
+   * @param ElementModel
+   */
+  _addElementListeners(
+    ele: cytoscape.CollectionReturnValue,
+    view: DOMWidgetView
+  ) {
+    ele.on('select', (event) => {
+      view.model.set('selected', true);
+      view.model.save_changes();
+    });
+    ele.on('unselect', (event) => {
+      view.model.set('selected', false);
+      view.model.save_changes();
+    });
+    ele.on('remove', (event) => {
+      view.model.set('removed', true);
+      view.model.save_changes();
+    });
+  }
+
+  async addNodeModel(NodeModel: NodeModel) {
+    const node = this.cytoscape_obj.add(NodeModel.asCyObj());
+    const child = await this.create_child_view(NodeModel, {
       cytoscapeView: this,
     });
+    this._addElementListeners(node, child);
+    node.on('grab', (event) => {
+      child.model.set('grabbed', true);
+      child.model.save_changes();
+    });
+    node.on('free', (event) => {
+      child.model.set('grabbed', false);
+      child.model.save_changes();
+    });
+    return child;
   }
 
   removeNodeView(nodeView: any) {
     nodeView.remove();
   }
 
-  addEdgeModel(EdgeModel: EdgeModel) {
-    this.cytoscape_obj.add(EdgeModel.asCyObj());
-    return this.create_child_view(EdgeModel, {
+  async addEdgeModel(EdgeModel: EdgeModel) {
+    const edge = this.cytoscape_obj.add(EdgeModel.asCyObj());
+    const child = await this.create_child_view(EdgeModel, {
       cytoscapeView: this,
     });
+    this._addElementListeners(edge, child);
+    return child;
   }
 
   removeEdgeView(edgeView: any) {
