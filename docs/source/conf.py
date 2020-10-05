@@ -27,6 +27,10 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'jupyter_sphinx',
+    'sphinx_copybutton',
+    'nbsphinx',
+    'nbsphinx_link',
 ]
 
 # Ensure our extension is available:
@@ -45,14 +49,17 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
-
 # The master toctree document.
 master_doc = 'index'
 
+# ensure widget output is not duplicated
+# see https://github.com/spatialaudio/nbsphinx/issues/378
+nbsphinx_widgets_path = ''
+
 # General information about the project.
 project = 'ipycytoscape'
-copyright = '2020, Mariana Meireles'
-author = 'Mariana Meireles'
+copyright = '2020, QuantStack and ipycytoscape Contributors'
+author = 'ipyctyoscape Contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

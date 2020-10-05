@@ -4,8 +4,12 @@ channels:
 dependencies:
   - ipycytoscape>=1.0.3
   - jupyterlab=2
-  - matplotlib-base
+  - nodejs
   - networkx
   - pandas
-  - traitlets
-  - spectate
+  - sphinx
+  - sphinx-copybutton
+  - jupyter_sphinx
+  - sphinx_rtd_theme
+  - nbsphinx
+  - nbsphinx-link

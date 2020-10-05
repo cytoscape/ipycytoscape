@@ -94,20 +94,30 @@ setup_args = dict(
     install_requires = [
         'ipywidgets>=7.0.0',
         'spectate>=0.4.1',
+        'networkx',
     ],
     extras_require = {
         'test': [
             'pytest>4.6',
             'pytest-cov',
             'nbval',
-            'networkx',
             'pandas'
         ],
         'examples': [
-            'networkx',
             'pandas'
             # Any requirements for the examples to run
         ],
+        'docs': [
+            'sphinx',
+            'sphinx_rtd_theme',
+            'sphinx-autobuild>=2020.9.1',
+            'jupyter-sphinx>=0.3.1',
+            'sphinx-copybutton',
+            'nbsphinx',
+            'nbsphinx-link',
+            'networkx',
+            'pandas',
+        ]
     },
     entry_points = {
     },

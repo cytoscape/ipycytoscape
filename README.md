@@ -1,6 +1,6 @@
 # ipycytoscape
 
-[![Build Status](https://travis-ci.com/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.com/Quantstack/ipycytoscape)[![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.com/Quantstack/ipycytoscape.svg?branch=master)](https://travis-ci.com/Quantstack/ipycytoscape) [![Documentation Status](https://readthedocs.org/projects/ipycytoscape/badge/?version=latest)](https://ipycytoscape.readthedocs.io/en/latest/?badge=latest) [![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A widget enabling interactive graph visualization with [cytoscape.js](https://js.cytoscape.org/) in JupyterLab and the Jupyter notebook.
 
@@ -41,6 +41,8 @@ There is an aditional step if you're using JupyterLab:
 jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
 ```
 
+And make sure you have an updated version of `nodejs` (>13) and Jupyter Lab in your environment.
+
 If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
 the nbextension:
 ```bash
@@ -52,7 +54,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 
 While not required, we recommend creating a conda environment to work in:
 ```bash
-conda create -n ipycytoscape -c conda-forge jupyterlab nodejs
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
 conda activate ipycytoscape
 
 # clone repo
@@ -124,6 +126,24 @@ conda -c conda-forge install networkx pandas matplotlib nbval pytest
 ```
 pytest
 ```
+
+### How to build the docs
+
+Install the following dependencies:
+
+`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx`
+
+and
+
+`pip install nbsphinx_link`
+
+Go to the docs directory:
+
+`cd docs`
+
+And build them: 
+
+`make html`
 
 ## License
 

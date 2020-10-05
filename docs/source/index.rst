@@ -1,10 +1,14 @@
-
 ipycytoscape
-=====================================
+============
 
 Version: |release|
 
-A Custom Jupyter Widget Library
+Visualize graphs using `Cytoscape.js <https://js.cytoscape.org/>`_ in a Jupyter Notebook. You
+can either create graphs using the ipycytoscape API or create them from:
+
+- `NetworkX <https://networkx.github.io/>`_
+- JSON
+- `Pandas <https://pandas.pydata.org/>`_ Dataframes
 
 
 Quickstart
@@ -14,32 +18,61 @@ To get started with ipycytoscape, install with pip::
 
     pip install ipycytoscape
 
-or with conda::
+or with conda/`mamba <https://github.com/TheSnakePit/mamba>`_::
 
-    conda install ipycytoscape
+    conda install -c conda-forge ipycytoscape
+    # or with mamba
+    mamba install -c conda-forge ipycytoscape
 
+
+Simple Example
+--------------
+
+.. jupyter-execute::
+
+   from ipycytoscape import CytoscapeWidget
+   import networkx as nx
+   G = nx.complete_graph(5)
+   cyto = CytoscapeWidget()
+   cyto.graph.add_graph_from_networkx(G)
+   display(cyto)
 
 Contents
 --------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Installation and usage
 
    installing
-   introduction
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :caption: Graph Creation
 
-   examples/index
+   examples/networkx
+   examples/json
+   examples/pandas
 
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Customization and Styling
+
+   examples/node-text
+   examples/labels
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Advanced Usage
+
+   examples/interaction
 
 .. toctree::
    :maxdepth: 2
    :caption: Development
 
    develop-install
+   contributing
 
 
 .. links
