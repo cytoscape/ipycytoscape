@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 version: 2
 python:
     version: 3.7
@@ -10,3 +11,11 @@ python:
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/source/conf.py
+=======
+conda:
+  file: docs/environment.yml
+
+conda:
+  environment: docs/doc_environmnent.yml
+
+>>>>>>> Stashed changes
