@@ -1,0 +1,13 @@
+name: ipycytoscape_docs
+channels:
+ - conda-forge
+dependencies:
+ - python=3.6
+ - ipycytoscape=1.0.3
+ - nbsphinx-link
+ - sphinx
+ - sphinx-copybutton
+ - jupyter_sphinx
+ - sphinx_rtd_theme
+ - nbsphinx
+ - nbsphinx-link
