@@ -129,17 +129,11 @@ pytest
 
 ### How to build the docs
 
-Install the following dependencies:
-
-`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx`
-
-and
-
-`pip install nbsphinx_link`
-
-Go to the docs directory:
-
 `cd docs`
+
+Install dependencies:
+
+`conda env update --file doc_environment.yml`
 
 And build them: 
 
