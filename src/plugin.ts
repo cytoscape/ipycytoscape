@@ -10,21 +10,23 @@ import { Widget } from '@phosphor/widgets';
 
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
 
+import * as widgetExports from './widget';
+
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
 const EXTENSION_ID = 'jupyter-cytoscape:plugin';
 
 /**
- * The example plugin.
+ * The ipycytoscape plugin.
  */
-const examplePlugin: IPlugin<Application<Widget>, void> = {
+const ipycytoscapePlugin: IPlugin<Application<Widget>, void> = {
   id: EXTENSION_ID,
   requires: [IJupyterWidgetRegistry as any],
   activate: activateWidgetExtension,
   autoStart: true,
 };
 
-export default examplePlugin;
+export default ipycytoscapePlugin;
 
 /**
  * Activate the widget extension.
@@ -36,8 +38,6 @@ function activateWidgetExtension(
   registry.registerWidget({
     name: MODULE_NAME,
     version: MODULE_VERSION,
-
-    exports: async () =>
-      await import(/* webpackChunkName: "jupyter-cytoscape" */ './index'),
+    exports: widgetExports,
   });
 }
