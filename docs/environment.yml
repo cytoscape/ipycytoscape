@@ -2,6 +2,7 @@ name: ipycytoscape
 channels:
   - conda-forge
 dependencies:
+  - python=3.7
   - ipycytoscape>=1.0.3
   - jupyterlab=2
   - nodejs
