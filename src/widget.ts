@@ -167,7 +167,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this._updateLayout, this);
     this.model.on('change:cytoscape_style', this._updateStyle, this);
     this.model.on('change:elements', this.value_changed, this);
-    this.model.on('change:@param ElementModel', this.value_changed, this);
+    this.model.on('change:pixel_ratio', this.value_changed, this);
     this.model.on(
       'change:_interaction_handlers',
       this.listenForUserEvents,
