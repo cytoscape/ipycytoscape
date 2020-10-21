@@ -167,7 +167,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on('change:cytoscape_layout', this._updateLayout, this);
     this.model.on('change:cytoscape_style', this._updateStyle, this);
     this.model.on('change:elements', this.value_changed, this);
-    this.model.on('change:pixel_ratio', this.value_changed, this);
+    this.model.on('change:@param ElementModel', this.value_changed, this);
     this.model.on(
       'change:_interaction_handlers',
       this.listenForUserEvents,
@@ -190,16 +190,13 @@ export class CytoscapeView extends DOMWidgetView {
   }
 
   private _updateViewLists() {
-    // should consider what happens with layouting here.
-    // Should the entire graph go through layouting again?
-    // Should we lock all the original nodes and then layout so only the new ones move?
-    // basically the question is: is it worth maintaining the extant positions
     this.nodeViews.update(this.model.get('graph').get('nodes'));
     this.edgeViews.update(this.model.get('graph').get('edges'));
     this.cytoscape_obj
       .elements()
       .layout(this.model.get('cytoscape_layout'))
       .run();
+    console.log('whole cytoscape relayout');
   }
 
   listenForUserEvents() {
@@ -357,7 +354,6 @@ export class CytoscapeView extends DOMWidgetView {
 
   /**
    * Add the listeners for traits that are common to nodes and edges
-   * @param ElementModel
    */
   _addElementListeners(
     ele: cytoscape.CollectionReturnValue,
