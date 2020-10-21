@@ -22,7 +22,6 @@ def compare_nodes(expected_nodes, actual_nodes):
 def compare_edges(expected_edges, actual_edges):
     for expected, actual in zip(expected_edges, actual_edges):
         assert expected.data == actual.data
-        assert expected.position == actual.position
         assert expected.classes == actual.classes
 
 class TestNetworkx:
@@ -46,16 +45,16 @@ class TestNetworkx:
             Node(data={'id': 'unconnected_node'}, position={})
             ]
         expected_edges = [
-            Edge(data={'source': '0', 'target': '1'}, position={}),
-            Edge(data={'source': '0', 'target': '2'}, position={}),
-            Edge(data={'source': '0', 'target': '3'}, position={}),
-            Edge(data={'source': '0', 'target': '4'}, position={}),
-            Edge(data={'source': '1', 'target': '2'}, position={}),
-            Edge(data={'source': '1', 'target': '3'}, position={}),
-            Edge(data={'source': '1', 'target': '4'}, position={}),
-            Edge(data={'source': '2', 'target': '3'}, position={}),
-            Edge(data={'source': '2', 'target': '4'}, position={}),
-            Edge(data={'source': '3', 'target': '4'}, position={})
+            Edge(data={'source': '0', 'target': '1'}),
+            Edge(data={'source': '0', 'target': '2'}),
+            Edge(data={'source': '0', 'target': '3'}),
+            Edge(data={'source': '0', 'target': '4'}),
+            Edge(data={'source': '1', 'target': '2'}),
+            Edge(data={'source': '1', 'target': '3'}),
+            Edge(data={'source': '1', 'target': '4'}),
+            Edge(data={'source': '2', 'target': '3'}),
+            Edge(data={'source': '2', 'target': '4'}),
+            Edge(data={'source': '3', 'target': '4'})
         ]
         compare_nodes(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
@@ -72,11 +71,11 @@ class TestNetworkx:
         graph.add_graph_from_networkx(G)
 
         expected_nodes = [
-            Node(classes='class1', data={'id': 'separate node 1'}, position={}),
-            Node(classes='class2', data={'id': 'separate node 2'}, position={})
+            Node(classes='class1', data={'id': 'separate node 1'}),
+            Node(classes='class2', data={'id': 'separate node 2'})
             ]
         expected_edges = [
-            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, position={})
+            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'})
         ]
 
         compare_nodes(expected_nodes, graph.nodes)
@@ -99,8 +98,8 @@ class TestNetworkx:
             Node(classes='', data={'id': 'separate node 2'}, position={})
             ]
         expected_edges = [
-            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, classes = ' directed ', position={}),
-            Edge(data={'source': 'separate node 2', 'target': 'separate node 1'}, classes = ' directed ', position={})
+            Edge(data={'source': 'separate node 1', 'target': 'separate node 2'}, classes = ' directed '),
+            Edge(data={'source': 'separate node 2', 'target': 'separate node 1'}, classes = ' directed ')
         ]
 
         compare_nodes(expected_nodes, graph.nodes)
@@ -120,11 +119,11 @@ class TestNetworkx:
         graph.add_graph_from_networkx(G)
 
         expected_edges = [
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 10}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'}, position={})]
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 10}),
+            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'})]
         
         expected_nodes = [Node(data={'id': '1'}, position={}),
                           Node(data={'id': '2'}, position={}),
@@ -136,8 +135,8 @@ class TestNetworkx:
         graph = Graph()
         # override default behavior
         graph.add_graph_from_networkx(G, multiple_edges=False)
-        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-                          Edge(data={'source': '2', 'target': '4'}, position={})]
+        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}),
+                          Edge(data={'source': '2', 'target': '4'})]
 
         compare_edges(expected_edges, graph.edges)
 
@@ -155,11 +154,11 @@ class TestNetworkx:
         graph.add_graph_from_networkx(G)
 
         expected_edges = [
-            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}, position={}),
-            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '1', 'weight': 10}, position={}),
-            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '4'}, position={})]
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '1', 'target': '2', 'weight': 1}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '1', 'weight': 10}),
+            Edge(classes=' directed  multiple_edges ', data={'source': '2', 'target': '4'})]
         
         expected_nodes = [Node(data={'id': '1'}, position={}),
                           Node(data={'id': '2'}, position={}),
@@ -171,8 +170,8 @@ class TestNetworkx:
         graph = Graph()
         # override default behavior
         graph.add_graph_from_networkx(G, multiple_edges=False, directed=False)
-        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-                          Edge(data={'source': '2', 'target': '4'}, position={})]
+        expected_edges = [Edge(data={'source': '1', 'target': '2', 'weight': 15}),
+                          Edge(data={'source': '2', 'target': '4'})]
 
         compare_edges(expected_edges, graph.edges)
 
@@ -193,10 +192,10 @@ class TestNetworkx:
         graph.add_edge(e, directed=True)
 
         expected_edges  = [
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}, position={}),
-            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'}, position={}),
-            Edge(classes=' directed ', data={'source': '1', 'target': '4'}, position={})]
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' multiple_edges ', data={'source': '1', 'target': '2', 'weight': 15}),
+            Edge(classes=' multiple_edges ', data={'source': '2', 'target': '4'}),
+            Edge(classes=' directed ', data={'source': '1', 'target': '4'})]
         compare_edges(expected_edges, graph.edges)
 
     def test_custom_node(self):
@@ -222,7 +221,7 @@ class TestNetworkx:
             Node(classes='', data={'id': 'Node: node 2'}, position={})
         ]
         expected_edges = [
-            Edge(data={'source': 'Node: node 1', 'target': 'Node: node 2'}, classes = '', position={})
+            Edge(data={'source': 'Node: node 1', 'target': 'Node: node 2'}, classes = '')
         ]
 
         compare_edges(expected_nodes, graph.nodes)
@@ -248,7 +247,7 @@ class TestNetworkx:
             n1, n2
         ]
         expected_edges = [
-            Edge(data={'source': 'node 1', 'target': 'node 2'}, classes = '', position={})
+            Edge(data={'source': 'node 1', 'target': 'node 2'}, classes = '')
         ]
 
         for expected, actual in zip(expected_nodes, graph.nodes):

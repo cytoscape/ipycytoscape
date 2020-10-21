@@ -13,7 +13,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2015"
+    "target": "es2015",
+    "strictPropertyInitialization": false,
   },
   "include": [
     "src/**/*.ts"

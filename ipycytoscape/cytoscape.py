@@ -10,7 +10,7 @@ from spectate import mvc
 from traitlets import TraitType, TraitError
 
 from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
-from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union
+from traitlets import Unicode, Bool, CFloat, Integer, Instance, Dict, List, Union, CaselessStrEnum
 from ._frontend import module_name, module_version
 
 import networkx as nx
@@ -18,6 +18,15 @@ import networkx as nx
 import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
+
+__all__ = [
+    'MONITORED_USER_TYPES',
+    'MONITORED_USER_INTERACTIONS',
+    'Node',
+    'Edge',
+    'Graph',
+    'CytoscapeWidget'
+]
 
 
 MONITORED_USER_TYPES = (
@@ -78,12 +87,11 @@ class CytoInteractionDict(Dict):
                         for v in value.values())):
                 return retval
         except (AttributeError, TypeError):
-            pass
-        msg = (
-            'The %s trait of %s instance must %s, but a value of %s was '
-            'specified.'
-        ) % (self.name, type(obj).__name__, self.info_text, value)
-        raise TraitError(msg)
+            msg = (
+                'The %s trait of %s instance must %s, but a value of %s was '
+                'specified.'
+            ) % (self.name, type(obj).__name__, self.info_text, value)
+            raise TraitError(msg)
 
 
 def _interaction_handlers_to_json(pydt, _widget):
@@ -93,7 +101,6 @@ def _interaction_handlers_to_json(pydt, _widget):
 def _interaction_handlers_from_json(js, widget):
     raise ValueError('Do not set ``_interaction_handlers`` from the client. '
                      'Widget %s received JSON: %s' % (widget, js))
-    #return {wt: {et: self[wt][et] for et in ets} for wt, ets in js.items()}
 
 
 interaction_serialization = {
@@ -130,7 +137,23 @@ class MutableList(Mutable):
     """A mutable list trait"""
     _model_type = mvc.List
 
-class Edge(Widget):
+class Element(Widget):
+    _model_name = Unicode('ElementModel').tag(sync=True)
+    _model_module = Unicode(module_name).tag(sync=True)
+    _model_module_version = Unicode(module_version).tag(sync=True)
+    _view_name = Unicode('ElementView').tag(sync=True)
+    _view_module = Unicode(module_name).tag(sync=True)
+    _view_module_version = Unicode(module_version).tag(sync=True)
+
+    removed = Bool().tag(sync=True)
+    selected = Bool().tag(sync=True)
+    selectable = Bool().tag(sync=True)
+    classes = Unicode().tag(sync=True)
+    data = MutableDict().tag(sync=True)
+    pannable = Bool().tag(sync=True)
+    _base_cyto_attrs = ['removed', 'selected', 'selectable', 'classes', 'data', 'pannable']
+
+class Edge(Element):
     """ Edge Widget """
     _model_name = Unicode('EdgeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -139,20 +162,12 @@ class Edge(Widget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    group = Unicode().tag(sync=True)
-    removed = Bool().tag(sync=True)
-    selected = Bool().tag(sync=True)
-    selectable = Bool().tag(sync=True)
-    locked = Bool().tag(sync=True)
-    grabbed = Bool().tag(sync=True)
-    grabbable = Bool().tag(sync=True)
-    classes = Unicode().tag(sync=True)
+    pannable = Bool(True).tag(sync=True)
 
-    data = MutableDict().tag(sync=True)
-    position = MutableDict().tag(sync=True)
+    # currently we don't sync anything for edges outside of the base Element
+    _cyto_attrs = []
 
-
-class Node(Widget):
+class Node(Element):
     """ Node Widget """
     _model_name = Unicode('NodeModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -161,22 +176,16 @@ class Node(Widget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    group = Unicode().tag(sync=True)
-    removed = Bool().tag(sync=True)
-    selected = Bool().tag(sync=True)
-    selectable = Bool().tag(sync=True)
-    locked = Bool().tag(sync=True)
-    grabbed = Bool().tag(sync=True)
-    grabbable = Bool().tag(sync=True)
-    classes = Unicode().tag(sync=True)
-
-    data = MutableDict().tag(sync=True)
     position = MutableDict().tag(sync=True)
+    locked = Bool(False).tag(sync=True)
+    grabbable = Bool(True).tag(sync=True)
+    grabbed = Bool(False).tag(sync=True)
+    pannable = Bool(False).tag(sync=True)
 
+    _cyto_attrs = ['position', 'locked', 'grabbable']
 
 def _set_attributes(instance, data):
-    cyto_attrs = ['group', 'removed', 'selected', 'selectable',
-                    'locked', 'grabbed', 'grabbable', 'classes', 'position', 'data']
+    cyto_attrs = instance._cyto_attrs + instance._base_cyto_attrs
     for k, v in data.items():
         if k in cyto_attrs:
             setattr(instance, k, v)
@@ -562,7 +571,7 @@ class CytoscapeWidget(DOMWidget):
     panning_enabled = Bool(True).tag(sync=True)
     user_panning_enabled = Bool(True).tag(sync=True)
     box_selection_enabled = Bool(False).tag(sync=True)
-    selection_type = Unicode('single').tag(sync=True)
+    selection_type = CaselessStrEnum(['single', 'additive'], default_value='single').tag(sync=True)
     touch_tap_threshold = Integer(8).tag(sync=True)
     desktop_tap_threshold = Integer(4).tag(sync=True)
     autolock = Bool(False).tag(sync=True)
@@ -723,6 +732,13 @@ class CytoscapeWidget(DOMWidget):
         Gets the layout of the current object.
         """
         return self.cytoscape_layout
+    
+    def relayout(self):
+        """
+        Cause the graph run the layout algorithm again. 
+        https://js.cytoscape.org/#cy.layout
+        """
+        self.send({'name': 'layout'})
 
     def set_style(self, style):
         """

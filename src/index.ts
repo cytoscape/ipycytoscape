@@ -5,4 +5,5 @@
 // The full license is in the file LICENSE, distributed with this software.
 
 export * from './version';
+export * from './graph';
 export * from './widget';
