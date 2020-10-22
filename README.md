@@ -86,6 +86,20 @@ the `install` command every time that you rebuild your extension. For certain in
 you might also need another flag instead of `--sys-prefix`, but we won't cover the meaning
 of those flags here.
 
+You need to install and build `npm` packages:
+
+```
+npm install && npm build
+```
+
+Every time you change your typescript code it's necessary to build it again:
+
+```
+npm build
+```
+
+It's possible to see your changes in real time, more about it in the [How to see your changes](https://github.com/QuantStack/ipycytoscape#how-to-see-your-changes) session.
+
 ### How to see your changes
 
 #### Typescript: 
