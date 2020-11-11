@@ -351,7 +351,7 @@ class Graph(Widget):
                 self._adj[source][target] += 1
             else:
                 self._adj[source][target] = 1
-            if not (directed or edge.classes == "directed"):
+            if not (directed or "directed" in edge.classes):
                 if multiple_edges and source in self._adj[target]:
                     self._adj[target][source] += 1
                 else:
@@ -404,7 +404,7 @@ class Graph(Widget):
                     self._adj[source][target] += 1
                 else:
                     self._adj[source][target] = 1
-                if not (directed or edge.classes == "directed"):
+                if not (directed or "directed" in edge.classes):
                     if multiple_edges and source in self._adj[target]:
                         self._adj[target][source] += 1
                     else:
@@ -425,7 +425,7 @@ class Graph(Widget):
         try:
             self.edges.remove(edge)
             del self._adj[edge.data["source"]][edge.data["target"]]
-            if not edge.classes == "directed":
+            if "directed" not in edge.classes:
                 del self._adj[edge.data["target"]][edge.data["source"]]
         except ValueError:
             raise ValueError(
@@ -446,7 +446,7 @@ class Graph(Widget):
             if (
                 edge.data["source"] == source_id and edge.data["target"] == target_id
             ) or (
-                not edge.classes == "directed"
+                "directed" not in edge.classes
                 and edge.data["source"] == target_id
                 and edge.data["target"] == source_id
             ):
