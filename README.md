@@ -89,13 +89,13 @@ of those flags here.
 You need to install and build `npm` packages:
 
 ```
-npm install && npm build
+npm install && npm run build
 ```
 
 Every time you change your typescript code it's necessary to build it again:
 
 ```
-npm build
+npm run build
 ```
 
 It's possible to see your changes in real time, more about it in the [How to see your changes](https://github.com/QuantStack/ipycytoscape#how-to-see-your-changes) session.
