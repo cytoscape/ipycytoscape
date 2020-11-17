@@ -1,6 +1,6 @@
 {
   "name": "jupyter-cytoscape",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Cytoscape Jupyter Widget",
   "keywords": [
     "jupyter",
