@@ -8,9 +8,9 @@
 def _jupyter_nbextension_paths():
     return [
         {
-            'section': 'notebook',
-            'src': 'nbextension/static',
-            'dest': 'jupyter-cytoscape',
-            'require': 'jupyter-cytoscape/extension',
+            "section": "notebook",
+            "src": "nbextension/static",
+            "dest": "jupyter-cytoscape",
+            "require": "jupyter-cytoscape/extension",
         }
     ]
