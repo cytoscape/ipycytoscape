@@ -2,4 +2,6 @@
   background-color: white;
   height: 400px;
   width: 100%;
+  resize: both;
+  border: 1px dashed #ccc;
 }
