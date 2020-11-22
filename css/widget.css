@@ -3,5 +3,8 @@
   height: 400px;
   width: 100%;
   resize: both;
-  border: 1px dashed #ccc;
+}
+
+.custom-widget:hover {
+    border: 1px dashed #ccc;
 }
