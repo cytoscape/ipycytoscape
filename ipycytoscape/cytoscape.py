@@ -357,6 +357,37 @@ class Graph(Widget):
         else:
             raise ValueError(f"Edge between {source_id} and {target_id} is not present in the graph.")
 
+            
+    def add_class_to_node_by_id(self,node_id,classes_to_add):
+        """
+        __by Jose Ferro__ -> line to be deleted
+        Add a class to a node. equivalent to append to a set of classes.
+        Parameters
+        ----------
+        self: cytoscape graph
+        node: cytoscape node
+        classes_to_add: a single string or a list of strings
+        """
+
+        # check if node_id exists.
+        if node_id not in graph._adj:
+            raise ValueError(f'You can not add classes to {node_id} because is not present in the graph ')
+
+        if type(classes_to_add) == type('string'):
+            classes_to_add = [classes_to_add]
+        
+        classes_to_add = [theclass.strip() for theclass in classes_to_add]
+        
+        for node in self.nodes:
+            if node.data['id'] == node_id:
+                current_classes = node.data['classes']
+                print(current_classes)
+                new_classes_set = set(current_classes.split(' ') + classes_to_add)
+                print(new_classes_set)
+                new_classes_string = ' '.join(new_classes_set)
+                node.data['classes'] = new_classes_string
+                break
+
     def add_graph_from_networkx(self, g, directed=False):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
