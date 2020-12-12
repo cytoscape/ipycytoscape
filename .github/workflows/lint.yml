@@ -1,0 +1,21 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: psf/black@stable
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: lint javascript
+        shell: bash -l {0}
+        run: |
+          npm install
+          npm run lint-check
+
