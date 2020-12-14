@@ -24,6 +24,7 @@ or with conda/`mamba <https://github.com/TheSnakePit/mamba>`_::
     # or with mamba
     mamba install -c conda-forge ipycytoscape
 
+If you are using JupyterLab you will also need to follow the instructions in :ref:`jlab-install-instructions`.
 
 Simple Example
 --------------

@@ -35,21 +35,29 @@ pip install ipycytoscape
 
 #### For jupyterlab users:
 
-There is an aditional step if you're using JupyterLab:
+If you are using JupyterLab 1.x or 2.x then you will also need to install `nodejs` and the `jupyterlab-manager` extension. You can do this like so:
 
 ```bash
-jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
+# installing nodejs
+conda install -c conda-forge nodejs
+
+
+# install jupyterlab-manager extension
+jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
+
+# if you have previously installed the manager you still to run jupyter lab build
+jupyter lab build
 ```
 
-And make sure you have an updated version of `nodejs` (>13) and Jupyter Lab in your environment.
+### For Jupyter Notebook 5.2 and earlier
 
-If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
-the nbextension:
+You may also need to manually enable the nbextension:
 ```bash
 jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 ```
 
 ## For a development installation:
+
 **(requires npm)**
 
 While not required, we recommend creating a conda environment to work in:
