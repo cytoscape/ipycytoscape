@@ -28,7 +28,7 @@ you can install it with conda by doing
     
     conda install -c conda-forge nodejs
 
-The ``jupyer-cytoscape`` labextension should have been automatically installed for you when you installed
+The ``jupyter-cytoscape`` labextension should have been automatically installed for you when you installed
 the Python package, but you still need to install the JupyterLab widget manager:
 
 .. code-block:: bash
