@@ -243,10 +243,10 @@ class Graph(Widget):
     def add_node(self, node):
         """
         Appends node to the end of the list. Equivalent to Python's append method.
+
         Parameters
         ----------
-        self: cytoscape graph
-        node: cytoscape node
+        node : ipycytoscape.Node
         """
         if node.data["id"] not in self._adj:
             self._adj[node.data["id"]] = dict()
@@ -255,10 +255,10 @@ class Graph(Widget):
     def add_nodes(self, nodes):
         """
         Appends nodes to the end of the list. Equivalent to Python's extend method.
+
         Parameters
         ----------
-        self: cytoscape graph
-        nodes: list of cytoscape nodes
+        nodes : list of ipycytoscape.Node
         """
         node_list = list()
         for node in nodes:
@@ -270,10 +270,10 @@ class Graph(Widget):
     def remove_node(self, node):
         """
         Removes node from the end of the list. Equivalent to Python's remove method.
+
         Parameters
         ----------
-        self: cytoscape graph
-        node: cytoscape node
+        node : ipycytoscape.Node
         """
         try:
             self.nodes.remove(node)
@@ -290,10 +290,10 @@ class Graph(Widget):
     def remove_node_by_id(self, node_id):
         """
         Removes node by the id specified.
+
         Parameters
         ----------
-        self: cytoscape graph
-        node_id: numeric types and string
+        node_id : numeric or string
         """
         node_list_id = -1
         for i, node in enumerate(self.nodes):
@@ -307,12 +307,12 @@ class Graph(Widget):
     def add_edge(self, edge, directed=False, multiple_edges=False):
         """
         Appends edge from the end of the list. Equivalent to Python's append method.
+
         Parameters
         ----------
-        self: cytoscape graph
-        edge: cytoscape edge
-        directed: boolean
-        multiple_edges: boolean
+        edge : cytoscape edge
+        directed : bool
+        multiple_edges : bool
         """
         source, target = edge.data["source"], edge.data["target"]
 
@@ -361,13 +361,14 @@ class Graph(Widget):
 
     def add_edges(self, edges, directed=False, multiple_edges=False):
         """
-        Appends edges from the end of the list. Equivalent to Python's extend method.
+        Appends edges from the end of the list. If either the source or target Node of an
+        Edge is not already in the graph it will be created and added to he Nodes list.
+
         Parameters
         ----------
-        self: cytoscape graph
-        edges: list of cytoscape edges
-        directed: boolean
-        multiple_edges: boolean
+        edges : list of ipycytoscape.Edge
+        directed : bool
+        multiple_edges : boolean
         """
         node_list = list()
         edge_list = list()
@@ -417,10 +418,10 @@ class Graph(Widget):
     def remove_edge(self, edge):
         """
         Removes edge from the end of the list.  Equivalent to Python's remove method.
+
         Parameters
         ----------
-        self: cytoscape graph
-        edge: cytoscape edge
+        edge : ipcytoscape.Edge
         """
         try:
             self.edges.remove(edge)
@@ -435,11 +436,11 @@ class Graph(Widget):
     def remove_edge_by_id(self, source_id, target_id):
         """
         Removes edge by the id specified.
+
         Parameters
         ----------
-        self: cytoscape graph
-        source_id: numeric types and string
-        target_id: numeric types and string
+        source_id : numeric or string
+        target_id : numeric or string
         """
         edge_id = -1
         for i, edge in enumerate(self.edges):
@@ -461,13 +462,13 @@ class Graph(Widget):
     def add_graph_from_networkx(self, g, directed=None, multiple_edges=None):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
+
         Parameters
         ----------
-        self: cytoscape graph
-        g: nx graph
+        g : networkx graph
             receives a generic NetworkX graph. more info in
             https://networkx.github.io/documentation/
-        directed: boolean
+        directed : bool
             If true all edges will be given directed as class if
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
@@ -519,11 +520,11 @@ class Graph(Widget):
         Converts a JSON Cytoscape graph in to a ipycytoscape graph.
         (This method only allows the conversion from a JSON that's already
         formatted as a Cytoscape graph).
+
         Parameters
         ----------
-        self: cytoscape graph
-        json_file: json file
-        directed: boolean
+        json_file : dict
+        directed : bool
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
@@ -556,15 +557,17 @@ class Graph(Widget):
     ):
         """
         Converts any Pandas DataFrame in to a Cytoscape graph.
+
         Parameters
         ----------
-        self: cytoscape graph
-        df: pandas dataframe
-        groupby_cols: list of strings (dataframe columns)
-        attribute_list: list of strings (dataframe columns)
-        edges: tuple in wich the first argument is the source edge and the
-            second is the target edge
-        directed: boolean
+        df : pandas dataframe
+        groupby_cols : list of str
+            List of dataframe columns
+        attribute_list : list of str
+            List of dataframe columns
+        edges : tuple of edges
+            The first item is the source edge and the second is the target edge
+        directed : bool
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
@@ -784,16 +787,17 @@ class CytoscapeWidget(DOMWidget):
         Sets the layout of the current object. Change the parameters individually.
         For extensive documentation on the different kinds of layout please refer
         to https://js.cytoscape.org/#layouts
+
         Parameters
         ----------
-        name: str
+        name : str
             name of the layout, ex.: cola, grid.
-        nodeSpacing: int
-            changes padding between nodes
-        edgeLengthVal: int
-            changes lenght of edges
-        padding: int
+        nodeSpacing : int
+        edgeLengthVal : int
+        padding : int
             adds padding to the whole graph in comparison to the Jupyter's cell
+        **kwargs :
+            All kwargs will be added to the dictionary of the layout.
         """
         dummy_dict = copy.deepcopy(self.cytoscape_layout)
 
@@ -804,7 +808,7 @@ class CytoscapeWidget(DOMWidget):
 
     def get_layout(self):
         """
-        Gets the layout of the current object.
+        Get the currently used layout.
         """
         return self.cytoscape_layout
 
@@ -819,6 +823,7 @@ class CytoscapeWidget(DOMWidget):
         """
         Sets the layout of the current object. Change the parameters
         with a dictionary.
+
         Parameters
         ----------
         stylesheet: dict
