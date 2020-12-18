@@ -240,7 +240,7 @@ class Graph(Widget):
     # dictionary for syncing graph structure
     _adj = MutableDict().tag(sync=True)
 
-    def add_node(self, node):
+    def add_node(self, node, *args, **kwargs):
         """
         Appends node to the end of the list. Equivalent to Python's append method.
 
@@ -248,9 +248,7 @@ class Graph(Widget):
         ----------
         node : ipycytoscape.Node
         """
-        if node.data["id"] not in self._adj:
-            self._adj[node.data["id"]] = dict()
-            self.nodes.append(node)
+        self.add_nodes([node], *args, **kwargs)
 
     def add_nodes(self, nodes):
         """
@@ -304,7 +302,7 @@ class Graph(Widget):
         else:
             raise ValueError(f"{node_id} is not present in the graph.")
 
-    def add_edge(self, edge, directed=False, multiple_edges=False):
+    def add_edge(self, edge, *args, **kwargs):
         """
         Appends edge from the end of the list. Equivalent to Python's append method.
 
@@ -314,50 +312,7 @@ class Graph(Widget):
         directed : bool
         multiple_edges : bool
         """
-        source, target = edge.data["source"], edge.data["target"]
-
-        if directed and "directed" not in edge.classes:
-            edge.classes += " directed "
-        if multiple_edges and "multiple_edges" not in edge.classes:
-            edge.classes += " multiple_edges "
-
-        # If multiple edges are allowed, it's okay to add more edges between the source and target
-        if multiple_edges:
-            new_edge = True
-        # Check to see if the edge source -> target exists in the graph (don't add it again)
-        elif source in self._adj and target in self._adj[source]:
-            new_edge = False
-        # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
-        elif not directed and target in self._adj and source in self._adj[target]:
-            new_edge = False
-        # If the edge doesn't exist already
-        else:
-            new_edge = True
-
-        if new_edge:  # if the edge is not present in the graph
-            self.edges.append(edge)
-            if source not in self._adj:
-                node_instance = Node()
-                # setting the id, according to current spec should be only int/str
-                node_instance.data = {"id": source}
-                self.add_node(node_instance)
-            if target not in self._adj:
-                node_instance = Node()
-                # setting the id, according to current spec should be only int/str
-                node_instance.data = {"id": target}
-                self.add_node(node_instance)
-
-            if multiple_edges and target in self._adj[source]:
-                self._adj[source][target] += 1
-            else:
-                self._adj[source][target] = 1
-            if not (directed or "directed" in edge.classes):
-                if multiple_edges and source in self._adj[target]:
-                    self._adj[target][source] += 1
-                else:
-                    self._adj[target][source] = 1
-        else:  # Don't add a new edge
-            pass
+        self.add_edges([edge], *args, **kwargs)
 
     def add_edges(self, edges, directed=False, multiple_edges=False):
         """
@@ -374,6 +329,12 @@ class Graph(Widget):
         edge_list = list()
         for edge in edges:
             source, target = edge.data["source"], edge.data["target"]
+
+            if directed and "directed" not in edge.classes:
+                edge.classes += " directed "
+            if multiple_edges and "multiple_edges" not in edge.classes:
+                edge.classes += " multiple_edges "
+
             # If multiple edges are allowed, it's okay to add more edges between the source and target
             if multiple_edges:
                 new_edge = True
