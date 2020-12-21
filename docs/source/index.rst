@@ -38,6 +38,12 @@ Simple Example
    cyto.graph.add_graph_from_networkx(G)
    display(cyto)
 
+joseberlines_ created a series of blog posts explaining key points on the functioning of ipycytoscape:
+
+Learning and visualising Graphs with ipycytoscape Part_1_
+
+The series of notebook examples "Ipycytoscape from Scratch" found on this repository maps to these blog posts.
+
 Contents
 --------
 
@@ -81,3 +87,7 @@ Contents
 .. _`Jupyter widgets`: https://jupyter.org/widgets.html
 
 .. _`notebook`: https://jupyter-notebook.readthedocs.io/en/latest/
+
+.. _`joseberlines`: https://github.com/joseberlines/
+
+.. _`Part_1_`: https://joseberlines.medium.com/learning-and-visualising-graphs-with-ipycytoscape-1ca150f24933
