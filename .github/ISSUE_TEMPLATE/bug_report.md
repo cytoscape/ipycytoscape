@@ -32,7 +32,7 @@ any necessary plotted data.
 **Expected outcome**
 
 <!--A description of the expected outcome from the code snippet-->
-<!--If this used to work in an earlier version of Matplotlib, please note the version it used to work on-->
+<!--If this used to work in an earlier version of ipycytoscape, please note the version it used to work on-->
 
 **Version Info**
 <!--Please specify your platform and versions of the relevant libraries you are using:-->
