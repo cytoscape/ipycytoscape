@@ -43,7 +43,7 @@ conda install -c conda-forge nodejs
 
 
 # install jupyterlab-manager extension
-jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
+jupyter labextension install @jupyter-widgets/jupyterlab-manager@2.0 --no-build
 
 # if you have previously installed the manager you still to run jupyter lab build
 jupyter lab build
