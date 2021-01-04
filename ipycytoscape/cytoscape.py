@@ -240,7 +240,7 @@ class Graph(Widget):
     # dictionary for syncing graph structure
     _adj = MutableDict().tag(sync=True)
 
-    def add_node(self, node, *args, **kwargs):
+    def add_node(self, node):
         """
         Appends node to the end of the list. Equivalent to Python's append method.
 
@@ -248,7 +248,7 @@ class Graph(Widget):
         ----------
         node : ipycytoscape.Node
         """
-        self.add_nodes([node], *args, **kwargs)
+        self.add_nodes([node])
 
     def add_nodes(self, nodes):
         """
@@ -302,7 +302,7 @@ class Graph(Widget):
         else:
             raise ValueError(f"{node_id} is not present in the graph.")
 
-    def add_edge(self, edge, *args, **kwargs):
+    def add_edge(self, edge, directed=False, multiple_edges=False):
         """
         Appends edge from the end of the list. Equivalent to Python's append method.
 
@@ -312,7 +312,7 @@ class Graph(Widget):
         directed : bool
         multiple_edges : bool
         """
-        self.add_edges([edge], *args, **kwargs)
+        self.add_edges([edge], directed=directed, multiple_edges=multiple_edges)
 
     def add_edges(self, edges, directed=False, multiple_edges=False):
         """
