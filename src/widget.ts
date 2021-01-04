@@ -8,8 +8,7 @@ import {
   DOMWidgetModel,
   DOMWidgetView,
   ISerializers,
-  WidgetModel,
-  WidgetView,
+  Dict,
 } from '@jupyter-widgets/base';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -20,7 +19,7 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 // Import the CSS
 import '../css/widget.css';
 
-import cytoscape from 'cytoscape';
+import cytoscape, { Core } from 'cytoscape';
 // @ts-ignore
 import cola from 'cytoscape-cola';
 // @ts-ignore
@@ -35,129 +34,13 @@ import klay from 'cytoscape-klay';
 
 import 'tippy.js/themes/material.css';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { NodeModel, EdgeModel } from './graph';
+
 cytoscape.use(popper);
 cytoscape.use(dagre);
 cytoscape.use(klay);
 cytoscape.use(cola);
-
-export class NodeModel extends WidgetModel {
-  defaults() {
-    return {
-      ...super.defaults(),
-      _model_name: NodeModel.model_name,
-      _model_module: NodeModel.model_module,
-      _model_module_version: NodeModel.model_module_version,
-      _view_name: NodeModel.view_name,
-      _view_module: NodeModel.view_module,
-      _view_module_version: NodeModel.view_module_version,
-
-      group: '',
-      removed: false,
-      selected: false,
-      selectable: false,
-      locked: false,
-      grabbed: false,
-      grabbable: false,
-      classes: '',
-      data: {},
-      position: {},
-    };
-  }
-
-  static model_name = 'NodeModel';
-  static model_module = MODULE_NAME;
-  static model_module_version = MODULE_VERSION;
-  static view_name = 'NodeView';
-  static view_module = MODULE_NAME;
-  static view_module_version = MODULE_VERSION;
-}
-
-export class EdgeModel extends WidgetModel {
-  defaults() {
-    return {
-      ...super.defaults(),
-      _model_name: EdgeModel.model_name,
-      _model_module: EdgeModel.model_module,
-      _model_module_version: EdgeModel.model_module_version,
-      _view_name: EdgeModel.view_name,
-      _view_module: EdgeModel.view_module,
-      _view_module_version: EdgeModel.view_module_version,
-
-      group: '',
-      removed: false,
-      selected: false,
-      selectable: false,
-      locked: false,
-      grabbed: false,
-      grabbable: false,
-      classes: '',
-      data: {},
-      position: {},
-    };
-  }
-
-  static model_name = 'EdgeModel';
-  static model_module = MODULE_NAME;
-  static model_module_version = MODULE_VERSION;
-  static view_name = 'EdgeView';
-  static view_module = MODULE_NAME;
-  static view_module_version = MODULE_VERSION;
-}
-
-export class GraphModel extends WidgetModel {
-  defaults() {
-    return {
-      ...super.defaults(),
-      _model_name: 'GraphModel',
-      _model_module: GraphModel.model_module,
-      _model_module_version: GraphModel.model_module_version,
-      nodes: [],
-      edges: [],
-    };
-  }
-
-  static serializers: ISerializers = {
-    nodes: { deserialize: widgets.unpack_models },
-    edges: { deserialize: widgets.unpack_models },
-    ...WidgetModel.serializers,
-  };
-
-  static model_module = MODULE_NAME;
-  static model_module_version = MODULE_VERSION;
-
-  converts_dict() {
-    const graph: Array<any> = [];
-
-    for (let i = 0; i < this.attributes.nodes.length; i++) {
-      const node = this.attributes.nodes[i];
-      graph.push({
-        group: 'nodes',
-        data: node.get('data'),
-        selected: node.get('selected'),
-        selectable: node.get('selectable'),
-        locked: node.get('locked'),
-        grabbed: node.get('grabbed'),
-        classes: node.get('classes'),
-        position: node.get('position'),
-      });
-    }
-    for (let j = 0; j < this.attributes.edges.length; j++) {
-      const edge = this.attributes.edges[j];
-      graph.push({
-        group: 'edges',
-        data: edge.get('data'),
-        selected: edge.get('selected'),
-        selectable: edge.get('selectable'),
-        locked: edge.get('locked'),
-        grabbed: edge.get('grabbed'),
-        classes: edge.get('classes'),
-        position: edge.get('position'),
-      });
-    }
-
-    return graph;
-  }
-}
 
 export class CytoscapeModel extends DOMWidgetModel {
   defaults() {
@@ -183,10 +66,31 @@ export class CytoscapeModel extends DOMWidgetModel {
     };
   }
 
+  initialize(attributes: any, options: any) {
+    super.initialize(attributes, options);
+    this.on('msg:custom', this.processMessage.bind(this));
+  }
+
   static serializers: ISerializers = {
     graph: { deserialize: widgets.unpack_models },
     ...DOMWidgetModel.serializers,
   };
+
+  private processMessage(command: any, buffers: any) {
+    if (command.name === 'layout') {
+      this.forEachView((view) => {
+        view.cytoscape_obj.layout(this.get('cytoscape_layout')).run();
+      });
+    }
+  }
+
+  private forEachView(callback: (view: CytoscapeView) => void) {
+    for (const view_id in this.views) {
+      this.views[view_id].then((view: CytoscapeView) => {
+        callback(view);
+      });
+    }
+  }
 
   static model_name = 'CytoscapeModel';
   static model_module = MODULE_NAME;
@@ -194,75 +98,11 @@ export class CytoscapeModel extends DOMWidgetModel {
   static view_name = 'CytoscapeView';
   static view_module = MODULE_NAME;
   static view_module_version = MODULE_VERSION;
-}
-
-export class NodeView extends WidgetView {
-  cytoscapeView: any;
-  private cyId: string;
-
-  constructor(params: any) {
-    super({
-      model: params.model,
-      options: params.options,
-    });
-    this.cytoscapeView = this.options.cytoscapeView;
-
-    this.model.on('change:group', this.valueChanged, this);
-    this.model.on('change:removed', this.valueChanged, this);
-    this.model.on('change:selected', this.valueChanged, this);
-    this.model.on('change:locked', this.valueChanged, this);
-    this.model.on('change:grabbed', this.valueChanged, this);
-    this.model.on('change:grabbable', this.valueChanged, this);
-    this.model.on('change:classes', this._updateClasses, this);
-    this.model.on('change:data', this.valueChanged, this);
-    this.model.on('change:position', this.valueChanged, this);
-    this.cyId = this.model.get('data')['id'];
-  }
-
-  private _updateClasses() {
-    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
-    elem.classes(this.model.get('classes'));
-  }
-
-  valueChanged() {
-    this.cytoscapeView.value_changed();
-  }
-}
-
-export class EdgeView extends WidgetView {
-  cytoscapeView: any;
-  private cyId: string;
-
-  constructor(params: any) {
-    super({
-      model: params.model,
-      options: params.options,
-    });
-    this.cytoscapeView = this.options.cytoscapeView;
-
-    this.model.on('change:group', this.valueChanged, this);
-    this.model.on('change:removed', this.valueChanged, this);
-    this.model.on('change:selected', this.valueChanged, this);
-    this.model.on('change:locked', this.valueChanged, this);
-    this.model.on('change:grabbed', this.valueChanged, this);
-    this.model.on('change:grabbable', this.valueChanged, this);
-    this.model.on('change:classes', this._updateClasses, this);
-    this.model.on('change:data', this.valueChanged, this);
-    this.model.on('change:position', this.valueChanged, this);
-    this.cyId = this.model.get('data')['id'];
-  }
-  private _updateClasses() {
-    const elem = this.cytoscapeView.cytoscape_obj.getElementById(this.cyId);
-    elem.classes(this.model.get('classes'));
-  }
-
-  valueChanged() {
-    this.cytoscapeView.value_changed();
-  }
+  views: Dict<Promise<CytoscapeView>>;
 }
 
 export class CytoscapeView extends DOMWidgetView {
-  cytoscape_obj: any;
+  cytoscape_obj: Core;
   is_rendered = false;
   nodeViews: any = [];
   edgeViews: any = [];
@@ -271,24 +111,32 @@ export class CytoscapeView extends DOMWidgetView {
   render() {
     this.el.classList.add('custom-widget');
 
-    this.nodeViews = new widgets.ViewList(
-      this.addNodeModel,
-      this.removeNodeView,
-      this
-    );
-    this.nodeViews.update(this.model.get('graph').get('nodes'));
+    this.displayed.then(() => {
+      this.init_render();
+      this.cytoscape_obj.startBatch();
+      this.nodeViews = new widgets.ViewList(
+        this.addNodeModel,
+        this.removeNodeView,
+        this
+      );
+      this.nodeViews.update(this.model.get('graph').get('nodes'));
 
-    this.edgeViews = new widgets.ViewList(
-      this.addEdgeModel,
-      this.removeEdgeView,
-      this
-    );
-    this.edgeViews.update(this.model.get('graph').get('edges'));
+      this.edgeViews = new widgets.ViewList(
+        this.addEdgeModel,
+        this.removeEdgeView,
+        this
+      );
+      this.edgeViews.update(this.model.get('graph').get('edges'));
+      this.cytoscape_obj.endBatch();
+      this.cytoscape_obj
+        .elements()
+        .layout(this.model.get('cytoscape_layout'))
+        .run();
+    });
 
-    this.value_changed();
-
-    this.model.get('graph').on('change:nodes', this.value_changed, this);
-    this.model.get('graph').on('change:edges', this.value_changed, this);
+    this.model
+      .get('graph')
+      .on_some_change(['nodes', 'edges'], this._updateViewLists, this);
 
     //Python attributes that must be sync. with frontend
     this.model.on('change:min_zoom', this._updateMinZoom, this);
@@ -330,10 +178,6 @@ export class CytoscapeView extends DOMWidgetView {
     if (layout !== null) {
       layout.on_some_change(['width', 'height'], this._resize, this);
     }
-
-    this.displayed.then(() => {
-      this.init_render();
-    });
   }
 
   value_changed() {
@@ -343,6 +187,16 @@ export class CytoscapeView extends DOMWidgetView {
       this.monitored = {};
       this.init_render();
     }
+  }
+
+  private _updateViewLists() {
+    this.nodeViews.update(this.model.get('graph').get('nodes'));
+    this.edgeViews.update(this.model.get('graph').get('edges'));
+    this.cytoscape_obj
+      .elements()
+      .layout(this.model.get('cytoscape_layout'))
+      .run();
+    console.log('whole cytoscape relayout');
   }
 
   listenForUserEvents() {
@@ -403,9 +257,8 @@ export class CytoscapeView extends DOMWidgetView {
         motionBlurOpacity: this.model.get('motion_blur_opacity'),
         wheelSensitivity: this.model.get('wheel_sensitivity'),
         pixelRatio: this.model.get('pixel_ratio'),
-        layout: this.model.get('cytoscape_layout'),
         style: this.model.get('cytoscape_style'),
-        elements: this.model.get('graph').converts_dict(),
+        elements: [],
       });
 
       // we need to set listeners at initial render in case interaction was
@@ -463,7 +316,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.cytoscape_obj.panningEnabled(this.model.get('panning_enabled'));
   }
   private _updateUserPanningEnabled() {
-    this.cytoscape_obj.UserPanningEnabled(
+    this.cytoscape_obj.userPanningEnabled(
       this.model.get('user_panning_enabled')
     );
   }
@@ -473,7 +326,8 @@ export class CytoscapeView extends DOMWidgetView {
     );
   }
   private _updateSelectionType() {
-    this.cytoscape_obj.selectionType(this.model.get('selection_type'));
+    // I think that @types may have gotten this wrong?
+    (this.cytoscape_obj as any).selectionType(this.model.get('selection_type'));
   }
   private _updateAutolock() {
     this.cytoscape_obj.autolock(this.model.get('autolock'));
@@ -498,20 +352,55 @@ export class CytoscapeView extends DOMWidgetView {
     }
   }
 
-  addNodeModel(NodeModel: any) {
-    return this.create_child_view(NodeModel, {
+  /**
+   * Add the listeners for traits that are common to nodes and edges
+   */
+  _addElementListeners(
+    ele: cytoscape.CollectionReturnValue,
+    view: DOMWidgetView
+  ) {
+    ele.on('select', (event) => {
+      view.model.set('selected', true);
+      view.model.save_changes();
+    });
+    ele.on('unselect', (event) => {
+      view.model.set('selected', false);
+      view.model.save_changes();
+    });
+    ele.on('remove', (event) => {
+      view.model.set('removed', true);
+      view.model.save_changes();
+    });
+  }
+
+  async addNodeModel(NodeModel: NodeModel) {
+    const node = this.cytoscape_obj.add(NodeModel.asCyObj());
+    const child = await this.create_child_view(NodeModel, {
       cytoscapeView: this,
     });
+    this._addElementListeners(node, child);
+    node.on('grab', (event) => {
+      child.model.set('grabbed', true);
+      child.model.save_changes();
+    });
+    node.on('free', (event) => {
+      child.model.set('grabbed', false);
+      child.model.save_changes();
+    });
+    return child;
   }
 
   removeNodeView(nodeView: any) {
     nodeView.remove();
   }
 
-  addEdgeModel(EdgeModel: any) {
-    return this.create_child_view(EdgeModel, {
+  async addEdgeModel(EdgeModel: EdgeModel) {
+    const edge = this.cytoscape_obj.add(EdgeModel.asCyObj());
+    const child = await this.create_child_view(EdgeModel, {
       cytoscapeView: this,
     });
+    this._addElementListeners(edge, child);
+    return child;
   }
 
   removeEdgeView(edgeView: any) {

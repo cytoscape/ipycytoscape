@@ -1,5 +1,0 @@
-conda:
-  environment: docs/doc_environmnent.yml
-python:
-    version: 3
-    setup_py_install: true

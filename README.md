@@ -11,7 +11,7 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 #### Supports:
 
 * Conversion from NetworkX see [example1](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb), [example2](https://github.com/QuantStack/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
-* Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/DataFrame%20interaction.ipynb)
+* Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/pandas.ipynb)
 
 ## Installation
 
@@ -35,26 +35,34 @@ pip install ipycytoscape
 
 #### For jupyterlab users:
 
-There is an aditional step if you're using JupyterLab:
+If you are using JupyterLab 1.x or 2.x then you will also need to install `nodejs` and the `jupyterlab-manager` extension. You can do this like so:
 
 ```bash
-jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
+# installing nodejs
+conda install -c conda-forge nodejs
+
+
+# install jupyterlab-manager extension
+jupyter labextension install @jupyter-widgets/jupyterlab-manager@2.0 --no-build
+
+# if you have previously installed the manager you still to run jupyter lab build
+jupyter lab build
 ```
 
-And make sure you have an updated version of `nodejs` (>13) and Jupyter Lab in your environment.
+### For Jupyter Notebook 5.2 and earlier
 
-If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
-the nbextension:
+You may also need to manually enable the nbextension:
 ```bash
 jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 ```
 
 ## For a development installation:
+
 **(requires npm)**
 
 While not required, we recommend creating a conda environment to work in:
 ```bash
-conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs networkx
 conda activate ipycytoscape
 
 # clone repo
@@ -85,6 +93,20 @@ Note that the `--symlink` flag doesn't work on Windows, so you will here have to
 the `install` command every time that you rebuild your extension. For certain installations
 you might also need another flag instead of `--sys-prefix`, but we won't cover the meaning
 of those flags here.
+
+You need to install and build `npm` packages:
+
+```
+npm install && npm run build
+```
+
+Every time you change your typescript code it's necessary to build it again:
+
+```
+npm run build
+```
+
+It's possible to see your changes in real time, more about it in the [How to see your changes](https://github.com/QuantStack/ipycytoscape#how-to-see-your-changes) session.
 
 ### How to see your changes
 
@@ -129,17 +151,11 @@ pytest
 
 ### How to build the docs
 
-Install the following dependencies:
-
-`conda install -c conda-forge sphinx sphinx-copybutton jupyter_sphinx sphinx_rtd_theme nbsphinx`
-
-and
-
-`pip install nbsphinx_link`
-
-Go to the docs directory:
-
 `cd docs`
+
+Install dependencies:
+
+`conda env update --file doc_environment.yml`
 
 And build them: 
 

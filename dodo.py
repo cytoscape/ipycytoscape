@@ -13,13 +13,17 @@ def task_mybinder():
         for filename in targets:
             with open(filename) as f:
                 content = f.read()
-            content = re.sub('cytoscape(?P<cmp>[^0-9]*)([0-9\.].*)', rf'cytoscape\g<cmp>{version}', content)
+            content = re.sub(
+                "cytoscape(?P<cmp>[^0-9]*)([0-9\.].*)",
+                rf"cytoscape\g<cmp>{version}",
+                content,
+            )
             with open(filename, "w") as f:
                 f.write(content)
             print(f"{filename} updated")
 
     return {
-        'actions': [action],
-        'targets': ["environment.yml", 'postBuild'],
-        'file_dep': ['ipycytoscape/_version.py']
-        }
+        "actions": [action],
+        "targets": ["environment.yml", "postBuild"],
+        "file_dep": ["ipycytoscape/_version.py"],
+    }
