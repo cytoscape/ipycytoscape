@@ -21,8 +21,7 @@ or with conda/`mamba <https://github.com/TheSnakePit/mamba>`_::
 JupyterLab Installation
 -----------------------
 
-In order to install the JupyterLab extension jupyter-cytoscape, you will first need to install nodejs,
-you can install it with conda by doing
+If you are using JupyterLab version 1.x or 2.x then you will also need to install nodejs and the jupyterlab-manager extension.
 
 .. code-block:: bash
     

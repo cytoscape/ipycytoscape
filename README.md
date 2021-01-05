@@ -33,7 +33,7 @@ With `pip`:
 pip install ipycytoscape
 ```
 
-#### For jupyterlab users:
+#### For jupyterlab 1.x or 2.x:
 
 If you are using JupyterLab 1.x or 2.x then you will also need to install `nodejs` and the `jupyterlab-manager` extension. You can do this like so:
 
@@ -57,32 +57,29 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 ```
 
 ## For a development installation:
-
 **(requires npm)**
 
 While not required, we recommend creating a conda environment to work in:
 ```bash
-conda create -n ipycytoscape -c conda-forge jupyterlab nodejs networkx
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
 conda activate ipycytoscape
 
 # clone repo
 git clone https://github.com/QuantStack/ipycytoscape.git
 cd ipycytoscape
-
-# Install python package for development, runs npm install and npm run build
-pip install -e .
 ```
 
-When developing ipycytoscape, you need to manually enable the extension with the
-notebook / lab frontend. For lab, this is done by the command:
-
+### Install python package for development
+This will also run npm install and npm run build
 ```
-# install jupyterlab-manager and this extension
-jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
-jupyter labextension install .
+pip install jupyter_packaging==0.7.9
+pip install -e ".[test, doc]"
+
+jupyter labextension develop . --overwrite
 ```
 
-For classic notebook, you can run:
+
+Or for classic notebook, you can run:
 
 ```
 jupyter nbextension install --sys-prefix --symlink --overwrite --py ipycytoscape
@@ -94,31 +91,18 @@ the `install` command every time that you rebuild your extension. For certain in
 you might also need another flag instead of `--sys-prefix`, but we won't cover the meaning
 of those flags here.
 
-You need to install and build `npm` packages:
-
-```
-npm install && npm run build
-```
-
-Every time you change your typescript code it's necessary to build it again:
-
-```
-npm run build
-```
-
-It's possible to see your changes in real time, more about it in the [How to see your changes](https://github.com/QuantStack/ipycytoscape#how-to-see-your-changes) session.
-
 ### How to see your changes
 
 #### Typescript: 
-To continuously monitor the project for changes and automatically trigger a rebuild, start Jupyter in watch mode:
-```bash
-jupyter lab --watch
-```
-And in a separate session, begin watching the source directory for changes:
+To continuously monitor the project for changes and automatically trigger a rebuild, start watching the ipycytoscape code:
 ```bash
 npm run watch
 ```
+And in a separate terminal start JupyterLab normally:
+```bash
+jupyter lab
+```
+once the webpack rebuild finishes refresh the JupyterLab page to have your changes take effect.
 
 #### Python:
 If you make a change to the python code then you need to restart the notebook kernel to have it take effect.
@@ -134,13 +118,13 @@ pip install -e .[test]
 Or with mamba:
 
 ```
-mamba -c conda-forge install networkx pandas matplotlib nbval pytest
+mamba -c conda-forge install networkx pandas nbval pytest
 ```
 
 Or with conda:
 
 ```
-conda -c conda-forge install networkx pandas matplotlib nbval pytest
+conda -c conda-forge install networkx pandas nbval pytest
 ```
 
 #### And to run it:
