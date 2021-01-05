@@ -41,7 +41,7 @@ jstargets = [
     path.join(HERE, "lib", "plugin.js"),
 ]
 
-package_data_spec = {name: ["nbextension/static/*.*", "labextension/*.*"]}
+package_data_spec = {name: ["*"]}
 
 data_files_spec = [
     ("share/jupyter/nbextensions/jupyter-cytoscape", nb_path, "**"),
