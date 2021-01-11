@@ -588,6 +588,124 @@ class Graph(Widget):
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
+    def convert_neo4j_types(node_attributes):
+        """
+        Converts types not compatible with cytoscape to strings.
+
+        Parameters
+        ----------
+        node_attributes : dictionary of node attributes
+        """
+        for key, value in node_attributes.items():
+            if isinstance(value, neotime.Date):
+               node_attributes[key] = str(value)
+    
+        return node_attributes
+
+    def get_node_labels_by_priority(graph):
+        """
+        Returns a list of Neo4j node labels in priority order.
+        If a Neo4j node has multiple labels, the most distinctive
+        (least frequently occuring) label will appear first in this list.
+        Example: five nodes have the labels (Person|Actor) and five nodes
+        have the labels (Person|Director). In this case the Actor and Director
+        labels have priority over the Person label.
+
+        Parameters
+        ----------
+        graph : py2neo Neo4j graph or subgraph object
+                See https://py2neo.org/v4/data.html#subgraph-objects
+        """
+        counts = dict()
+
+        for node in subgraph.nodes:
+            for label in node.labels:
+                counts[label] = counts.get(label, 0) + 1
+
+        return sorted(counts, key=counts.get)
+
+    def add_graph_from_neo4j(self, graph, directed=True, multiple_edges=True, property_summary=None):
+        """
+        Converts a py2neo Neo4j subgraph into a Cytoscape graph.
+
+        Parameters
+        ----------
+        graph : py2neo Neo4j graph or subgraph object
+                See https://py2neo.org/v4/data.html#subgraph-objects
+        directed : bool
+            If true all edges will be given directed as class if
+            they do not already have it. Equivalent to adding
+            'directed' to the 'classes' attribute of edge.data for all edges
+        """
+        directed = True
+        multiple_edges = True
+
+        priority_labels = get_node_labels_by_priority(graph)
+
+        # convert Neo4j nodes to cytoscape nodes
+        node_list = list()
+        for node in g.nodes:
+            node_attributes = dict(node)
+        
+            # convert Neo4j specific types to string
+            node_attributes = convert_neo4j_types(node_attributes)
+        
+            # assign properties
+            if property_summary:
+                properties = get_property_summary(node_attributes)
+        
+            # assign unique id to node
+            node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
+        
+            # assign class label with the highest priority
+            index = len(priority_labels)
+            for label in node.labels:
+                index = min(index, priority_labels.index(label))
+            
+            node_attributes['label'] = priority_labels[index]
+        
+            # add a list of all node properties (can be used as a tool tip)
+            if property_summary:
+                node_attributes[property_summary] = properties
+                            
+            # create node
+            node_instance = Node()
+            _set_attributes(node_instance, node_attributes)
+            node_list.append(node_instance)
+
+        self.add_nodes(node_list)
+
+        # convert Neo4j relationships to cytoscape edges 
+        edge_list = list()
+        for rel in subgraph.relationships:
+            edge_instance = Edge()
+
+            # create dictionaries of relationship and node attributes
+            rel_attributes = dict(rel)
+            start_node_attributes = dict(rel.start_node)
+            end_node_attributes = dict(rel.end_node)
+        
+            # convert Neo4j specific types to string
+            rel_attributes = convert_neo4j_types(rel_attributes) 
+            start_node_attributes = convert_neo4j_types(start_node_attributes)
+            end_node_attributes = convert_neo4j_types(end_node_attributes)
+  
+            # assign name of the relationship
+            rel_attributes['name'] = rel.__class__.__name__
+
+            # assign unique node ids
+            edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
+            edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items()))) 
+            _set_attributes(edge_instance, rel_attributes)
+
+            if directed and "directed" not in edge_instance.classes:
+                edge_instance.classes += " directed "
+            if multiple_edges and "multiple_edges" not in edge_instance.classes:
+                edge_instance.classes += " multiple_edges "
+            edge_list.append(edge_instance)
+
+        self.add_edges(edge_list, directed, multiple_edges)
+
 
 class CytoscapeWidget(DOMWidget):
     """ Implements the main Cytoscape Widget """
