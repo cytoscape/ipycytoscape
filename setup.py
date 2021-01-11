@@ -95,6 +95,7 @@ setup_args = dict(
         "ipywidgets>=7.6.0",
         "spectate>=0.4.1",
         "networkx",
+        "py2neo",
     ],
     extras_require={
         "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas"],
