@@ -609,9 +609,9 @@ class Graph(Widget):
         ----------
         node_attributes : dictionary of node attributes
         """
-        for key, value in node_attributes.items():
-            if isinstance(value, neotime.Date):
-               node_attributes[key] = str(value)
+        for k, v in node_attributes.items():
+            if isinstance(v, neotime.Date):
+               node_attributes[k] = str(v)
     
         return node_attributes
 
@@ -637,6 +637,17 @@ class Graph(Widget):
                 counts[label] = counts.get(label, 0) + 1
 
         return sorted(counts, key=counts.get)
+
+    @staticmethod
+    def get_property_summary(node_attributes):
+        """
+        Returns a string of all node attributes.
+
+        Parameters
+        ----------
+        node_attributes : dictionary of node attributes
+        """
+        return '\n'.join(k + ':' + str(v) for k, v in node_attributes.items()) 
 
     def add_graph_from_neo4j(self, g, directed=True, multiple_edges=True, property_summary=None):
         """
