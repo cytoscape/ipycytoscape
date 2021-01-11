@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eux
+export NEO4J_HOME=${CONDA_DIR}/neo4j-community-4.0.3
+
+${CONDA_DIR}/neo4j-community-4.0.3/bin/neo4j start
+
+exec "$@"
