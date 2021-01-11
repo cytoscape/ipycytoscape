@@ -24,6 +24,8 @@ from traitlets import (
 from ._frontend import module_name, module_version
 
 import networkx as nx
+from py2neo import Graph
+import neotime
 
 """TODO: Remove this after this is somewhat done"""
 import logging
@@ -598,6 +600,7 @@ class Graph(Widget):
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
+    @staticmethod
     def convert_neo4j_types(node_attributes):
         """
         Converts types not compatible with cytoscape to strings.
@@ -612,7 +615,8 @@ class Graph(Widget):
     
         return node_attributes
 
-    def get_node_labels_by_priority(graph):
+    @staticmethod
+    def get_node_labels_by_priority(g):
         """
         Returns a list of Neo4j node labels in priority order.
         If a Neo4j node has multiple labels, the most distinctive
@@ -623,24 +627,24 @@ class Graph(Widget):
 
         Parameters
         ----------
-        graph : py2neo Neo4j graph or subgraph object
+        g : py2neo Neo4j graph or subgraph object
                 See https://py2neo.org/v4/data.html#subgraph-objects
         """
         counts = dict()
 
-        for node in subgraph.nodes:
+        for node in g.nodes:
             for label in node.labels:
                 counts[label] = counts.get(label, 0) + 1
 
         return sorted(counts, key=counts.get)
 
-    def add_graph_from_neo4j(self, graph, directed=True, multiple_edges=True, property_summary=None):
+    def add_graph_from_neo4j(self, g, directed=True, multiple_edges=True, property_summary=None):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph.
 
         Parameters
         ----------
-        graph : py2neo Neo4j graph or subgraph object
+        g : py2neo Neo4j graph or subgraph object
                 See https://py2neo.org/v4/data.html#subgraph-objects
         directed : bool
             If true all edges will be given directed as class if
@@ -650,7 +654,7 @@ class Graph(Widget):
         directed = True
         multiple_edges = True
 
-        priority_labels = get_node_labels_by_priority(graph)
+        priority_labels = self.get_node_labels_by_priority(g)
 
         # convert Neo4j nodes to cytoscape nodes
         node_list = list()
@@ -658,11 +662,11 @@ class Graph(Widget):
             node_attributes = dict(node)
         
             # convert Neo4j specific types to string
-            node_attributes = convert_neo4j_types(node_attributes)
+            node_attributes = self.convert_neo4j_types(node_attributes)
         
             # assign properties
             if property_summary:
-                properties = get_property_summary(node_attributes)
+                properties = self.get_property_summary(node_attributes)
         
             # assign unique id to node
             node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
@@ -687,7 +691,7 @@ class Graph(Widget):
 
         # convert Neo4j relationships to cytoscape edges 
         edge_list = list()
-        for rel in subgraph.relationships:
+        for rel in g.relationships:
             edge_instance = Edge()
 
             # create dictionaries of relationship and node attributes
@@ -696,9 +700,9 @@ class Graph(Widget):
             end_node_attributes = dict(rel.end_node)
         
             # convert Neo4j specific types to string
-            rel_attributes = convert_neo4j_types(rel_attributes) 
-            start_node_attributes = convert_neo4j_types(start_node_attributes)
-            end_node_attributes = convert_neo4j_types(end_node_attributes)
+            rel_attributes = self.convert_neo4j_types(rel_attributes) 
+            start_node_attributes = self.convert_neo4j_types(start_node_attributes)
+            end_node_attributes = self.convert_neo4j_types(end_node_attributes)
   
             # assign name of the relationship
             rel_attributes['name'] = rel.__class__.__name__
