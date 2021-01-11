@@ -3,9 +3,9 @@ jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytosca
 
 
 #
-# Install Neo4j (required to run Neo4j Graph example notebooks on Binder)
+# Install Neo4j (only required to run Neo4j Graph example notebooks on Binder)
 #
-VERSION="neo4j-community-4.2.3"
+VERSION="neo4j-community-4.2.0"
 
 if [ ! -f $VERSION-unix.tar.gz ]; then
   wget http://dist.neo4j.org/$VERSION-unix.tar.gz
