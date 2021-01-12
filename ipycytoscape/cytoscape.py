@@ -706,7 +706,8 @@ class Graph(Widget):
             end_node_attributes = self.convert_neo4j_types(end_node_attributes)
   
             # assign name of the relationship
-            rel_attributes['name'] = rel.__class__.__name__
+            if not 'name' in rel_attributes:
+                rel_attributes['name'] = rel.__class__.__name__
 
             # assign unique node ids
             edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
