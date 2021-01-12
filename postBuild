@@ -1,21 +1,2 @@
 #!/bin/bash
 jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape@0.2.3
-
-
-#
-# Install Neo4j (only required to run Neo4j Graph example notebooks on Binder)
-#
-VERSION="neo4j-community-4.2.0"
-
-if [ ! -f $VERSION-unix.tar.gz ]; then
-  wget http://dist.neo4j.org/$VERSION-unix.tar.gz
-fi
-
-tar -xvf $VERSION-unix.tar.gz
-mv $VERSION ${CONDA_DIR}/
-rm $VERSION-unix.tar.gz
-
-# Set password 
-${CONDA_DIR}/$VERSION/bin/neo4j-admin set-initial-password neo4jbinder
-
-export NEO4J_HOME=${CONDA_DIR}/$VERSION
