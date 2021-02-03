@@ -601,7 +601,7 @@ class Graph(Widget):
         """
         for k, v in node_attributes.items():
             if isinstance(v, neotime.Date):
-               node_attributes[k] = str(v)
+                node_attributes[k] = str(v)
     
         return node_attributes
 
@@ -652,8 +652,6 @@ class Graph(Widget):
             they do not already have it. Equivalent to adding
             'directed' to the 'classes' attribute of edge.data for all edges
         """
-        directed = True
-        multiple_edges = True
 
         priority_labels = self.get_node_labels_by_priority(g)
 
@@ -670,7 +668,8 @@ class Graph(Widget):
                 properties = self.get_property_summary(node_attributes)
         
             # assign unique id to node
-            node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
+            #node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
+            node_attributes['id'] = hash(node)
         
             # assign class label with the highest priority
             index = len(priority_labels)
@@ -710,8 +709,10 @@ class Graph(Widget):
                 rel_attributes['name'] = rel.__class__.__name__
 
             # assign unique node ids
-            edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
-            edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items()))) 
+            #edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
+            #edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
+            edge_instance.data["source"] = hash(node)
+            edge_instance.data["target"] = hash(node)
             _set_attributes(edge_instance, rel_attributes)
 
             if directed and "directed" not in edge_instance.classes:
