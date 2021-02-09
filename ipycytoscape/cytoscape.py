@@ -668,7 +668,7 @@ class Graph(Widget):
             node_attributes = self.convert_neo4j_types(node_attributes)
         
             # create tooltip text string 
-            if tooltip:
+            if not 'tooltip' in node_attributes:
                 tooltip_text = self.create_tooltip(node_attributes)
         
             # assign unique id to node
