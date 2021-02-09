@@ -639,17 +639,18 @@ class Graph(Widget):
         """
         return '\n'.join(k + ':' + str(v) for k, v in node_attributes.items()) 
 
-    def add_graph_from_neo4j(self, g, tooltip=None):
+    def add_graph_from_neo4j(self, g):
         """
-        Converts a py2neo Neo4j subgraph into a Cytoscape graph.
+        Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
+        a 'tooltip' node attribute to the Cytoscape graph if it is not present 
+        in the Neo4j subgraph. This attribute can be set as a tooltip by
+        set_tooltip_source('tooltip'). The tooltip then displays the node 
+        properties from the Neo4j nodes. 
 
         Parameters
         ----------
         g : py2neo Neo4j subgraph object
             See https://py2neo.org/v4/data.html#subgraph-objects
-        tooltip : str
-            Name of attribute that represents the properties of a node as
-            key value pairs. This attribute can be be used as a tool tip.
         """
         # Neo4j graphs are always directed and can contain multiple edges
         directed=True
@@ -681,8 +682,8 @@ class Graph(Widget):
             node_attributes['label'] = priority_labels[index]
         
             # add tooltip text as an attibute 
-            if tooltip:
-                node_attributes[tooltip] = tooltip_text 
+            if not 'tooltip' in node_attributes:
+                node_attributes['tooltip'] = tooltip_text 
                             
             # create node
             node_instance = Node()
