@@ -617,8 +617,8 @@ class Graph(Widget):
 
         Parameters
         ----------
-        g : py2neo Neo4j graph or subgraph object
-                See https://py2neo.org/v4/data.html#subgraph-objects
+        g : py2neo Neo4j subgraph object
+            See https://py2neo.org/v4/data.html#subgraph-objects
         """
         counts = dict()
 
@@ -629,9 +629,9 @@ class Graph(Widget):
         return sorted(counts, key=counts.get)
 
     @staticmethod
-    def get_property_summary(node_attributes):
+    def create_tooltip(node_attributes):
         """
-        Returns a string of all node attributes.
+        Returns a string of all node attributes that can be used as a tooltip.
 
         Parameters
         ----------
@@ -639,20 +639,23 @@ class Graph(Widget):
         """
         return '\n'.join(k + ':' + str(v) for k, v in node_attributes.items()) 
 
-    def add_graph_from_neo4j(self, g, directed=True, multiple_edges=True, property_summary=None):
+    def add_graph_from_neo4j(self, g, tooltip=None):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph.
 
         Parameters
         ----------
-        g : py2neo Neo4j graph or subgraph object
-                See https://py2neo.org/v4/data.html#subgraph-objects
-        directed : bool
-            If true all edges will be given directed as class if
-            they do not already have it. Equivalent to adding
-            'directed' to the 'classes' attribute of edge.data for all edges
+        g : py2neo Neo4j subgraph object
+            See https://py2neo.org/v4/data.html#subgraph-objects
+        tooltip : str
+            Name of attribute that represents the properties of a node as
+            key value pairs. This attribute can be be used as a tool tip.
         """
+        # Neo4j graphs are always directed and can contain multiple edges
+        directed=True
+        multiple_edges=True
 
+        # select labels to be displayed as node labels
         priority_labels = self.get_node_labels_by_priority(g)
 
         # convert Neo4j nodes to cytoscape nodes
@@ -663,13 +666,12 @@ class Graph(Widget):
             # convert Neo4j specific types to string
             node_attributes = self.convert_neo4j_types(node_attributes)
         
-            # assign properties
-            if property_summary:
-                properties = self.get_property_summary(node_attributes)
+            # create tooltip text string 
+            if tooltip:
+                tooltip_text = self.create_tooltip(node_attributes)
         
             # assign unique id to node
             node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
-            #node_attributes['id'] = hash(node)
         
             # assign class label with the highest priority
             index = len(priority_labels)
@@ -678,9 +680,9 @@ class Graph(Widget):
             
             node_attributes['label'] = priority_labels[index]
         
-            # add a list of all node properties (can be used as a tool tip)
-            if property_summary:
-                node_attributes[property_summary] = properties
+            # add tooltip text as an attibute 
+            if tooltip:
+                node_attributes[tooltip] = tooltip_text 
                             
             # create node
             node_instance = Node()
@@ -711,8 +713,6 @@ class Graph(Widget):
             # assign unique node ids
             edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
             edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
-            #edge_instance.data["source"] = hash(node)
-            #edge_instance.data["target"] = hash(node)
             _set_attributes(edge_instance, rel_attributes)
 
             if directed and "directed" not in edge_instance.classes:
