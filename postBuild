@@ -1,1 +1,1 @@
-jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-cytoscape
+jupyter lab build --dev-build=False
