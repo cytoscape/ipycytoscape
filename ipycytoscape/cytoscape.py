@@ -647,7 +647,7 @@ class Graph(Widget):
         ----------
         node_attributes : dictionary of node attributes
         """
-        return '\n'.join(k + ':' + str(v) for k, v in node_attributes.items()) 
+        return "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
 
     def add_graph_from_neo4j(self, g):
         """
@@ -678,22 +678,22 @@ class Graph(Widget):
             node_attributes = self.convert_neo4j_types(node_attributes)
         
             # create tooltip text string 
-            if not 'tooltip' in node_attributes:
+            if not "tooltip" in node_attributes:
                 tooltip_text = self.create_tooltip(node_attributes)
         
             # assign unique id to node
-            node_attributes['id'] = hash(repr(sorted(node_attributes.items())))
+            node_attributes["id"] = hash(repr(sorted(node_attributes.items())))
         
             # assign class label with the highest priority
             index = len(priority_labels)
             for label in node.labels:
                 index = min(index, priority_labels.index(label))
             
-            node_attributes['label'] = priority_labels[index]
+            node_attributes["label"] = priority_labels[index]
         
             # add tooltip text as an attibute 
-            if not 'tooltip' in node_attributes:
-                node_attributes['tooltip'] = tooltip_text 
+            if not "tooltip" in node_attributes:
+                node_attributes["tooltip"] = tooltip_text 
                             
             # create node
             node_instance = Node()
@@ -718,8 +718,8 @@ class Graph(Widget):
             end_node_attributes = self.convert_neo4j_types(end_node_attributes)
   
             # assign name of the relationship
-            if not 'name' in rel_attributes:
-                rel_attributes['name'] = rel.__class__.__name__
+            if not "name" in rel_attributes:
+                rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids
             edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
