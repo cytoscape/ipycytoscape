@@ -93,7 +93,7 @@ setup_args = dict(
     include_package_data=True,
     install_requires=[
         "ipywidgets>=7.6.0",
-        "spectate>=0.4.1",
+        "spectate>=1.0.0",
         "networkx",
         "py2neo",
     ],
