@@ -34,7 +34,7 @@ install:
   - 'conda create -n test_env python=%PYTHON_VERSION% -y'
   - 'activate test_env'
   # Update install tools:
-  - 'conda install setuptools pip -y'
+  - 'conda install setuptools pip jupyterlab=3 jupyter-packaging -c conda-forge -y'
   - 'python -m pip install --upgrade pip'
   - 'python -m easy_install --upgrade setuptools'
   # Install coverage utilities:

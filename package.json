@@ -1,6 +1,6 @@
 {
   "name": "jupyter-cytoscape",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Cytoscape Jupyter Widget",
   "keywords": [
     "jupyter",
@@ -30,8 +30,8 @@
     "url": "https://github.com/Quantstack/ipycytoscape"
   },
   "scripts": {
-    "build": "npm run build:lib && npm run build:nbextension",
-    "build:labextension": "npm run clean:labextension && mkdirp ipycytoscape/labextension && cd ipycytoscape/labextension && npm pack ../..",
+    "build": "npm run build:lib && npm run build:all",
+    "build:labextension": "npm run clean:labextension && jupyter labextension build .",
     "build:lib": "tsc",
     "build:nbextension": "webpack -p",
     "build:all": "npm run build:labextension && npm run build:nbextension",
@@ -52,7 +52,7 @@
     "watch:nbextension": "webpack --watch"
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3",
+    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3 || ^4.0.0",
     "@types/cytoscape": "^3.8.8",
     "cytoscape": "^3.14.0",
     "cytoscape-cola": "^2.3.0",
@@ -62,6 +62,7 @@
     "tippy.js": "^5.2.1"
   },
   "devDependencies": {
+    "@jupyterlab/builder": "^3.0.0",
     "@phosphor/application": "^1.6.0",
     "@phosphor/widgets": "^1.6.0",
     "@types/expect.js": "^0.3.29",
@@ -98,7 +99,14 @@
     "webpack-cli": "^3.1.2"
   },
   "jupyterlab": {
-    "extension": "lib/plugin"
+    "extension": "lib/plugin",
+    "outputDir": "ipycytoscape/labextension",
+    "sharedPackages": {
+      "@jupyter-widgets/base": {
+        "bundled": false,
+        "singleton": true
+      }
+    }
   },
   "husky": {
     "hooks": {
