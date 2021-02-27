@@ -683,7 +683,7 @@ class Graph(Widget):
         
             # assign unique id to node
             node_attributes["id"] = hash(repr(sorted(node_attributes.items())))
-            print("node id", node_attributes["id"])
+            print("node id", node.identity)
         
             # assign class label with the highest priority
             index = len(priority_labels)
@@ -725,8 +725,8 @@ class Graph(Widget):
             # assign unique node ids
             edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
             edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
-            print("source",  edge_instance.data["source"])
-            print("target",  edge_instance.data["target"])
+            print("source",  rel.start_node.identity)
+            print("target",  rel.end_node.identity)
             _set_attributes(edge_instance, rel_attributes)
 
             if directed and "directed" not in edge_instance.classes:
