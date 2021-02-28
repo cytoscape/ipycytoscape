@@ -636,9 +636,10 @@ class Graph(Widget):
         Parameters
         ----------
         node_attributes : dictionary of node attributes
+        node_labels : list of node labels
         """
         labels = ",".join(str(label) in node_labels)
-        attributes "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
+        attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
         return labels + "\n" + attributes
 
     def add_graph_from_neo4j(self, g):
