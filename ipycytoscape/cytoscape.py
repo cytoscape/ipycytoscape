@@ -682,9 +682,7 @@ class Graph(Widget):
                 tooltip_text = self.create_tooltip(node_attributes)
         
             # assign unique id to node
-            #node_attributes["id"] = hash(repr(sorted(node_attributes.items())))
             node_attributes["id"] = node.identity
-            print("node id", node.identity)
         
             # assign class label with the highest priority
             index = len(priority_labels)
@@ -709,15 +707,15 @@ class Graph(Widget):
         for rel in g.relationships:
             edge_instance = Edge()
 
-            # create dictionaries of relationship and node attributes
+            # create dictionaries of relationship
             rel_attributes = dict(rel)
-            start_node_attributes = dict(rel.start_node)
-            end_node_attributes = dict(rel.end_node)
+            #start_node_attributes = dict(rel.start_node)
+            #end_node_attributes = dict(rel.end_node)
         
             # convert Neo4j specific types to string
             rel_attributes = self.convert_neo4j_types(rel_attributes) 
-            start_node_attributes = self.convert_neo4j_types(start_node_attributes)
-            end_node_attributes = self.convert_neo4j_types(end_node_attributes)
+            #start_node_attributes = self.convert_neo4j_types(start_node_attributes)
+            #end_node_attributes = self.convert_neo4j_types(end_node_attributes)
   
             # assign name of the relationship
             if not "name" in rel_attributes:
@@ -728,8 +726,6 @@ class Graph(Widget):
             #edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
             edge_instance.data["source"] = rel.start_node.identity
             edge_instance.data["target"] = rel.end_node.identity 
-            print("source",  rel.start_node.identity)
-            print("target",  rel.end_node.identity)
             _set_attributes(edge_instance, rel_attributes)
 
             if directed and "directed" not in edge_instance.classes:
