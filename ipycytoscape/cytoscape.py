@@ -642,7 +642,7 @@ class Graph(Widget):
         attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
         return labels + "\n" + attributes
 
-    def add_graph_from_neo4j(self, g, directed=True, multiple_edge=True):
+    def add_graph_from_neo4j(self, g, directed=True, multiple_edges=True):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
         a 'tooltip' node attribute to the Cytoscape graph if it is not present 
