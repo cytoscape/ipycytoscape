@@ -629,15 +629,17 @@ class Graph(Widget):
         return sorted(counts, key=counts.get)
 
     @staticmethod
-    def create_tooltip(node_attributes):
+    def create_tooltip(node_attributes, node_labels):
         """
-        Returns a string of all node attributes that can be used as a tooltip.
+        Returns a string of node labels and node attributes to be used as a tooltip.
 
         Parameters
         ----------
         node_attributes : dictionary of node attributes
         """
-        return "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
+        labels = ",".join(str(label) in node_labels)
+        attributes "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
+        return labels + "\n" + attributes
 
     def add_graph_from_neo4j(self, g):
         """
@@ -669,7 +671,8 @@ class Graph(Widget):
         
             # create tooltip text string 
             if not "tooltip" in node_attributes:
-                tooltip_text = self.create_tooltip(node_attributes)
+                tooltip_text = self.create_tooltip(node_attributes, node.labels)
+                node_attributes["tooltip"] = tooltip_text
         
             # assign unique id to node
             node_attributes["id"] = node.identity
@@ -682,8 +685,8 @@ class Graph(Widget):
             node_attributes["label"] = priority_labels[index]
         
             # add tooltip text as an attibute 
-            if not "tooltip" in node_attributes:
-                node_attributes["tooltip"] = tooltip_text 
+            #if not "tooltip" in node_attributes:
+            #    node_attributes["tooltip"] = tooltip_text 
                             
             # create node
             node_instance = Node()
