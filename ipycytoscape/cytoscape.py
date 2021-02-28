@@ -638,7 +638,7 @@ class Graph(Widget):
         node_attributes : dictionary of node attributes
         node_labels : list of node labels
         """
-        labels = ",".join(str(label) in node_labels)
+        labels = ",".join(label for label in node_labels)
         attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
         return labels + "\n" + attributes
 
