@@ -672,7 +672,8 @@ class Graph(Widget):
                 tooltip_text = self.create_tooltip(node_attributes)
         
             # assign unique id to node
-            node_attributes["id"] = hash(repr(sorted(node_attributes.items())))
+            #node_attributes["id"] = hash(repr(sorted(node_attributes.items())))
+            node_attributes["id"] = node.identity
             print("node id", node.identity)
         
             # assign class label with the highest priority
@@ -713,8 +714,10 @@ class Graph(Widget):
                 rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids
-            edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
-            edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
+            #edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
+            #edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
+            edge_instance.data["source"] = rel.start_node.identity
+            edge_instance.data["target"] = rel.end_node.identity 
             print("source",  rel.start_node.identity)
             print("target",  rel.end_node.identity)
             _set_attributes(edge_instance, rel_attributes)
