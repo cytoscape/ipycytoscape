@@ -652,7 +652,7 @@ class Graph(Widget):
         attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
         return labels + "\n" + attributes
 
-    def add_graph_from_neo4j(self, g):
+    def add_graph_from_neo4j(self, g, directed=True, multiple_edge=True):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
         a 'tooltip' node attribute to the Cytoscape graph if it is not present 
@@ -666,8 +666,8 @@ class Graph(Widget):
             See https://py2neo.org/v4/data.html#subgraph-objects
         """
         # Neo4j graphs are always directed and can contain multiple edges
-        directed=True
-        multiple_edges=True
+        #directed=True
+        #multiple_edges=True
 
         # select labels to be displayed as node labels
         priority_labels = self.get_node_labels_by_priority(g)
