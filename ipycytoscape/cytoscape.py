@@ -720,6 +720,8 @@ class Graph(Widget):
 
             edge_list.append(edge_instance)
 
+        directed = True
+        multiple_edges = True
         self.add_edges(edge_list, directed, multiple_edges)
 
 
