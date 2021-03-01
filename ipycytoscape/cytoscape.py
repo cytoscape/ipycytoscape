@@ -663,6 +663,7 @@ class Graph(Widget):
         priority_labels = self.get_node_labels_by_priority(g)
 
         # convert Neo4j nodes to cytoscape nodes
+        ids = set()
         node_list = list()
         for node in g.nodes:
             node_attributes = dict(node)
@@ -677,7 +678,7 @@ class Graph(Widget):
         
             # assign unique id to node
             node_attributes["id"] = node.identity
-        
+            ids.add(note.identity)
             # assign class label with the highest priority
             index = len(priority_labels)
             for label in node.labels:
@@ -720,6 +721,10 @@ class Graph(Widget):
             #edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
             edge_instance.data["source"] = rel.start_node.identity
             edge_instance.data["target"] = rel.end_node.identity 
+            if rel.start_node.identity not in ids:
+                print("start node mismatch:", rel.start_node.identity)
+            if rel.end_node.identity not in ids:
+                print("end node mismatch:", rel.end_node.identity)
             _set_attributes(edge_instance, rel_attributes)
 
             if directed and "directed" not in edge_instance.classes:
