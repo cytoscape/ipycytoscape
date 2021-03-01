@@ -679,6 +679,7 @@ class Graph(Widget):
             # assign unique id to node
             node_attributes["id"] = node.identity
             ids.add(node.identity)
+
             # assign class label with the highest priority
             index = len(priority_labels)
             for label in node.labels:
@@ -686,10 +687,6 @@ class Graph(Widget):
             
             node_attributes["label"] = priority_labels[index]
         
-            # add tooltip text as an attibute 
-            #if not "tooltip" in node_attributes:
-            #    node_attributes["tooltip"] = tooltip_text 
-                            
             # create node
             node_instance = Node()
             _set_attributes(node_instance, node_attributes)
@@ -704,21 +701,15 @@ class Graph(Widget):
 
             # create dictionaries of relationship
             rel_attributes = dict(rel)
-            #start_node_attributes = dict(rel.start_node)
-            #end_node_attributes = dict(rel.end_node)
         
             # convert Neo4j specific types to string
             rel_attributes = self.convert_neo4j_types(rel_attributes) 
-            #start_node_attributes = self.convert_neo4j_types(start_node_attributes)
-            #end_node_attributes = self.convert_neo4j_types(end_node_attributes)
   
             # assign name of the relationship
             if not "name" in rel_attributes:
                 rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids
-            #edge_instance.data["source"] = hash(repr(sorted(start_node_attributes.items())))
-            #edge_instance.data["target"] = hash(repr(sorted(end_node_attributes.items())))
             edge_instance.data["source"] = rel.start_node.identity
             edge_instance.data["target"] = rel.end_node.identity 
             if rel.start_node.identity not in ids:
@@ -727,10 +718,10 @@ class Graph(Widget):
                 print("end node mismatch:", rel.end_node.identity)
             _set_attributes(edge_instance, rel_attributes)
 
-            if directed and "directed" not in edge_instance.classes:
-                edge_instance.classes += " directed "
-            if multiple_edges and "multiple_edges" not in edge_instance.classes:
-                edge_instance.classes += " multiple_edges "
+            #if directed and "directed" not in edge_instance.classes:
+            #    edge_instance.classes += " directed "
+            #if multiple_edges and "multiple_edges" not in edge_instance.classes:
+            #    edge_instance.classes += " multiple_edges "
             edge_list.append(edge_instance)
 
         self.add_edges(edge_list, directed, multiple_edges)
