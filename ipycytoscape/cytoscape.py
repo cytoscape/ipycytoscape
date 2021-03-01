@@ -688,7 +688,7 @@ class Graph(Widget):
         
             # assign unique id to node
             node_attributes["id"] = node.identity
-            ids.add(note.identity)
+            ids.add(node.identity)
             # assign class label with the highest priority
             index = len(priority_labels)
             for label in node.labels:
