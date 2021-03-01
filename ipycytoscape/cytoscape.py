@@ -24,7 +24,6 @@ from traitlets import (
 from ._frontend import module_name, module_version
 
 import networkx as nx
-from py2neo import Graph
 import neotime
 
 """TODO: Remove this after this is somewhat done"""
@@ -612,7 +611,7 @@ class Graph(Widget):
         for k, v in node_attributes.items():
             if isinstance(v, neotime.Date):
                 node_attributes[k] = str(v)
-    
+
         return node_attributes
 
     @staticmethod
@@ -649,54 +648,49 @@ class Graph(Widget):
         node_labels : list of node labels
         """
         labels = ",".join(label for label in node_labels)
-        attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items()) 
+        attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items())
         return labels + "\n" + attributes
 
-    def add_graph_from_neo4j(self, g, directed=True, multiple_edges=True):
+    def add_graph_from_neo4j(self, g):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
-        a 'tooltip' node attribute to the Cytoscape graph if it is not present 
+        a 'tooltip' node attribute to the Cytoscape graph if it is not present
         in the Neo4j subgraph. This attribute can be set as a tooltip by
-        set_tooltip_source('tooltip'). The tooltip then displays the node 
-        properties from the Neo4j nodes. 
+        set_tooltip_source('tooltip'). The tooltip then displays the node
+        properties from the Neo4j nodes.
 
         Parameters
         ----------
         g : py2neo Neo4j subgraph object
             See https://py2neo.org/v4/data.html#subgraph-objects
         """
-        # Neo4j graphs are always directed and can contain multiple edges
-        #directed=True
-        #multiple_edges=True
 
         # select labels to be displayed as node labels
         priority_labels = self.get_node_labels_by_priority(g)
 
         # convert Neo4j nodes to cytoscape nodes
-        ids = set()
         node_list = list()
         for node in g.nodes:
             node_attributes = dict(node)
-        
+
             # convert Neo4j specific types to string
             node_attributes = self.convert_neo4j_types(node_attributes)
-        
-            # create tooltip text string 
+
+            # create tooltip text string
             if not "tooltip" in node_attributes:
                 tooltip_text = self.create_tooltip(node_attributes, node.labels)
                 node_attributes["tooltip"] = tooltip_text
-        
+
             # assign unique id to node
             node_attributes["id"] = node.identity
-            ids.add(node.identity)
 
             # assign class label with the highest priority
             index = len(priority_labels)
             for label in node.labels:
                 index = min(index, priority_labels.index(label))
-            
+
             node_attributes["label"] = priority_labels[index]
-        
+
             # create node
             node_instance = Node()
             _set_attributes(node_instance, node_attributes)
@@ -704,34 +698,26 @@ class Graph(Widget):
 
         self.add_nodes(node_list)
 
-        # convert Neo4j relationships to cytoscape edges 
+        # convert Neo4j relationships to cytoscape edges
         edge_list = list()
         for rel in g.relationships:
             edge_instance = Edge()
 
             # create dictionaries of relationship
             rel_attributes = dict(rel)
-        
+
             # convert Neo4j specific types to string
-            rel_attributes = self.convert_neo4j_types(rel_attributes) 
-  
+            rel_attributes = self.convert_neo4j_types(rel_attributes)
+
             # assign name of the relationship
             if not "name" in rel_attributes:
                 rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids
             edge_instance.data["source"] = rel.start_node.identity
-            edge_instance.data["target"] = rel.end_node.identity 
-            if rel.start_node.identity not in ids:
-                print("start node mismatch:", rel.start_node.identity)
-            if rel.end_node.identity not in ids:
-                print("end node mismatch:", rel.end_node.identity)
+            edge_instance.data["target"] = rel.end_node.identity
             _set_attributes(edge_instance, rel_attributes)
 
-            #if directed and "directed" not in edge_instance.classes:
-            #    edge_instance.classes += " directed "
-            #if multiple_edges and "multiple_edges" not in edge_instance.classes:
-            #    edge_instance.classes += " multiple_edges "
             edge_list.append(edge_instance)
 
         self.add_edges(edge_list, directed, multiple_edges)
