@@ -95,6 +95,7 @@ setup_args = dict(
         "ipywidgets>=7.6.0",
         "spectate>=1.0.0",
         "networkx",
+        "py2neo",
         "neotime",
     ],
     extras_require={
