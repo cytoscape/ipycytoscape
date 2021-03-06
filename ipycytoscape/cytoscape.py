@@ -613,28 +613,28 @@ class Graph(Widget):
     #
     #        return node_attributes
 
-    @staticmethod
-    def get_node_labels_by_priority(g):
-        """
-        Returns a list of Neo4j node labels in priority order.
-        If a Neo4j node has multiple labels, the most distinctive
-        (least frequently occuring) label will appear first in this list.
-        Example: five nodes have the labels (Person|Actor) and five nodes
-        have the labels (Person|Director). In this case the Actor and Director
-        labels have priority over the Person label.
-
-        Parameters
-        ----------
-        g : py2neo Neo4j subgraph object
-            See https://py2neo.org/v4/data.html#subgraph-objects
-        """
-        counts = dict()
-
-        for node in g.nodes:
-            for label in node.labels:
-                counts[label] = counts.get(label, 0) + 1
-
-        return sorted(counts, key=counts.get)
+    # @staticmethod
+    # def get_node_labels_by_priority(g):
+    #    """
+    #    Returns a list of Neo4j node labels in priority order.
+    #    If a Neo4j node has multiple labels, the most distinctive
+    #    (least frequently occuring) label will appear first in this list.
+    #    Example: five nodes have the labels (Person|Actor) and five nodes
+    #    have the labels (Person|Director). In this case the Actor and Director
+    #    labels have priority over the Person label.
+    #
+    #    Parameters
+    #    ----------
+    #    g : py2neo Neo4j subgraph object
+    #        See https://py2neo.org/v4/data.html#subgraph-objects
+    #    """
+    #    counts = dict()
+    #
+    #    for node in g.nodes:
+    #        for label in node.labels:
+    #            counts[label] = counts.get(label, 0) + 1
+    #
+    #    return sorted(counts, key=counts.get)
 
     @staticmethod
     def create_tooltip(node_attributes, node_labels):
@@ -679,8 +679,30 @@ class Graph(Widget):
 
             return node_attributes
 
+        def get_node_labels_by_priority(g):
+            """
+            Returns a list of Neo4j node labels in priority order.
+            If a Neo4j node has multiple labels, the most distinctive
+            (least frequently occuring) label will appear first in this list.
+            Example: five nodes have the labels (Person|Actor) and five nodes
+            have the labels (Person|Director). In this case the Actor and Director
+            labels have priority over the Person label.
+
+            Parameters
+            ----------
+            g : py2neo Neo4j subgraph object
+                See https://py2neo.org/v4/data.html#subgraph-objects
+            """
+            counts = dict()
+
+            for node in g.nodes:
+                for label in node.labels:
+                    counts[label] = counts.get(label, 0) + 1
+
+            return sorted(counts, key=counts.get)
+
         # select labels to be displayed as node labels
-        priority_labels = self.get_node_labels_by_priority(g)
+        priority_labels = get_node_labels_by_priority(g)
 
         # convert Neo4j nodes to cytoscape nodes
         node_list = list()
@@ -734,8 +756,10 @@ class Graph(Widget):
 
             edge_list.append(edge_instance)
 
+        # Neo4j graphs are directed and may have multiple edges
         directed = True
         multiple_edges = True
+
         self.add_edges(edge_list, directed, multiple_edges)
 
 
