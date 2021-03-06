@@ -598,20 +598,20 @@ class Graph(Widget):
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
-#    @staticmethod
-#    def convert_neo4j_types(node_attributes):
-#        """
-#        Converts types not compatible with cytoscape to strings.
-#
-#        Parameters
-#        ----------
-#        node_attributes : dictionary of node attributes
-#        """
-#        for k, v in node_attributes.items():
-#            if isinstance(v, neotime.Date):
-#                node_attributes[k] = str(v)
-#
-#        return node_attributes
+    #    @staticmethod
+    #    def convert_neo4j_types(node_attributes):
+    #        """
+    #        Converts types not compatible with cytoscape to strings.
+    #
+    #        Parameters
+    #        ----------
+    #        node_attributes : dictionary of node attributes
+    #        """
+    #        for k, v in node_attributes.items():
+    #            if isinstance(v, neotime.Date):
+    #                node_attributes[k] = str(v)
+    #
+    #        return node_attributes
 
     @staticmethod
     def get_node_labels_by_priority(g):
