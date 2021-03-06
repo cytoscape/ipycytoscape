@@ -688,7 +688,7 @@ class Graph(Widget):
             node_attributes = dict(node)
 
             # convert Neo4j specific types to string
-            node_attributes = self.convert_neo4j_types(node_attributes)
+            node_attributes = convert_neo4j_types(node_attributes)
 
             # create tooltip text string
             if not "tooltip" in node_attributes:
@@ -721,7 +721,7 @@ class Graph(Widget):
             rel_attributes = dict(rel)
 
             # convert Neo4j specific types to string
-            rel_attributes = self.convert_neo4j_types(rel_attributes)
+            rel_attributes = convert_neo4j_types(rel_attributes)
 
             # assign name of the relationship
             if not "name" in rel_attributes:
