@@ -598,58 +598,6 @@ class Graph(Widget):
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
-    #    @staticmethod
-    #    def convert_neo4j_types(node_attributes):
-    #        """
-    #        Converts types not compatible with cytoscape to strings.
-    #
-    #        Parameters
-    #        ----------
-    #        node_attributes : dictionary of node attributes
-    #        """
-    #        for k, v in node_attributes.items():
-    #            if isinstance(v, neotime.Date):
-    #                node_attributes[k] = str(v)
-    #
-    #        return node_attributes
-
-    # @staticmethod
-    # def get_node_labels_by_priority(g):
-    #    """
-    #    Returns a list of Neo4j node labels in priority order.
-    #    If a Neo4j node has multiple labels, the most distinctive
-    #    (least frequently occuring) label will appear first in this list.
-    #    Example: five nodes have the labels (Person|Actor) and five nodes
-    #    have the labels (Person|Director). In this case the Actor and Director
-    #    labels have priority over the Person label.
-    #
-    #    Parameters
-    #    ----------
-    #    g : py2neo Neo4j subgraph object
-    #        See https://py2neo.org/v4/data.html#subgraph-objects
-    #    """
-    #    counts = dict()
-    #
-    #    for node in g.nodes:
-    #        for label in node.labels:
-    #            counts[label] = counts.get(label, 0) + 1
-    #
-    #    return sorted(counts, key=counts.get)
-
-    @staticmethod
-    def create_tooltip(node_attributes, node_labels):
-        """
-        Returns a string of node labels and node attributes to be used as a tooltip.
-
-        Parameters
-        ----------
-        node_attributes : dictionary of node attributes
-        node_labels : list of node labels
-        """
-        labels = ",".join(label for label in node_labels)
-        attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items())
-        return labels + "\n" + attributes
-
     def add_graph_from_neo4j(self, g):
         """
         Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
@@ -700,6 +648,19 @@ class Graph(Widget):
                     counts[label] = counts.get(label, 0) + 1
 
             return sorted(counts, key=counts.get)
+
+        def create_tooltip(node_attributes, node_labels):
+            """
+            Returns a string of node labels and node attributes to be used as a tooltip.
+
+            Parameters
+            ----------
+            node_attributes : dictionary of node attributes
+            node_labels : list of node labels
+            """
+            labels = ",".join(label for label in node_labels)
+            attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items())
+            return labels + "\n" + attributes
 
         # select labels to be displayed as node labels
         priority_labels = get_node_labels_by_priority(g)
