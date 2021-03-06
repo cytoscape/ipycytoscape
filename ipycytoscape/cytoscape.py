@@ -24,7 +24,6 @@ from traitlets import (
 from ._frontend import module_name, module_version
 
 import networkx as nx
-import neotime
 
 """TODO: Remove this after this is somewhat done"""
 import logging
@@ -599,20 +598,20 @@ class Graph(Widget):
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
 
-    @staticmethod
-    def convert_neo4j_types(node_attributes):
-        """
-        Converts types not compatible with cytoscape to strings.
-
-        Parameters
-        ----------
-        node_attributes : dictionary of node attributes
-        """
-        for k, v in node_attributes.items():
-            if isinstance(v, neotime.Date):
-                node_attributes[k] = str(v)
-
-        return node_attributes
+#    @staticmethod
+#    def convert_neo4j_types(node_attributes):
+#        """
+#        Converts types not compatible with cytoscape to strings.
+#
+#        Parameters
+#        ----------
+#        node_attributes : dictionary of node attributes
+#        """
+#        for k, v in node_attributes.items():
+#            if isinstance(v, neotime.Date):
+#                node_attributes[k] = str(v)
+#
+#        return node_attributes
 
     @staticmethod
     def get_node_labels_by_priority(g):
@@ -664,6 +663,21 @@ class Graph(Widget):
         g : py2neo Neo4j subgraph object
             See https://py2neo.org/v4/data.html#subgraph-objects
         """
+        import neotime
+
+        def convert_neo4j_types(node_attributes):
+            """
+            Converts types not compatible with cytoscape to strings.
+
+            Parameters
+            ----------
+            node_attributes : dictionary of node attributes
+            """
+            for k, v in node_attributes.items():
+                if isinstance(v, neotime.Date):
+                    node_attributes[k] = str(v)
+
+            return node_attributes
 
         # select labels to be displayed as node labels
         priority_labels = self.get_node_labels_by_priority(g)
