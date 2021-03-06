@@ -675,7 +675,7 @@ class Graph(Widget):
 
             # create tooltip text string
             if not "tooltip" in node_attributes:
-                tooltip_text = self.create_tooltip(node_attributes, node.labels)
+                tooltip_text = create_tooltip(node_attributes, node.labels)
                 node_attributes["tooltip"] = tooltip_text
 
             # assign unique id to node
