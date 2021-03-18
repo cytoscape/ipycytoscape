@@ -28,8 +28,7 @@ import networkx as nx
 """TODO: Remove this after this is somewhat done"""
 import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "MONITORED_USER_TYPES",
