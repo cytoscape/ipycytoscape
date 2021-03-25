@@ -2,13 +2,16 @@ include LICENSE
 include README.md
 
 include setupbase.py
+include pyproject.toml
 include pytest.ini
 include .coverage.rc
 
 include tsconfig.json
 include package.json
 include webpack.config.js
-include ipycytoscape/labextension/*.tgz
+
+recursive-include ipycytoscape/nbextension/*
+recursive-include ipycytoscape/labextension/*
 
 # Documentation
 graft docs
@@ -25,7 +28,6 @@ graft tests
 prune tests/build
 
 # Javascript files
-graft ipycytoscape/nbextension
 graft src
 graft css
 prune **/node_modules
@@ -38,3 +40,4 @@ global-exclude *.pyc
 global-exclude *.pyo
 global-exclude .git
 global-exclude .ipynb_checkpoints
+

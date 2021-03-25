@@ -12,3 +12,9 @@ from .cytoscape import *
 from ._version import __version__, version_info
 
 from .nbextension import _jupyter_nbextension_paths
+
+npm_pkg_name = "jupyter-cytoscape"
+
+
+def _jupyter_labextension_paths():
+    return [{"src": "labextension", "dest": npm_pkg_name}]

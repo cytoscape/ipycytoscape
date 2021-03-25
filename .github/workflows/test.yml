@@ -1,0 +1,66 @@
+name: Tests
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
+
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        echo "::set-output name=dir::$(pip cache dir)"
+
+    - name: pip cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+          ${{ runner.os }}-pip-
+
+    - name: Install build dependencies
+      shell: bash -l {0}
+      run: pip install jupyterlab==3 jupyter-packaging
+
+    - name: Install ipycytoscape
+      shell: bash -l {0}
+      run: pip install -e ".[test, examples]"
+
+    - name: Check labextension
+      shell: bash -l {0}
+      run: |
+        jupyter labextension list 1>labextensions 2>&1
+        cat labextensions | grep "jupyter-cytoscape.*OK"
+        python -m jupyterlab.browser_check
+
+    - name: Run Tests
+      shell: bash -l {0}
+      run: pytest . --color=yes

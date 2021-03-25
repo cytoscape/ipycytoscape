@@ -16,19 +16,21 @@ or with conda/`mamba <https://github.com/TheSnakePit/mamba>`_::
     mamba install -c conda-forge ipycytoscape
 
 
-JupyterLab
-----------
-In order to install the JupyterLab extension jupyter-cytoscape, you will first need to install nodejs,
-you can install it with conda by doing
+.. _jlab-install-instructions:
 
-.. code-block::bash
+JupyterLab Installation
+-----------------------
+
+If you are using JupyterLab version 1.x or 2.x then you will also need to install nodejs and the jupyterlab-manager extension.
+
+.. code-block:: bash
     
     conda install -c conda-forge nodejs
 
-The ``jupyer-cytoscape`` labextension should have been automatically installed for you when you installed
+The ``jupyter-cytoscape`` labextension should have been automatically installed for you when you installed
 the Python package, but you still need to install the JupyterLab widget manager:
 
-.. code-block::bash
+.. code-block:: bash
 
     jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build
 

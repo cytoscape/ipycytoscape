@@ -145,8 +145,8 @@ $RECYCLE.BIN/
 # ----
 
 **/node_modules/
-ipycytoscape/nbextension/static/index.*
-ipycytoscape/labextension/*.tgz
+ipycytoscape/nbextension/static/*
+ipycytoscape/labextension/*
 
 # Coverage data
 # -------------
