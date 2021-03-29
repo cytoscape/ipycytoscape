@@ -133,7 +133,9 @@ export class ElementView extends WidgetView {
     const cyId = this.model.get('data')['id'];
     this.elem = this.cytoscapeView.cytoscape_obj.getElementById(cyId);
 
-    this.model.on('change:removed', this.valueChanged, this);
+    this.model.on('change:removed', () => {
+      this.elem.remove();
+    });
     this.model.on('change:classes', () => {
       this.elem.classes(this.model.get('classes'));
     });

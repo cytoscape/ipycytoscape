@@ -419,6 +419,17 @@ class Graph(Widget):
                 f"Edge between {source_id} and {target_id} is not present in the graph."
             )
 
+    def clear(self):
+        """
+        Remove all the nodes and edges from the graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        """
+        self.nodes.clear()
+        self.edges.clear()
+        self._adj.clear()
+
     def add_graph_from_networkx(self, g, directed=None, multiple_edges=None):
         """
         Converts a NetworkX graph in to a Cytoscape graph.
