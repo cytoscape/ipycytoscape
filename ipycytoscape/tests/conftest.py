@@ -41,6 +41,7 @@ class MockComm(Comm):
 _widget_attrs = {}
 undefined = object()
 
+
 @pytest.fixture
 def mock_comm():
     _widget_attrs["_comm_default"] = getattr(Widget, "_comm_default", undefined)
