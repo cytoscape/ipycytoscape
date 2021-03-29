@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - ipycytoscape>=1.0.3
-  - jupyterlab=2
+  - jupyterlab=3
   - matplotlib-base
   - networkx
   - pandas
