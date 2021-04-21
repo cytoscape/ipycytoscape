@@ -613,7 +613,7 @@ class Graph(Widget):
         """
         import neotime
 
-        def convert_neo4j_types(node_attributes):
+        def convert_types_to_string(node_attributes):
             """
             Converts types not compatible with cytoscape to strings.
 
@@ -643,6 +643,10 @@ class Graph(Widget):
             """
             counts = dict()
 
+            # This counts the number of instances that a node has a particular
+            # label (a node can have multiple labels in Neo4j).
+            # counts.get(label, 0) initializes the count with zero, and then
+            # increments the value if more of the same labels are encountered.
             for node in g.nodes:
                 for label in node.labels:
                     counts[label] = counts.get(label, 0) + 1
@@ -671,7 +675,7 @@ class Graph(Widget):
             node_attributes = dict(node)
 
             # convert Neo4j specific types to string
-            node_attributes = convert_neo4j_types(node_attributes)
+            node_attributes = convert_types_to_string(node_attributes)
 
             # create tooltip text string
             if not "tooltip" in node_attributes:
@@ -704,7 +708,7 @@ class Graph(Widget):
             rel_attributes = dict(rel)
 
             # convert Neo4j specific types to string
-            rel_attributes = convert_neo4j_types(rel_attributes)
+            rel_attributes = convert_types_to_string(rel_attributes)
 
             # assign name of the relationship
             if not "name" in rel_attributes:
