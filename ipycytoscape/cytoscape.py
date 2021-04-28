@@ -383,11 +383,20 @@ class Graph(Widget):
         ----------
         edge : ipcytoscape.Edge
         """
+        source = edge.data["source"]
+        target = edge.data["target"]
+
         try:
             self.edges.remove(edge)
-            del self._adj[edge.data["source"]][edge.data["target"]]
+            if self._adj[source][target] == 1:
+                del self._adj[source][target]
+            else:
+                self._adj[source][target] -= 1
             if "directed" not in edge.classes:
-                del self._adj[edge.data["target"]][edge.data["source"]]
+                if self._adj[target][source] == 1:
+                    del self._adj[target][source]
+                else:
+                    self._adj[target][source] -= 1
         except ValueError:
             raise ValueError(
                 f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph."
@@ -402,8 +411,10 @@ class Graph(Widget):
         source_id : numeric or string
         target_id : numeric or string
         """
-        edge_id = -1
-        for i, edge in enumerate(self.edges):
+        contains_edge = False
+        edges = copy.copy(self.edges)
+
+        for edge in edges:
             if (
                 edge.data["source"] == source_id and edge.data["target"] == target_id
             ) or (
@@ -411,10 +422,9 @@ class Graph(Widget):
                 and edge.data["source"] == target_id
                 and edge.data["target"] == source_id
             ):
-                edge_id = i
-        if edge_id != -1:
-            self.remove_edge(self.edges[edge_id])
-        else:
+                self.remove_edge(edge)
+                contains_edge = True
+        if not contains_edge:
             raise ValueError(
                 f"Edge between {source_id} and {target_id} is not present in the graph."
             )
