@@ -3,11 +3,14 @@
 
 # Copyright (c) Mariana Meireles.
 # Distributed under the terms of the Modified BSD License.
-
+from os import path
 import copy
+import json
 
 from spectate import mvc
 from traitlets import TraitType, TraitError
+
+from pandas import DataFrame
 
 from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
 from traitlets import (
@@ -504,11 +507,15 @@ class Graph(Widget):
 
         Parameters
         ----------
-        json_file : dict
+        json_file : dict, string
         directed : bool
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
+        if path.isfile(str(json_file)):
+            with open(json_file) as f:
+                json_file = json.load(f)
+
         node_list = list()
         for node in json_file["nodes"]:
             node_instance = Node()
@@ -811,11 +818,20 @@ class CytoscapeWidget(DOMWidget):
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def __init__(self, **kwargs):
+    def __init__(self, graph_file=None, **kwargs):
         super(CytoscapeWidget, self).__init__(**kwargs)
 
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
+
+        if isinstance(graph_file, nx.Graph):
+            self.graph.add_graph_from_networkx(graph_file)
+        if isinstance(graph_file, dict):
+            self.graph.add_graph_from_json(graph_file)
+        if isinstance(graph_file, DataFrame):
+            self.graph.add_graph_from_df(graph_file)
+        if isinstance(graph_file, str):
+            self.graph.add_graph_from_json(graph_file)
 
     # Make sure we have a callback dispatcher for this widget and event type;
     # since _interaction_handlers is synced with the frontend and changes to
