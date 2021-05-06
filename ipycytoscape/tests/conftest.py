@@ -52,7 +52,6 @@ def mock_comm():
         raise NotImplementedError()
 
     Widget._ipython_display_ = raise_not_implemented
-
     yield MockComm()
 
     for attr, value in _widget_attrs.items():

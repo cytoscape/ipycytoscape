@@ -391,6 +391,7 @@ export class CytoscapeView extends DOMWidgetView {
   }
 
   removeNodeView(nodeView: any) {
+    nodeView.model.set('removed', true);
     nodeView.remove();
   }
 
@@ -404,6 +405,7 @@ export class CytoscapeView extends DOMWidgetView {
   }
 
   removeEdgeView(edgeView: any) {
+    edgeView.model.set('removed', true);
     edgeView.remove();
   }
 }

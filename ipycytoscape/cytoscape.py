@@ -28,8 +28,7 @@ import networkx as nx
 """TODO: Remove this after this is somewhat done"""
 import logging
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "MONITORED_USER_TYPES",
@@ -384,11 +383,20 @@ class Graph(Widget):
         ----------
         edge : ipcytoscape.Edge
         """
+        source = edge.data["source"]
+        target = edge.data["target"]
+
         try:
             self.edges.remove(edge)
-            del self._adj[edge.data["source"]][edge.data["target"]]
+            if self._adj[source][target] == 1:
+                del self._adj[source][target]
+            else:
+                self._adj[source][target] -= 1
             if "directed" not in edge.classes:
-                del self._adj[edge.data["target"]][edge.data["source"]]
+                if self._adj[target][source] == 1:
+                    del self._adj[target][source]
+                else:
+                    self._adj[target][source] -= 1
         except ValueError:
             raise ValueError(
                 f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph."
@@ -403,8 +411,10 @@ class Graph(Widget):
         source_id : numeric or string
         target_id : numeric or string
         """
-        edge_id = -1
-        for i, edge in enumerate(self.edges):
+        contains_edge = False
+        edges = copy.copy(self.edges)
+
+        for edge in edges:
             if (
                 edge.data["source"] == source_id and edge.data["target"] == target_id
             ) or (
@@ -412,13 +422,23 @@ class Graph(Widget):
                 and edge.data["source"] == target_id
                 and edge.data["target"] == source_id
             ):
-                edge_id = i
-        if edge_id != -1:
-            self.remove_edge(self.edges[edge_id])
-        else:
+                self.remove_edge(edge)
+                contains_edge = True
+        if not contains_edge:
             raise ValueError(
                 f"Edge between {source_id} and {target_id} is not present in the graph."
             )
+
+    def clear(self):
+        """
+        Remove all the nodes and edges from the graph.
+        Parameters
+        ----------
+        self: cytoscape graph
+        """
+        self.nodes.clear()
+        self.edges.clear()
+        self._adj.clear()
 
     def add_graph_from_networkx(self, g, directed=None, multiple_edges=None):
         """
@@ -587,6 +607,135 @@ class Graph(Widget):
         all_nodes = list(group_nodes.values()) + graph_nodes
         self.add_edges(graph_edges, directed, multiple_edges)
         self.add_nodes(all_nodes)
+
+    def add_graph_from_neo4j(self, g):
+        """
+        Converts a py2neo Neo4j subgraph into a Cytoscape graph. It also adds
+        a 'tooltip' node attribute to the Cytoscape graph if it is not present
+        in the Neo4j subgraph. This attribute can be set as a tooltip by
+        set_tooltip_source('tooltip'). The tooltip then displays the node
+        properties from the Neo4j nodes.
+
+        Parameters
+        ----------
+        g : py2neo Neo4j subgraph object
+            See https://py2neo.org/v4/data.html#subgraph-objects
+        """
+        import neotime
+
+        def convert_types_to_string(node_attributes):
+            """
+            Converts types not compatible with cytoscape to strings.
+
+            Parameters
+            ----------
+            node_attributes : dictionary of node attributes
+            """
+            for k, v in node_attributes.items():
+                if isinstance(v, neotime.Date):
+                    node_attributes[k] = str(v)
+
+            return node_attributes
+
+        def get_node_labels_by_priority(g):
+            """
+            Returns a list of Neo4j node labels in priority order.
+            If a Neo4j node has multiple labels, the most distinctive
+            (least frequently occuring) label will appear first in this list.
+            Example: five nodes have the labels (Person|Actor) and five nodes
+            have the labels (Person|Director). In this case the Actor and Director
+            labels have priority over the Person label.
+
+            Parameters
+            ----------
+            g : py2neo Neo4j subgraph object
+                See https://py2neo.org/v4/data.html#subgraph-objects
+            """
+            counts = dict()
+
+            # This counts the number of instances that a node has a particular
+            # label (a node can have multiple labels in Neo4j).
+            # counts.get(label, 0) initializes the count with zero, and then
+            # increments the value if more of the same labels are encountered.
+            for node in g.nodes:
+                for label in node.labels:
+                    counts[label] = counts.get(label, 0) + 1
+
+            return sorted(counts, key=counts.get)
+
+        def create_tooltip(node_attributes, node_labels):
+            """
+            Returns a string of node labels and node attributes to be used as a tooltip.
+
+            Parameters
+            ----------
+            node_attributes : dictionary of node attributes
+            node_labels : list of node labels
+            """
+            labels = ",".join(label for label in node_labels)
+            attributes = "\n".join(k + ":" + str(v) for k, v in node_attributes.items())
+            return labels + "\n" + attributes
+
+        # select labels to be displayed as node labels
+        priority_labels = get_node_labels_by_priority(g)
+
+        # convert Neo4j nodes to cytoscape nodes
+        node_list = list()
+        for node in g.nodes:
+            node_attributes = dict(node)
+
+            # convert Neo4j specific types to string
+            node_attributes = convert_types_to_string(node_attributes)
+
+            # create tooltip text string
+            if not "tooltip" in node_attributes:
+                tooltip_text = create_tooltip(node_attributes, node.labels)
+                node_attributes["tooltip"] = tooltip_text
+
+            # assign unique id to node
+            node_attributes["id"] = node.identity
+
+            # assign class label with the highest priority
+            index = len(priority_labels)
+            for label in node.labels:
+                index = min(index, priority_labels.index(label))
+
+            node_attributes["label"] = priority_labels[index]
+
+            # create node
+            node_instance = Node()
+            _set_attributes(node_instance, node_attributes)
+            node_list.append(node_instance)
+
+        self.add_nodes(node_list)
+
+        # convert Neo4j relationships to cytoscape edges
+        edge_list = list()
+        for rel in g.relationships:
+            edge_instance = Edge()
+
+            # create dictionaries of relationship
+            rel_attributes = dict(rel)
+
+            # convert Neo4j specific types to string
+            rel_attributes = convert_types_to_string(rel_attributes)
+
+            # assign name of the relationship
+            if not "name" in rel_attributes:
+                rel_attributes["name"] = rel.__class__.__name__
+
+            # assign unique node ids
+            edge_instance.data["source"] = rel.start_node.identity
+            edge_instance.data["target"] = rel.end_node.identity
+            _set_attributes(edge_instance, rel_attributes)
+
+            edge_list.append(edge_instance)
+
+        # Neo4j graphs are directed and may have multiple edges
+        directed = True
+        multiple_edges = True
+
+        self.add_edges(edge_list, directed, multiple_edges)
 
 
 class CytoscapeWidget(DOMWidget):
