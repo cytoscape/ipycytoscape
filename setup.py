@@ -116,7 +116,7 @@ setup_args = dict(
         "neo4j": [
             "py2neo",
             "neotime",
-        ]
+        ],
     },
     entry_points={},
 )
