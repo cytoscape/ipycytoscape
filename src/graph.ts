@@ -1,3 +1,5 @@
+// Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
+
 import { ISerializers, WidgetModel, WidgetView } from '@jupyter-widgets/base';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
