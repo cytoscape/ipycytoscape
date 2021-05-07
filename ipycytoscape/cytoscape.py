@@ -182,7 +182,7 @@ class Element(Widget):
 
 
 class Edge(Element):
-    """ Edge Widget """
+    """Edge Widget"""
 
     _model_name = Unicode("EdgeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -198,7 +198,7 @@ class Edge(Element):
 
 
 class Node(Element):
-    """ Node Widget """
+    """Node Widget"""
 
     _model_name = Unicode("NodeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -226,7 +226,7 @@ def _set_attributes(instance, data):
 
 
 class Graph(Widget):
-    """ Graph Widget """
+    """Graph Widget"""
 
     _model_name = Unicode("GraphModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -739,7 +739,7 @@ class Graph(Widget):
 
 
 class CytoscapeWidget(DOMWidget):
-    """ Implements the main Cytoscape Widget """
+    """Implements the main Cytoscape Widget"""
 
     _model_name = Unicode("CytoscapeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
