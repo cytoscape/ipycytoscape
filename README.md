@@ -12,6 +12,8 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 * Conversion from NetworkX see [example1](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb), [example2](https://github.com/QuantStack/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
 * Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/pandas.ipynb)
+* Conversion from neo4j see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Neo4j_Example.ipynb)
+    - Currently there's no package of `py2neo` available that's compatible with `ipycytoscape`. As a provisory solution to this problem you can use the package offered by `pypi` and install it with the following line: `pip install -e ".[neo4j]"`
 
 ## Installation
 

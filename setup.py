@@ -95,8 +95,6 @@ setup_args = dict(
         "ipywidgets>=7.6.0",
         "spectate>=1.0.0",
         "networkx",
-        "py2neo",
-        "neotime",
     ],
     extras_require={
         "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas"],
@@ -115,6 +113,10 @@ setup_args = dict(
             "networkx",
             "pandas",
         ],
+        "neo4j": [
+            "py2neo",
+            "neotime",
+        ]
     },
     entry_points={},
 )
