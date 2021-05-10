@@ -67,7 +67,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup_args = dict(
     name=name,
-    description="A Cytoscape widget for Jupyter", 
+    description="A Cytoscape widget for Jupyter",
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=version,
