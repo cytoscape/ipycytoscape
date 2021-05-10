@@ -6,7 +6,7 @@ Developer install
 To install a developer version of ipycytoscape, you will first need to clone
 the repository::
 
-    git clone https://github.com/Quantstack/ipycytoscape
+    git clone https://github.com/cytoscape/ipycytoscape
     cd ipycytoscape
 
 Next, install it with a develop install using pip::

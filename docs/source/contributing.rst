@@ -3,13 +3,13 @@ Contributing
 ============
 
 Thanks for thinking of a way to help improve this library! Remember that contributions come in all
-shapes and sizes beyond writing bug fixes: Contributing to documentation, opening new `issues <https://github.com/quantstack/ipycytoscape/issues>`_ for bugs, asking for clarification 
+shapes and sizes beyond writing bug fixes: Contributing to documentation, opening new `issues <https://github.com/cytoscape/ipycytoscape/issues>`_ for bugs, asking for clarification 
 on things you find unclear, and requesting new features, are all super valuable contributions. 
 
 Code Improvements
 -----------------
 
-All development for this library happens on Github at `ipycytoscape <https://github.com/quantstack/ipycytoscape>`_.
+All development for this library happens on Github at `ipycytoscape <https://github.com/cytoscape/ipycytoscape>`_.
 
 Seeing your changes
 ^^^^^^^^^^^^^^^^^^^
@@ -33,7 +33,7 @@ Using Git/Github can confusing (https://xkcd.com/1597/) so if you're new to Git,
 it helpful to use a program like `Github Desktop <desktop.github.com>`_ and to follow
 a `guide <https://github.com/firstcontributions/first-contributions#first-contributions>`_. 
 
-Also feel free to ask for help/advice on the relevant Github `issue <https://github.com/quantstack/ipycytoscape/issues>`_
+Also feel free to ask for help/advice on the relevant Github `issue <https://github.com/cytoscape/ipycytoscape/issues>`_
 or in the `Gitter chat <https://gitter.im/QuantStack/Lobby>`_.
 
 Documentation
