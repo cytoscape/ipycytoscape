@@ -149,7 +149,7 @@ And build them:
 
 ## Acknowledgements
 
-The ipycytoscape project was started by [Mariana Meireles](https://github.com/marimeireles) at [QuantStack](https://quantstack/net). This initial development was funded as part of the [PLASMA](https://plasmabio.org) project, which is led by Claire Vandiedonck, Pierre Poulain, and Sandrine Caburet.
+The ipycytoscape project was started by [Mariana Meireles](https://github.com/marimeireles) at [QuantStack](https://quantstack.net). This initial development was funded as part of the [PLASMA](https://plasmabio.org) project, which is led by Claire Vandiedonck, Pierre Poulain, and Sandrine Caburet.
 
 ## License
 

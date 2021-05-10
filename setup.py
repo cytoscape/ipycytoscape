@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Jupyter Development Team.
+# Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
+#
 # Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
 
-from __future__ import print_function
 from glob import glob
 import os
 from os import path
@@ -65,7 +67,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup_args = dict(
     name=name,
-    description="Python implementation of the graph visualization tool Cytoscape.",
+    description="A Cytoscape widget for Jupyter", 
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=version,
