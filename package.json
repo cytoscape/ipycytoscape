@@ -14,9 +14,9 @@
     "css/*.css",
     "LICENSE"
   ],
-  "homepage": "https://github.com/Quantstack/ipycytoscape",
+  "homepage": "https://github.com/cytoscape/ipycytoscape",
   "bugs": {
-    "url": "https://github.com/Quantstack/ipycytoscape/issues"
+    "url": "https://github.com/cytoscape/ipycytoscape/issues"
   },
   "license": "BSD-3-Clause",
   "author": {
@@ -27,7 +27,7 @@
   "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Quantstack/ipycytoscape"
+    "url": "https://github.com/cytoscape/ipycytoscape"
   },
   "scripts": {
     "build": "npm run build:lib && npm run build:all",
