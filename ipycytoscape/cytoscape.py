@@ -10,8 +10,6 @@ import json
 from spectate import mvc
 from traitlets import TraitType, TraitError
 
-from pandas import DataFrame
-
 from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
 from traitlets import (
     Unicode,
@@ -185,7 +183,7 @@ class Element(Widget):
 
 
 class Edge(Element):
-    """ Edge Widget """
+    """Edge Widget"""
 
     _model_name = Unicode("EdgeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -201,7 +199,7 @@ class Edge(Element):
 
 
 class Node(Element):
-    """ Node Widget """
+    """Node Widget"""
 
     _model_name = Unicode("NodeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -229,7 +227,7 @@ def _set_attributes(instance, data):
 
 
 class Graph(Widget):
-    """ Graph Widget """
+    """Graph Widget"""
 
     _model_name = Unicode("GraphModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -508,6 +506,10 @@ class Graph(Widget):
         Parameters
         ----------
         json_file : dict, string
+            If a dict is passed, it will be parsed as a JSON object,
+            a file path (to the json graph file) can also be passed as a
+            string, the file will be loaded it's content parsed as JSON an
+            object.
         directed : bool
             If True all edges will be given 'directed' as a class if
             they do not already have it.
@@ -746,7 +748,7 @@ class Graph(Widget):
 
 
 class CytoscapeWidget(DOMWidget):
-    """ Implements the main Cytoscape Widget """
+    """Implements the main Cytoscape Widget"""
 
     _model_name = Unicode("CytoscapeModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
@@ -818,20 +820,34 @@ class CytoscapeWidget(DOMWidget):
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def __init__(self, graph_file=None, **kwargs):
+    def __init__(self, graph=None, **kwargs):
+        """
+        Initializes the graph widget.
+
+        Parameters
+        ----------
+        - graph:
+          type: string|dict|pandas.DataFrame|networkx.Graph|neo4j|Graph|None
+          description: graph passes is checked to be of one of the declared
+                       types, and the corresponding object is added to the
+                       graph attribute of the DOM object.
+        """
         super(CytoscapeWidget, self).__init__(**kwargs)
 
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
 
-        if isinstance(graph_file, nx.Graph):
-            self.graph.add_graph_from_networkx(graph_file)
-        if isinstance(graph_file, dict):
-            self.graph.add_graph_from_json(graph_file)
-        if isinstance(graph_file, DataFrame):
-            self.graph.add_graph_from_df(graph_file)
-        if isinstance(graph_file, str):
-            self.graph.add_graph_from_json(graph_file)
+        if isinstance(graph, nx.Graph):
+            self.graph.add_graph_from_networkx(graph)
+        elif isinstance(graph, (dict, str)):
+            self.graph.add_graph_from_json(graph)
+        elif graph.__class__.__name__ == "DataFrame":
+            self.graph.add_graph_from_df(graph, **kwargs)
+        else:
+            if isinstance(graph, Graph):
+                self.graph = graph
+            elif graph.__class__.__name__ == "Graph":
+                self.graph.add_graph_from_neo4j(graph)
 
     # Make sure we have a callback dispatcher for this widget and event type;
     # since _interaction_handlers is synced with the frontend and changes to
