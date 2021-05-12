@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Jupyter Development Team.
+# Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
+#
 # Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
 
-from __future__ import print_function
 from glob import glob
 import os
 from os import path
@@ -65,7 +67,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup_args = dict(
     name=name,
-    description="Python implementation of the graph visualization tool Cytoscape.",
+    description="A Cytoscape widget for Jupyter",
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=version,
@@ -74,7 +76,7 @@ setup_args = dict(
     packages=find_packages(),
     author="Mariana Meireles",
     author_email="mariana.meireles@quantstack.net",
-    url="https://github.com/Quantstack/ipycytoscape",
+    url="https://github.com/cytoscape/ipycytoscape",
     license="BSD",
     platforms="Linux, Mac OS X, Windows",
     keywords=["Jupyter", "Widgets", "IPython"],
@@ -95,8 +97,6 @@ setup_args = dict(
         "ipywidgets>=7.6.0",
         "spectate>=1.0.0",
         "networkx",
-        "py2neo",
-        "neotime",
     ],
     extras_require={
         "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas"],
@@ -114,6 +114,10 @@ setup_args = dict(
             "nbsphinx-link",
             "networkx",
             "pandas",
+        ],
+        "neo4j": [
+            "py2neo",
+            "neotime",
         ],
     },
     entry_points={},

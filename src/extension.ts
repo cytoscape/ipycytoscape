@@ -1,13 +1,8 @@
-// Copyright (c) Jupyter Development Team.
+// Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
+//
 // Distributed under the terms of the Modified BSD License.
-
-// Entry point for the notebook bundle containing custom model definitions.
 //
-// Setup notebook base URL
-//
-// Some static assets may be required by the custom widget javascript. The base
-// url for the notebook is not known at build time and is therefore computed
-// dynamically.
+// The full license is in the file LICENSE, distributed with this software.
 
 (window as any).__webpack_public_path__ =
   document.querySelector('body')!.getAttribute('data-base-url') + // eslint-disable-line @typescript-eslint/no-non-null-assertion

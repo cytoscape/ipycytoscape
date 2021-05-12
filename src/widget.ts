@@ -1,4 +1,4 @@
-// Copyright (c) 2020, QuantStack and ipycytoscape Contributors
+// Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 //
 // Distributed under the terms of the Modified BSD License.
 //

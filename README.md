@@ -10,8 +10,10 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 
 #### Supports:
 
-* Conversion from NetworkX see [example1](https://github.com/QuantStack/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb), [example2](https://github.com/QuantStack/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
-* Conversion from Pandas DataFrame see [example](https://github.com/QuantStack/ipycytoscape/blob/master/examples/pandas.ipynb)
+* Conversion from NetworkX see [example1](https://github.com/cytoscape/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb), [example2](https://github.com/cytoscape/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
+* Conversion from Pandas DataFrame see [example](https://github.com/cytoscape/ipycytoscape/blob/master/examples/pandas.ipynb)
+* Conversion from neo4j see [example](https://github.com/cytoscape/ipycytoscape/blob/master/examples/Neo4j_Example.ipynb)
+    - Currently there's no package of `py2neo` available that's compatible with `ipycytoscape`. As a provisory solution to this problem you can use the package offered by `pypi` and install it with the following line: `pip install -e ".[neo4j]"`
 
 ## Installation
 
@@ -65,7 +67,7 @@ conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
 conda activate ipycytoscape
 
 # clone repo
-git clone https://github.com/QuantStack/ipycytoscape.git
+git clone https://github.com/cytoscape/ipycytoscape.git
 cd ipycytoscape
 ```
 
@@ -144,6 +146,10 @@ Install dependencies:
 And build them: 
 
 `make html`
+
+## Acknowledgements
+
+The ipycytoscape project was started by [Mariana Meireles](https://github.com/marimeireles) at [QuantStack](https://quantstack.net). This initial development was funded as part of the [PLASMA](https://plasmabio.org) project, which is led by Claire Vandiedonck, Pierre Poulain, and Sandrine Caburet.
 
 ## License
 
