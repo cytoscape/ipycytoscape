@@ -99,7 +99,7 @@ setup_args = dict(
         "networkx",
     ],
     extras_require={
-        "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas"],
+        "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas", "nbclassic=0.2.8"],
         "examples": [
             "pandas"
             # Any requirements for the examples to run
