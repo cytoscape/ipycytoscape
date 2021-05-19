@@ -523,7 +523,7 @@ class Graph(Widget):
 
         Parameters
         ----------
-        json_file : dict, string
+        json_file : dict or string
             If a dict is passed, it will be parsed as a JSON object,
             a file path (to the json graph file) can also be passed as a
             string, the file will be loaded it's content parsed as JSON an
@@ -844,11 +844,12 @@ class CytoscapeWidget(DOMWidget):
 
         Parameters
         ----------
-        graph: string or dict or pandas.DataFrame or networkx.Graph or neo4j or
-               Graph, optional (defaults to None)
-               graph passes is checked to be of one of the declared types, and
-               the corresponding object is added to the graph attribute of the
-               DOM object.
+        graph: string or dict or pandas DataFrame object or networkx Graph
+               object or neo4j Graph object or Graph object, optional (defaults
+               to None)
+               Checked to be of one of the declared types, and graph object
+               corresponding to it is added as a Graph attribute to the
+               CytoscapeWidget DOM.
         """
         super(CytoscapeWidget, self).__init__(**kwargs)
 
