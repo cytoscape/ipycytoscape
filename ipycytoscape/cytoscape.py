@@ -31,6 +31,19 @@ from ._frontend import module_name, module_version
 
 import networkx as nx
 
+try:
+    import pandas as pd
+
+except ImportError:
+    pd = None
+
+try:
+    import py2neo
+
+except ImportError:
+    pass
+
+
 """TODO: Remove this after this is somewhat done"""
 import logging
 
@@ -831,11 +844,11 @@ class CytoscapeWidget(DOMWidget):
 
         Parameters
         ----------
-        - graph:
-          type: string|dict|pandas.DataFrame|networkx.Graph|neo4j|Graph|None
-          description: graph passes is checked to be of one of the declared
-                       types, and the corresponding object is added to the
-                       graph attribute of the DOM object.
+        graph: string or dict or pandas.DataFrame or networkx.Graph or neo4j or
+               Graph, optional (defaults to None)
+               graph passes is checked to be of one of the declared types, and
+               the corresponding object is added to the graph attribute of the
+               DOM object.
         """
         super(CytoscapeWidget, self).__init__(**kwargs)
 
@@ -846,13 +859,12 @@ class CytoscapeWidget(DOMWidget):
             self.graph.add_graph_from_networkx(graph)
         elif isinstance(graph, (dict, str)):
             self.graph.add_graph_from_json(graph)
-        elif graph.__class__.__name__ == "DataFrame":
+        elif pd and isinstance(graph, pd.DataFrame):
             self.graph.add_graph_from_df(graph, **kwargs)
-        else:
-            if isinstance(graph, Graph):
-                self.graph = graph
-            elif graph.__class__.__name__ == "Graph":
-                self.graph.add_graph_from_neo4j(graph)
+        elif isinstance(graph, Graph):
+            self.graph = graph
+        elif py2neo and isinstance(graph, py2neo.Graph):
+            self.graph.add_graph_from_neo4j(graph)
 
     # Make sure we have a callback dispatcher for this widget and event type;
     # since _interaction_handlers is synced with the frontend and changes to
