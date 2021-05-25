@@ -13,7 +13,6 @@ Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https:
 * Conversion from NetworkX see [example1](https://github.com/cytoscape/ipycytoscape/blob/master/examples/Test%20NetworkX%20methods.ipynb), [example2](https://github.com/cytoscape/ipycytoscape/blob/master/examples/NetworkX%20Example.ipynb)
 * Conversion from Pandas DataFrame see [example](https://github.com/cytoscape/ipycytoscape/blob/master/examples/pandas.ipynb)
 * Conversion from neo4j see [example](https://github.com/cytoscape/ipycytoscape/blob/master/examples/Neo4j_Example.ipynb)
-    - Currently there's no package of `py2neo` available that's compatible with `ipycytoscape`. As a provisory solution to this problem you can use the package offered by `pypi` and install it with the following line: `pip install -e ".[neo4j]"`
 
 ## Installation
 
@@ -33,6 +32,33 @@ With `pip`:
 
 ```bash
 pip install ipycytoscape
+```
+
+### Pandas installation
+
+You can install the Pandas dependencies for `ipycytoscape` with pip:
+
+```
+pip install pandas
+```
+
+Or conda-forge:
+
+```
+mamba install pandas
+```
+
+### Neo4j installation
+
+You can install the neo4j dependencies for `ipycytoscape` with pip:
+
+```
+pip install -e ".[neo4j]"
+```
+
+Or conda-forge:
+```
+mamba install py2neo neotime
 ```
 
 #### For jupyterlab 1.x or 2.x:
@@ -72,7 +98,10 @@ cd ipycytoscape
 ```
 
 ### Install python package for development
-This will also run npm install and npm run build
+
+This will `run npm install` and `npm run build`. 
+This command will also install the test suite and the [docs](https://ipycytoscape.readthedocs.io/en/latest/) locally:
+
 ```
 pip install jupyter_packaging==0.7.9
 pip install -e ".[test, doc]"
