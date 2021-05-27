@@ -41,7 +41,7 @@ try:
     import py2neo
 
 except ImportError:
-    pass
+    py2neo = None
 
 
 """TODO: Remove this after this is somewhat done"""
