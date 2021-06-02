@@ -101,7 +101,9 @@ setup_args = dict(
     extras_require={
         "test": ["pytest>4.6", "pytest-cov", "nbval", "pandas"],
         "examples": [
-            "pandas"
+            "pandas",
+            "py2neo",
+            "neotime",
             # Any requirements for the examples to run
         ],
         "docs": [
