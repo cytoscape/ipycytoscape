@@ -844,12 +844,10 @@ class CytoscapeWidget(DOMWidget):
 
         Parameters
         ----------
-        graph: string or dict or pandas DataFrame object or networkx Graph
-               object or neo4j Graph object or Graph object, optional (defaults
-               to None)
-               Checked to be of one of the declared types, and graph object
-               corresponding to it is added as a Graph attribute to the
-               CytoscapeWidget DOM.
+        graph: graph: string, dict, pandas.DataFrame, networkx.Graph,
+               neo4j.Graph, Graph object, optional
+               The graph to initialize with. Equivalent to calling the
+               appropriate ``CytoscapeWidget.graph.add_graph_from_` method.
         """
         super(CytoscapeWidget, self).__init__(**kwargs)
 
