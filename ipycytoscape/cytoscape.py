@@ -28,11 +28,6 @@ from ._frontend import module_name, module_version
 
 import networkx as nx
 
-"""TODO: Remove this after this is somewhat done"""
-import logging
-
-logger = logging.getLogger(__name__)
-
 __all__ = [
     "MONITORED_USER_TYPES",
     "MONITORED_USER_INTERACTIONS",
@@ -778,33 +773,7 @@ class CytoscapeWidget(DOMWidget):
     wheel_sensitivity = CFloat(1).tag(sync=True)
     cytoscape_layout = Dict({"name": "cola"}).tag(sync=True)
     pixel_ratio = Union([Unicode(), CFloat()], default_value="auto").tag(sync=True)
-    cytoscape_style = List(
-        [
-            {"selector": "node", "css": {"background-color": "#11479e"}},
-            {"selector": "node:parent", "css": {"background-opacity": 0.333}},
-            {
-                "selector": "edge",
-                "style": {
-                    "width": 4,
-                    "line-color": "#9dbaea",
-                },
-            },
-            {
-                "selector": "edge.directed",
-                "style": {
-                    "curve-style": "bezier",
-                    "target-arrow-shape": "triangle",
-                    "target-arrow-color": "#9dbaea",
-                },
-            },
-            {
-                "selector": "edge.multiple_edges",
-                "style": {
-                    "curve-style": "bezier",
-                },
-            },
-        ]
-    ).tag(sync=True)
+    cytoscape_style = MutableList().tag(sync=True)
     zoom = CFloat(2.0).tag(sync=True)
     rendered_position = Dict({"renderedPosition": {"x": 100, "y": 100}}).tag(sync=True)
     tooltip_source = Unicode("tooltip").tag(sync=True)
@@ -819,6 +788,34 @@ class CytoscapeWidget(DOMWidget):
 
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
+
+        # Default style for a cytoscape graph
+        # Has to be initialized here because Spectate doesn't allow default values to be
+        # set in their initilization
+
+        graph_default_style = [{"selector": "node", "css": {"background-color": "#11479e"}},
+            {"selector": "node:parent", "css": {"background-opacity": 0.333}},
+            {"selector": "edge",
+                "style": {
+                    "width": 4,
+                    "line-color": "#9dbaea",
+                },
+            },
+            {"selector": "edge.directed",
+                "style": {
+                    "curve-style": "bezier",
+                    "target-arrow-shape": "triangle",
+                    "target-arrow-color": "#9dbaea",
+                },
+            },
+            {"selector": "edge.multiple_edges",
+                "style": {
+                    "curve-style": "bezier",
+                },
+            }
+        ]
+        for s in graph_default_style:
+            self.cytoscape_style.append(s)
 
     # Make sure we have a callback dispatcher for this widget and event type;
     # since _interaction_handlers is synced with the frontend and changes to
@@ -934,15 +931,111 @@ class CytoscapeWidget(DOMWidget):
 
     def set_style(self, style):
         """
-        Sets the layout of the current object. Change the parameters
-        with a dictionary.
+        Sets the style of the current object. This method won't
+        overwrite any styles only append to the end of the
+        dictionary. If two styles are overlapping the latest added
+        style will prevail.
 
         Parameters
         ----------
         stylesheet: dict
             See https://js.cytoscape.org for layout examples.
         """
-        self.cytoscape_style = style
+        for s in style:
+            self.cytoscape_style.append(s)
+
+        return self.cytoscape_style
+
+    def remove_style(self, input_key):
+        """
+        This will remove the whole style for the first selector that
+        matchs the input_key. If there's more than one selector with the
+        same name simply run the method again to remove it.
+
+        Parameters
+        ----------
+        stylesheet: dict
+            See https://js.cytoscape.org for layout examples.
+        input_key : str
+            key of the selector you wish to remove
+        """
+        for item in self.cytoscape_style:
+            for key in item.keys():
+                if item[key] and input_key:
+                    # The checks have to be done separately because not all
+                    # keys are strings, some are dictionaries
+                    if item[key].strip() == item[key]:
+                        item.clear()
+                        # Since here we're dealing with nested non Spectate
+                        # objs (the dicts inside the MutableList) we need
+                        # to remove them from the MutableList to see the
+                        # changes on the frontend
+                        for d in self.cytoscape_style:
+                            if not bool(d):
+                                self.cytoscape_style.remove(d)
+                        break
+                        return self.cytoscape_style
+
+
+    def set_style_default(self):
+        """
+        Clears all user inputed styles in a cytoscape object and sets
+        the style to the following default configuration:
+
+        {"selector": "node", "css": {"background-color": "#11479e"}},
+        {"selector": "node:parent", "css": {"background-opacity": 0.333}},
+        {"selector": "edge",
+            "style": {
+                "width": 4,
+                "line-color": "#9dbaea",
+            },
+        },
+        {"selector": "edge.directed",
+            "style": {
+                "curve-style": "bezier",
+                "target-arrow-shape": "triangle",
+                "target-arrow-color": "#9dbaea",
+            },
+        },
+        {"selector": "edge.multiple_edges",
+            "style": {
+                "curve-style": "bezier",
+            },
+        }
+        """
+        self.clear_style()
+
+        graph_default_style = [{"selector": "node", "css": {"background-color": "#11479e"}},
+            {"selector": "node:parent", "css": {"background-opacity": 0.333}},
+            {"selector": "edge",
+                "style": {
+                    "width": 4,
+                    "line-color": "#9dbaea",
+                },
+            },
+            {"selector": "edge.directed",
+                "style": {
+                    "curve-style": "bezier",
+                    "target-arrow-shape": "triangle",
+                    "target-arrow-color": "#9dbaea",
+                },
+            },
+            {"selector": "edge.multiple_edges",
+                "style": {
+                    "curve-style": "bezier",
+                },
+            }
+        ]
+        for s in graph_default_style:
+            self.cytoscape_style.append(s)
+
+    def clear_style(self):
+        """
+        Removes all style of a cytoscape object. If you want to have
+        your styles clear but would like to maintain the default
+        cytoscape styles use set_style_default().
+        """
+        return self.cytoscape_style.clear()
 
     def get_style(self):
         """
