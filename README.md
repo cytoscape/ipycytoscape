@@ -143,7 +143,7 @@ If you make a change to the python code then you need to restart the notebook ke
 Install necessary dependencies with pip:
 
 ```
-pip install -e .[test]
+pip install -e ".[test]"
 ```
 
 Or with mamba:
