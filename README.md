@@ -104,7 +104,7 @@ This command will also install the test suite and the [docs](https://ipycytoscap
 
 ```
 pip install jupyter_packaging==0.7.9
-pip install -e ".[test, doc]"
+pip install -e ".[test, docs]"
 
 jupyter labextension develop . --overwrite
 ```
