@@ -12,6 +12,7 @@ from os import path
 import copy
 import json
 
+
 from spectate import mvc
 from traitlets import TraitType, TraitError
 
@@ -29,20 +30,27 @@ from traitlets import (
 )
 from ._frontend import module_name, module_version
 
-import networkx as nx
+try:
+    import networkx as nx
+except ModuleNotFoundError:
+    nx = None
 
 try:
     import pandas as pd
 
-except ImportError:
+except ModuleNotFoundError:
     pd = None
 
 try:
     import py2neo
 
-except ImportError:
+except ModuleNotFoundError:
     py2neo = None
 
+try:
+    import neotime
+except ModuleNotFoundError:
+    neotime = None
 
 """TODO: Remove this after this is somewhat done"""
 import logging
@@ -648,7 +656,6 @@ class Graph(Widget):
         g : py2neo Neo4j subgraph object
             See https://py2neo.org/v4/data.html#subgraph-objects
         """
-        import neotime
 
         def convert_types_to_string(node_attributes):
             """
@@ -659,7 +666,7 @@ class Graph(Widget):
             node_attributes : dictionary of node attributes
             """
             for k, v in node_attributes.items():
-                if isinstance(v, neotime.Date):
+                if neotime and isinstance(v, neotime.Date):
                     node_attributes[k] = str(v)
 
             return node_attributes
@@ -854,7 +861,7 @@ class CytoscapeWidget(DOMWidget):
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
 
-        if isinstance(graph, nx.Graph):
+        if nx and isinstance(graph, nx.Graph):
             self.graph.add_graph_from_networkx(graph)
         elif isinstance(graph, (dict, str)):
             self.graph.add_graph_from_json(graph)
