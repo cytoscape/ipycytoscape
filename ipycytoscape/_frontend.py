@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) 2020, QuantStack and ipycytoscape Contributors
+# Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -12,4 +12,4 @@ Information about the frontend package of the widgets.
 """
 
 module_name = "jupyter-cytoscape"
-module_version = "^1.2.1"
+module_version = "^1.2.2"

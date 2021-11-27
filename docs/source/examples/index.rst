@@ -6,6 +6,8 @@ Examples
     :maxdepth: 2
     :caption: Graph Creation
 
+
+    graph-init
     networkx
     json
     pandas

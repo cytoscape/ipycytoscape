@@ -63,4 +63,4 @@ jobs:
 
     - name: Run Tests
       shell: bash -l {0}
-      run: pytest . --color=yes
+      run: pytest . --color=yes --ignore=examples/Neo4j_Example.ipynb
