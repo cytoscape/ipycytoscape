@@ -13,12 +13,12 @@ jobs:
     - name: Install node
       uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '14.x'
         registry-url: 'https://registry.npmjs.org'
     - name: Install Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.9.x'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
