@@ -91,4 +91,4 @@ Contents
 
 .. _`joseberlines`: https://github.com/joseberlines/
 
-.. _`Part_1_`: https://joseberlines.medium.com/learning-and-visualising-graphs-with-ipycytoscape-1ca150f24933
+.. _`Part_1`: https://joseberlines.medium.com/learning-and-visualising-graphs-with-ipycytoscape-1ca150f24933
