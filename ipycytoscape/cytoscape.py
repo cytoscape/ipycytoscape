@@ -7,7 +7,10 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
+from os import path
+
 import copy
+import json
 
 from spectate import mvc
 from traitlets import TraitType, TraitError
@@ -27,6 +30,19 @@ from traitlets import (
 from ._frontend import module_name, module_version
 
 import networkx as nx
+
+try:
+    import pandas as pd
+
+except ImportError:
+    pd = None
+
+try:
+    import py2neo
+
+except ImportError:
+    py2neo = None
+
 
 """TODO: Remove this after this is somewhat done"""
 import logging
@@ -507,11 +523,19 @@ class Graph(Widget):
 
         Parameters
         ----------
-        json_file : dict
+        json_file : dict or string
+            If a dict is passed, it will be parsed as a JSON object,
+            a file path (to the json graph file) can also be passed as a
+            string, the file will be loaded it's content parsed as JSON an
+            object.
         directed : bool
             If True all edges will be given 'directed' as a class if
             they do not already have it.
         """
+        if path.isfile(str(json_file)):
+            with open(json_file) as f:
+                json_file = json.load(f)
+
         node_list = list()
         for node in json_file["nodes"]:
             node_instance = Node()
@@ -814,11 +838,32 @@ class CytoscapeWidget(DOMWidget):
 
     graph = Instance(Graph, args=tuple()).tag(sync=True, **widget_serialization)
 
-    def __init__(self, **kwargs):
+    def __init__(self, graph=None, **kwargs):
+        """
+        Initializes the graph widget.
+
+        Parameters
+        ----------
+        graph: graph: string, dict, pandas.DataFrame, networkx.Graph,
+               neo4j.Graph, Graph object, optional
+               The graph to initialize with. Equivalent to calling the
+               appropriate ``CytoscapeWidget.graph.add_graph_from_` method.
+        """
         super(CytoscapeWidget, self).__init__(**kwargs)
 
         self.on_msg(self._handle_interaction)
         self.graph = Graph()
+
+        if isinstance(graph, nx.Graph):
+            self.graph.add_graph_from_networkx(graph)
+        elif isinstance(graph, (dict, str)):
+            self.graph.add_graph_from_json(graph)
+        elif pd and isinstance(graph, pd.DataFrame):
+            self.graph.add_graph_from_df(graph, **kwargs)
+        elif isinstance(graph, Graph):
+            self.graph = graph
+        elif py2neo and isinstance(graph, py2neo.Graph):
+            self.graph.add_graph_from_neo4j(graph)
 
     # Make sure we have a callback dispatcher for this widget and event type;
     # since _interaction_handlers is synced with the frontend and changes to
