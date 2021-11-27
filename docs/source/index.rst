@@ -56,6 +56,7 @@ Contents
    :maxdepth: 2
    :caption: Graph Creation
 
+   examples/graph-init 
    examples/networkx
    examples/json
    examples/pandas
