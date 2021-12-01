@@ -16,7 +16,6 @@ from jupyter_packaging import (
     install_npm,
     ensure_targets,
     combine_commands,
-    ensure_python,
     get_version,
 )
 
@@ -27,9 +26,6 @@ from setuptools import setup, find_packages
 name = "ipycytoscape"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-
-# Ensure a valid python version
-ensure_python(">=3.4")
 
 # Get our version
 version = get_version(path.join(name, "_version.py"))
