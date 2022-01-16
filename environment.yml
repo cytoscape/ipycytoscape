@@ -9,6 +9,4 @@ dependencies:
   - pandas
   - traitlets
   - spectate
-  - pip
-  - pip:
-    - py2neo
+  - py2neo
