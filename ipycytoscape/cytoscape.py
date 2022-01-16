@@ -47,11 +47,6 @@ try:
 except ModuleNotFoundError:
     py2neo = None
 
-try:
-    import neotime
-except ModuleNotFoundError:
-    neotime = None
-
 """TODO: Remove this after this is somewhat done"""
 import logging
 
