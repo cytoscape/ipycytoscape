@@ -108,6 +108,7 @@ setup_args = dict(
             "pandas",
             "py2neo",
             "neotime",
+            "monotonic",
             # Any requirements for the examples to run
         ],
         "docs": [
@@ -124,6 +125,7 @@ setup_args = dict(
         "neo4j": [
             "py2neo",
             "neotime",
+            "monotonic",
         ],
     },
     entry_points={},

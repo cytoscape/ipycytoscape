@@ -10,3 +10,4 @@ dependencies:
   - traitlets
   - spectate
   - py2neo
+  - monotonic
