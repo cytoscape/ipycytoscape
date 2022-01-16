@@ -666,7 +666,9 @@ class Graph(Widget):
             node_attributes : dictionary of node attributes
             """
             for k, v in node_attributes.items():
-                if neotime and isinstance(v, neotime.Date):
+                try:
+                    json.dumps(v)
+                except TypeError:
                     node_attributes[k] = str(v)
 
             return node_attributes
