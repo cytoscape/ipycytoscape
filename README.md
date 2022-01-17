@@ -109,6 +109,12 @@ pip install -e ".[test, docs]"
 jupyter labextension develop . --overwrite
 ```
 
+optionally install the pre-commit hooks with:
+
+```bash
+pre-commit install
+```
+
 
 Or for classic notebook, you can run:
 
