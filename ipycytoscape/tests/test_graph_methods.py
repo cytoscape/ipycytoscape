@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2021, QuantStack and ipycytoscape Contributors
 #
@@ -7,10 +6,10 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-import pytest
 
 import copy
-from ipycytoscape.cytoscape import Graph, Node, Edge
+
+from ipycytoscape.cytoscape import Edge, Graph, Node
 
 
 def compare_nodes(expected_nodes, actual_nodes):

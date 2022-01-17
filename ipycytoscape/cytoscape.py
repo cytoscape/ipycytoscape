@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,27 +6,26 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-from os import path
-
 import copy
 import json
+from os import path
 
-
+from ipywidgets import CallbackDispatcher, DOMWidget, Widget, widget_serialization
 from spectate import mvc
-from traitlets import TraitType, TraitError
-
-from ipywidgets import DOMWidget, Widget, widget_serialization, CallbackDispatcher
 from traitlets import (
-    Unicode,
     Bool,
-    CFloat,
-    Integer,
-    Instance,
-    Dict,
-    List,
-    Union,
     CaselessStrEnum,
+    CFloat,
+    Dict,
+    Instance,
+    Integer,
+    List,
+    TraitError,
+    TraitType,
+    Unicode,
+    Union,
 )
+
 from ._frontend import module_name, module_version
 
 try:
@@ -587,7 +585,7 @@ class Graph(Widget):
         for i, name in enumerate(grouped.groups):
             if not isinstance(name, tuple):
                 name = (name,)
-            group_nodes[name] = Node(data={"id": "parent-{}".format(i), "name": name})
+            group_nodes[name] = Node(data={"id": f"parent-{i}", "name": name})
 
         graph_nodes = []
         graph_edges = []
@@ -597,7 +595,7 @@ class Graph(Widget):
             # Includes content to tips
             tip_content = ""
             for attribute in attribute_list:
-                tip_content += "{}: {}\n".format(attribute, row[attribute])
+                tip_content += f"{attribute}: {row[attribute]}\n"
 
             # Creates a list with all nodes adding them in the correct node parents
             graph_nodes.append(
@@ -853,7 +851,7 @@ class CytoscapeWidget(DOMWidget):
                The graph to initialize with. Equivalent to calling the
                appropriate ``CytoscapeWidget.graph.add_graph_from_` method.
         """
-        super(CytoscapeWidget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.on_msg(self._handle_interaction)
         self.graph = Graph()

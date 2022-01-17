@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,10 +6,10 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-import pytest
 
-from ipycytoscape.cytoscape import Graph, Node, Edge
 import networkx as nx
+
+from ipycytoscape.cytoscape import Graph, Node
 
 
 class TestNetworkx:
@@ -58,4 +57,3 @@ class TestNetworkx:
 
         # remove all nodes of the graph
         graph.clear()
-        expected_nodes = []
