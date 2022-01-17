@@ -103,6 +103,7 @@ setup_args = dict(
             "pandas",
             "nbclassic>=0.2.8",
             "networkx",
+            "pre-commit",
         ],
         "examples": [
             "pandas",
