@@ -75,17 +75,17 @@ MONITORED_USER_INTERACTIONS = (
     "vmousedown",  # alias for 'tapstart'
     "tapdrag",  # normalised move event (either touchmove or mousemove)
     "vmousemove",  # alias for 'tapdrag'
-    "tapdragover",  # normalised over element event (either touchmove or mousemove/mouseover)
-    "tapdragout",  # normalised off of element event (either touchmove or mousemove/mouseout)
+    "tapdragover",  # normalised over element event (either touchmove or mousemove/mouseover) # noqa
+    "tapdragout",  # normalised off of element event (either touchmove or mousemove/mouseout) # noqa
     "tapend",  # normalised tap end event (either mouseup or touchend)
     "vmouseup",  # alias for 'tapend'
-    "tap",  # normalised tap event (either click, or touchstart followed by touchend without touchmove)
+    "tap",  # normalised tap event (either click, or touchstart followed by touchend without touchmove) # noqa
     "vclick",  # alias for 'tap'
     "taphold",  # normalised tap hold event
     "cxttapstart",  # normalised right-click mousedown or two-finger tapstart
     "cxttapend",  # normalised right-click mouseup or two-finger tapend
     "cxttap",  # normalised right-click or two-finger tap
-    "cxtdrag",  # normalised mousemove or two-finger drag after cxttapstart but before cxttapend
+    "cxtdrag",  # normalised mousemove or two-finger drag after cxttapstart but before cxttapend # noqa
     "cxtdragover",  # when going over a node via cxtdrag
     "cxtdragout",  # when going off a node via cxtdrag
     "boxstart",  # when starting box selection
@@ -335,8 +335,9 @@ class Graph(Widget):
 
     def add_edges(self, edges, directed=False, multiple_edges=False):
         """
-        Appends edges from the end of the list. If either the source or target Node of an
-        Edge is not already in the graph it will be created and added to he Nodes list.
+        Appends edges from the end of the list. If either the source or target Node
+        of an Edge is not already in the graph it will be created and added to
+        the Nodes list.
 
         Parameters
         ----------
@@ -354,13 +355,16 @@ class Graph(Widget):
             if multiple_edges and "multiple_edges" not in edge.classes:
                 edge.classes += " multiple_edges "
 
-            # If multiple edges are allowed, it's okay to add more edges between the source and target
+            # If multiple edges are allowed, it's okay to add more
+            # edges between the source and target
             if multiple_edges:
                 new_edge = True
-            # Check to see if the edge source -> target exists in the graph (don't add it again)
+            # Check to see if the edge source -> target exists in the graph
+            # If it does then don't add it again
             elif source in self._adj and target in self._adj[source]:
                 new_edge = False
-            # Check to see if the edge target-> source exists in an undirected graph (don't add it again)
+            # Check to see if the edge target-> source exists in an
+            # undirected graph (don't add it again)
             elif not directed and target in self._adj and source in self._adj[target]:
                 new_edge = False
             # If the edge doesn't exist already
@@ -419,7 +423,8 @@ class Graph(Widget):
                     self._adj[target][source] -= 1
         except ValueError:
             raise ValueError(
-                f"Edge from {edge.data['source']} to {edge.data['target']} is not present in the graph."
+                f"Edge from {edge.data['source']} to {edge.data['target']} "
+                "is not present in the graph."
             )
 
     def remove_edge_by_id(self, source_id, target_id):
@@ -717,7 +722,7 @@ class Graph(Widget):
             node_attributes = convert_types_to_string(node_attributes)
 
             # create tooltip text string
-            if not "tooltip" in node_attributes:
+            if "tooltip" not in node_attributes:
                 tooltip_text = create_tooltip(node_attributes, node.labels)
                 node_attributes["tooltip"] = tooltip_text
 
@@ -750,7 +755,7 @@ class Graph(Widget):
             rel_attributes = convert_types_to_string(rel_attributes)
 
             # assign name of the relationship
-            if not "name" in rel_attributes:
+            if "name" not in rel_attributes:
                 rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids

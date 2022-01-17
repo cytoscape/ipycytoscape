@@ -11,6 +11,8 @@ import networkx as nx
 
 from ipycytoscape.cytoscape import Graph, Node
 
+from ._util import compare_nodes
+
 
 class TestNetworkx:
     def test_lonely_nodes(self):
@@ -34,6 +36,7 @@ class TestNetworkx:
             Node(data={"id": "unconnected_node"}, position={}),
         ]
 
+        compare_nodes(expected_nodes, graph.nodes)
         # remove individual node using node as input
         graph.remove_node(graph.nodes[0])
 
@@ -44,6 +47,7 @@ class TestNetworkx:
             Node(data={"id": "4"}, position={}),
             Node(data={"id": "unconnected_node"}, position={}),
         ]
+        compare_nodes(expected_nodes, graph.nodes)
 
         # remove individual node using index node as input
         graph.remove_node_by_id("3")
@@ -54,6 +58,8 @@ class TestNetworkx:
             Node(data={"id": "4"}, position={}),
             Node(data={"id": "unconnected_node"}, position={}),
         ]
+        compare_nodes(expected_nodes, graph.nodes)
 
         # remove all nodes of the graph
         graph.clear()
+        compare_nodes([], graph.nodes)
