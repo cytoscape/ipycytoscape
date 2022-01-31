@@ -16,7 +16,6 @@ from jupyter_packaging import (
     install_npm,
     ensure_targets,
     combine_commands,
-    ensure_python,
     get_version,
 )
 
@@ -27,9 +26,6 @@ from setuptools import setup, find_packages
 name = "ipycytoscape"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-
-# Ensure a valid python version
-ensure_python(">=3.4")
 
 # Get our version
 version = get_version(path.join(name, "_version.py"))
@@ -111,7 +107,7 @@ setup_args = dict(
         "examples": [
             "pandas",
             "py2neo",
-            "neotime",
+            "monotonic",
             # Any requirements for the examples to run
         ],
         "docs": [
@@ -127,7 +123,7 @@ setup_args = dict(
         ],
         "neo4j": [
             "py2neo",
-            "neotime",
+            "monotonic",
         ],
     },
     entry_points={},

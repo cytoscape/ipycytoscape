@@ -10,8 +10,8 @@ include tsconfig.json
 include package.json
 include webpack.config.js
 
-recursive-include ipycytoscape/nbextension/*
-recursive-include ipycytoscape/labextension/*
+graft ipycytoscape/nbextension
+graft ipycytoscape/labextension
 
 # Documentation
 graft docs
