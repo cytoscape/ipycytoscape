@@ -263,7 +263,7 @@ class TestGraphAddMethods:
         compare_edges(expected_edges, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_1(self, edges):
+    def test_add_edges(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
         """
@@ -283,9 +283,10 @@ class TestGraphAddMethods:
         compare_edges(expected_edges_undirected, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_2(self, edges):
+    def test_add_edges_directed(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
+        for directed edges
         """
 
         expected_nodes = [
@@ -304,9 +305,10 @@ class TestGraphAddMethods:
         compare_edges(expected_edges_directed, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_3(self, edges):
+    def test_add_edges_multiple_edges(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
+        with multiple_edges
         """
 
         expected_nodes = [
@@ -333,7 +335,7 @@ class TestGraphAddMethods:
         compare_edges(expected_edges_multiple, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_4(self):
+    def test_add_edges_2(self):
         """
         Test to ensure that an edge with the corresponding nodes will be added to the graph
         """
