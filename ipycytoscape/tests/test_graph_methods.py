@@ -29,6 +29,23 @@ def compare_edges(expected_edges, actual_edges):
         assert expected.classes == actual.classes
 
 
+@pytest.fixture(name="edges", scope="module")
+def _make_edges():
+    ids = ["0", "1", "2"]
+    edges = [
+        Edge(data={"source": source, "target": target})
+        for source, target in zip(ids[:-1], ids[1:])
+    ]
+    edges_weighted = [
+        Edge(data={"source": "0", "target": "1", "weight": str(i)}) for i in range(1, 3)
+    ]
+    edge_inv = Edge(data={"source": "1", "target": "0"})
+
+    edges += edges_weighted
+    edges += [edge_inv]
+    return edges
+
+
 class TestGraphRemoveMethods:
     def test_remove_edge(self):
         """
@@ -246,23 +263,10 @@ class TestGraphAddMethods:
         compare_edges(expected_edges, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_1(self):
+    def test_add_edges_1(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
         """
-        ids = ["0", "1", "2"]
-        edges = [
-            Edge(data={"source": source, "target": target})
-            for source, target in zip(ids[:-1], ids[1:])
-        ]
-        edges_weighted = [
-            Edge(data={"source": "0", "target": "1", "weight": str(i)})
-            for i in range(1, 3)
-        ]
-        edge_inv = Edge(data={"source": "1", "target": "0"})
-
-        edges += edges_weighted
-        edges += [edge_inv]
 
         expected_nodes = [
             Node(data={"id": "0"}, position={}),
@@ -279,23 +283,10 @@ class TestGraphAddMethods:
         compare_edges(expected_edges_undirected, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_2(self):
+    def test_add_edges_2(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
         """
-        ids = ["0", "1", "2"]
-        edges = [
-            Edge(data={"source": source, "target": target})
-            for source, target in zip(ids[:-1], ids[1:])
-        ]
-        edges_weighted = [
-            Edge(data={"source": "0", "target": "1", "weight": str(i)})
-            for i in range(1, 3)
-        ]
-        edge_inv = Edge(data={"source": "1", "target": "0"})
-
-        edges += edges_weighted
-        edges += [edge_inv]
 
         expected_nodes = [
             Node(data={"id": "0"}, position={}),
@@ -313,23 +304,10 @@ class TestGraphAddMethods:
         compare_edges(expected_edges_directed, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
-    def test_add_edges_3(self):
+    def test_add_edges_3(self, edges):
         """
         Test to ensure that edges with the corresponding nodes will be added to the graph
         """
-        ids = ["0", "1", "2"]
-        edges = [
-            Edge(data={"source": source, "target": target})
-            for source, target in zip(ids[:-1], ids[1:])
-        ]
-        edges_weighted = [
-            Edge(data={"source": "0", "target": "1", "weight": str(i)})
-            for i in range(1, 3)
-        ]
-        edge_inv = Edge(data={"source": "1", "target": "0"})
-
-        edges += edges_weighted
-        edges += [edge_inv]
 
         expected_nodes = [
             Node(data={"id": "0"}, position={}),
