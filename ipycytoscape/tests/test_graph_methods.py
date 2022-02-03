@@ -29,7 +29,7 @@ def compare_edges(expected_edges, actual_edges):
         assert expected.classes == actual.classes
 
 
-@pytest.fixture(name="edges", scope="module")
+@pytest.fixture(name="edges", scope="function")
 def _make_edges():
     ids = ["0", "1", "2"]
     edges = [
@@ -279,7 +279,7 @@ class TestGraphAddMethods:
         ]
 
         graph = Graph()
-        graph.add_edges([copy.copy(edge) for edge in edges])
+        graph.add_edges(edges)
         compare_edges(expected_edges_undirected, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
@@ -300,7 +300,7 @@ class TestGraphAddMethods:
         ]
 
         graph = Graph()
-        graph.add_edges([copy.copy(edge) for edge in edges], directed=True)
+        graph.add_edges(edges, directed=True)
         compare_edges(expected_edges_directed, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
@@ -329,7 +329,7 @@ class TestGraphAddMethods:
         ]
 
         graph = Graph()
-        graph.add_edges([copy.copy(edge) for edge in edges], multiple_edges=True)
+        graph.add_edges(edges, multiple_edges=True)
         compare_edges(expected_edges_multiple, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
 
