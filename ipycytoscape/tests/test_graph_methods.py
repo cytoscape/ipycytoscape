@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2021, QuantStack and ipycytoscape Contributors
 #
@@ -7,26 +6,14 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-import pytest
 
 import copy
-from ipycytoscape.cytoscape import Graph, Node, Edge
 
+import pytest
 
-def compare_nodes(expected_nodes, actual_nodes):
-    # if one list is empty
-    assert bool(expected_nodes) == bool(actual_nodes)
-    for expected, actual in zip(expected_nodes, actual_nodes):
-        assert expected.data == actual.data
-        assert expected.classes == actual.classes
-        assert expected.position == actual.position
+from ipycytoscape.cytoscape import Edge, Graph, Node
 
-
-def compare_edges(expected_edges, actual_edges):
-    assert bool(expected_edges) == bool(actual_edges)
-    for expected, actual in zip(expected_edges, actual_edges):
-        assert expected.data == actual.data
-        assert expected.classes == actual.classes
+from ._util import compare_edges, compare_nodes
 
 
 @pytest.fixture(name="edges", scope="function")
@@ -265,7 +252,8 @@ class TestGraphAddMethods:
 
     def test_add_edges(self, edges):
         """
-        Test to ensure that edges with the corresponding nodes will be added to the graph
+        Test to ensure that edges with the corresponding nodes will be
+        added to the graph.
         """
 
         expected_nodes = [
@@ -285,8 +273,8 @@ class TestGraphAddMethods:
 
     def test_add_edges_directed(self, edges):
         """
-        Test to ensure that edges with the corresponding nodes will be added to the graph
-        for directed edges
+        Test to ensure that edges with the corresponding nodes will be added
+        to the graph for directed edges
         """
 
         expected_nodes = [
@@ -307,8 +295,8 @@ class TestGraphAddMethods:
 
     def test_add_edges_multiple_edges(self, edges):
         """
-        Test to ensure that edges with the corresponding nodes will be added to the graph
-        with multiple_edges
+        Test to ensure that edges with the corresponding nodes
+        will be added to the graph with multiple_edges.
         """
 
         expected_nodes = [
@@ -337,7 +325,8 @@ class TestGraphAddMethods:
 
     def test_add_edges_2(self):
         """
-        Test to ensure that an edge with the corresponding nodes will be added to the graph
+        Test to ensure that an edge with the corresponding nodes will be
+        added to the graph.
         """
         edge = Edge(data={"source": "0", "target": "1"})
         edge_inv = Edge(data={"source": "1", "target": "0"})

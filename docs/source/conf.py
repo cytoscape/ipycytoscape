@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # ipycytoscape documentation build configuration file
 #
@@ -35,7 +34,8 @@ extensions = [
 
 # Ensure our extension is available:
 import sys
-from os.path import dirname, join as pjoin
+from os.path import dirname
+from os.path import join as pjoin
 
 docs = dirname(dirname(__file__))
 root = dirname(docs)

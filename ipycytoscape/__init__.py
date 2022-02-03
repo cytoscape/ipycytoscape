@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,10 +6,15 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-from .cytoscape import *
-
 from ._version import __version__, version_info
-
+from .cytoscape import (
+    MONITORED_USER_INTERACTIONS,
+    MONITORED_USER_TYPES,
+    CytoscapeWidget,
+    Edge,
+    Graph,
+    Node,
+)
 from .nbextension import _jupyter_nbextension_paths
 
 npm_pkg_name = "jupyter-cytoscape"

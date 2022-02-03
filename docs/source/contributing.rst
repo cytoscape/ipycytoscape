@@ -36,6 +36,20 @@ a `guide <https://github.com/firstcontributions/first-contributions#first-contri
 Also feel free to ask for help/advice on the relevant Github `issue <https://github.com/cytoscape/ipycytoscape/issues>`_
 or in the `Gitter chat <https://gitter.im/QuantStack/Lobby>`_.
 
+
+pre-commit
+^^^^^^^^^^
+
+You can install `pre-commit <pre-commit.com>`_ hooks like so:
+
+.. code-block:: bash
+
+    pip install pre-commit
+    pre-commit install
+
+This will then run automated checks whenever you ``git commit``. If you don't want to do this then that's
+ok as the pre-commit.ci bot will automatically push fixes to your pull requests.
+
 Documentation
 -------------
 

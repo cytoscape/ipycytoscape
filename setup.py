@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,20 +6,18 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-from glob import glob
 import os
+from glob import glob
 from os import path
 
 from jupyter_packaging import (
-    create_cmdclass,
-    install_npm,
-    ensure_targets,
     combine_commands,
+    create_cmdclass,
+    ensure_targets,
     get_version,
+    install_npm,
 )
-
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 # The name of the project
 name = "ipycytoscape"
@@ -103,6 +100,7 @@ setup_args = dict(
             "pandas",
             "nbclassic>=0.2.8",
             "networkx",
+            "pre-commit",
         ],
         "examples": [
             "pandas",

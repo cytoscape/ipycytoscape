@@ -15,9 +15,20 @@ module.exports = {
       '@typescript-eslint/ban-ts-ignore': 'off', //stackoverflow.com/questions/59729654/how-ignore-typescript-errors-with-ts-ignore
       '@typescript-eslint/camelcase': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/interface-name-prefix': [
+      '@typescript-eslint/naming-convention': [ // https://stackoverflow.com/questions/62915344/eslint-erro-when-adding-rule-typescript-eslint-interface-name-prefix
+        "error",
+          {
+          "selector": "interface",
+          "format": ["PascalCase"],
+          "custom": {
+            "regex": "^I[A-Z]",
+            "match": true
+          }
+        }
+      ],
+      '@typescript-eslint/ban-ts-comment': [
         'error',
-        { prefixWithI: 'always' },
+        {'ts-ignore': false},
       ],
       '@typescript-eslint/no-unused-vars': ['warn', { args: 'none' }],
       '@typescript-eslint/no-explicit-any': 'off',
@@ -39,4 +50,3 @@ module.exports = {
       'prefer-arrow-callback': 'error'
     }
   };
-

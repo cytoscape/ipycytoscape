@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,23 +6,12 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-import pytest
 
-from ipycytoscape.cytoscape import Graph, Node, Edge
 import networkx as nx
 
+from ipycytoscape.cytoscape import Edge, Graph, Node
 
-def compare_nodes(expected_nodes, actual_nodes):
-    for expected, actual in zip(expected_nodes, actual_nodes):
-        assert expected.data == actual.data
-        assert expected.classes == actual.classes
-        assert expected.position == actual.position
-
-
-def compare_edges(expected_edges, actual_edges):
-    for expected, actual in zip(expected_edges, actual_edges):
-        assert expected.data == actual.data
-        assert expected.classes == actual.classes
+from ._util import compare_edges, compare_nodes
 
 
 class TestNetworkx:

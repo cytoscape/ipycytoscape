@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -8,7 +7,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 
 import pytest
-
 from ipykernel.comm import Comm
 from ipywidgets import Widget
 
@@ -26,7 +24,7 @@ class MockComm(Comm):
         self.log_open = []
         self.log_send = []
         self.log_close = []
-        super(MockComm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def open(self, *args, **kwargs):
         self.log_open.append((args, kwargs))

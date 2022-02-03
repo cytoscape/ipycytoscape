@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # Copyright (c) 2020, QuantStack, Mariana Meireles and ipycytoscape Contributors
 #
@@ -7,10 +6,12 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 
-import pytest
 
-from ipycytoscape.cytoscape import Graph, Node, Edge
 import networkx as nx
+
+from ipycytoscape.cytoscape import Graph, Node
+
+from ._util import compare_nodes
 
 
 class TestNetworkx:
@@ -35,6 +36,7 @@ class TestNetworkx:
             Node(data={"id": "unconnected_node"}, position={}),
         ]
 
+        compare_nodes(expected_nodes, graph.nodes)
         # remove individual node using node as input
         graph.remove_node(graph.nodes[0])
 
@@ -45,6 +47,7 @@ class TestNetworkx:
             Node(data={"id": "4"}, position={}),
             Node(data={"id": "unconnected_node"}, position={}),
         ]
+        compare_nodes(expected_nodes, graph.nodes)
 
         # remove individual node using index node as input
         graph.remove_node_by_id("3")
@@ -55,7 +58,8 @@ class TestNetworkx:
             Node(data={"id": "4"}, position={}),
             Node(data={"id": "unconnected_node"}, position={}),
         ]
+        compare_nodes(expected_nodes, graph.nodes)
 
         # remove all nodes of the graph
         graph.clear()
-        expected_nodes = []
+        compare_nodes([], graph.nodes)
