@@ -9,6 +9,8 @@
 
 import copy
 
+import pytest
+
 from ipycytoscape.cytoscape import Edge, Graph, Node
 
 from ._util import compare_edges, compare_nodes
@@ -271,8 +273,8 @@ class TestGraphAddMethods:
 
     def test_add_edges_directed(self, edges):
         """
-        Test to ensure that edges with the corresponding nodes will be added to the graph
-        for directed edges
+        Test to ensure that edges with the corresponding nodes will be added
+        to the graph for directed edges
         """
 
         expected_nodes = [
@@ -293,8 +295,8 @@ class TestGraphAddMethods:
 
     def test_add_edges_multiple_edges(self, edges):
         """
-        Test to ensure that edges with the corresponding nodes will be added to the graph
-        with multiple_edges
+        Test to ensure that edges with the corresponding nodes
+        will be added to the graph with multiple_edges.
         """
 
         expected_nodes = [
