@@ -30,11 +30,15 @@
     "url": "https://github.com/cytoscape/ipycytoscape"
   },
   "scripts": {
-    "build": "npm run build:lib && npm run build:all",
+    "build:prod": "npm run build:lib && npm run build:all",
+    "build": "npm run build:lib && npm run build:all:dev",
     "build:labextension": "npm run clean:labextension && jupyter labextension build .",
+    "build:labextension:dev": "npm run clean:labextension && jupyter labextension build --development True .",
     "build:lib": "tsc",
     "build:nbextension": "webpack --mode=production",
+    "build:nbextension:dev": "webpack --mode=development",
     "build:all": "npm run build:labextension && npm run build:nbextension",
+    "build:all:dev": "npm run build:labextension:dev && npm run build:nbextension:dev",
     "clean": "npm run clean:lib && npm run clean:nbextension",
     "clean:lib": "rimraf lib",
     "clean:labextension": "rimraf ipycytoscape/labextension",
