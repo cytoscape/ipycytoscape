@@ -49,7 +49,7 @@
     "test:ie": "karma start --browsers=IE tests/karma.conf.js",
     "watch": "npm-run-all -p watch:*",
     "watch:lib": "tsc -w",
-    "watch:nbextension": "webpack --watch",
+    "watch:nbextension": "webpack --watch --mode=development",
     "watch:labextension": "jupyter labextension watch ."
   },
   "dependencies": {
