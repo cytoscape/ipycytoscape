@@ -28,7 +28,8 @@ module.exports = [
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, 'ipycytoscape', 'nbextension', 'static'),
-      libraryTarget: 'amd'
+      libraryTarget: 'amd',
+      publicPath: ''
     },
     module: {
       rules: rules

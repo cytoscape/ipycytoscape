@@ -33,7 +33,7 @@
     "build": "npm run build:lib && npm run build:all",
     "build:labextension": "npm run clean:labextension && jupyter labextension build .",
     "build:lib": "tsc",
-    "build:nbextension": "webpack -p",
+    "build:nbextension": "webpack --mode=production",
     "build:all": "npm run build:labextension && npm run build:nbextension",
     "clean": "npm run clean:lib && npm run clean:nbextension",
     "clean:lib": "rimraf lib",
@@ -95,8 +95,8 @@
     "style-loader": "^1.0.0",
     "ts-loader": "^5.2.1",
     "typescript": "~3.7.1",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0"
   },
   "jupyterlab": {
     "extension": "lib/plugin",
