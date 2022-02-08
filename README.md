@@ -1,6 +1,6 @@
 # ipycytoscape
 
-[![Tests](https://github.com/cytoscape/ipycytoscape/actions/workflows/test.yml/badge.svg)](https://github.com/cytoscape/ipycytoscape/actions/workflows/test.yml) [![Documentation Status](https://readthedocs.org/projects/ipycytoscape/badge/?version=latest)](https://ipycytoscape.readthedocs.io/en/latest/?badge=latest) [![StackOverflow](https://img.shields.io/badge/stackoverflow--orange.svg)](https://stackoverflow.com/questions/tagged/ipycytoscape) [![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Tests](https://github.com/cytoscape/ipycytoscape/actions/workflows/test.yml/badge.svg)](https://github.com/cytoscape/ipycytoscape/actions/workflows/test.yml) [![Documentation Status](https://readthedocs.org/projects/ipycytoscape/badge/?version=master)](https://ipycytoscape.readthedocs.io/en/latest/?badge=master) [![StackOverflow](https://img.shields.io/badge/stackoverflow--orange.svg)](https://stackoverflow.com/questions/tagged/ipycytoscape) [![Join the chat at https://gitter.im/QuantStack/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A widget enabling interactive graph visualization with [cytoscape.js](https://js.cytoscape.org/) in JupyterLab and the Jupyter notebook.
 
@@ -89,7 +89,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipycytoscape
 
 While not required, we recommend creating a conda environment to work in:
 ```bash
-conda create -n ipycytoscape -c conda-forge jupyterlab nodejs>13 networkx
+conda create -n ipycytoscape -c conda-forge jupyterlab nodejs
 conda activate ipycytoscape
 
 # clone repo
@@ -152,16 +152,10 @@ Install necessary dependencies with pip:
 pip install -e ".[test]"
 ```
 
-Or with mamba:
+Or with conda/mamba:
 
 ```
 mamba -c conda-forge install networkx pandas nbval pytest
-```
-
-Or with conda:
-
-```
-conda -c conda-forge install networkx pandas nbval pytest
 ```
 
 #### And to run it:
