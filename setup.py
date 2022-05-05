@@ -94,13 +94,16 @@ setup_args = dict(
     ],
     extras_require={
         "test": [
+            "black==22.1.0",
+            "flake8>=4.0.1",
+            "flake8-typing-imports>=1.7.0",
+            "nbclassic>=0.2.8",
+            "nbval",
+            "networkx",
+            "pandas",
+            "pre-commit",
             "pytest>4.6",
             "pytest-cov",
-            "nbval",
-            "pandas",
-            "nbclassic>=0.2.8",
-            "networkx",
-            "pre-commit",
         ],
         "examples": [
             "pandas",
