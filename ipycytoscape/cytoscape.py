@@ -207,6 +207,8 @@ class Element(Widget):
     _cyto_attrs = []
 
     def __init__(self, **kwargs):
+        super().__init__()
+
         cyto_attrs = self._cyto_attrs + self._base_cyto_attrs
         for k, v in kwargs.items():
             if k in cyto_attrs:
