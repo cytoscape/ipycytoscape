@@ -264,7 +264,7 @@ class TestNetworkx:
             Edge(data={"source": "Node: node 1", "target": "Node: node 2"}, classes="")
         ]
 
-        compare_edges(expected_nodes, graph.nodes)
+        compare_nodes(expected_nodes, graph.nodes)
         compare_edges(expected_edges, graph.edges)
 
     def test_subclassed_node(self):

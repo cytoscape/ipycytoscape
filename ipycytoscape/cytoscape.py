@@ -185,12 +185,17 @@ class Element(Widget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
+    # Attributes
+    # NOTE: If you add something here,
+    # make sure to add it to
+    # `_base_cyto_attrs` as well
     removed = Bool().tag(sync=True)
     selected = Bool().tag(sync=True)
     selectable = Bool().tag(sync=True)
     classes = Unicode().tag(sync=True)
     data = MutableDict().tag(sync=True)
     pannable = Bool().tag(sync=True)
+
     _base_cyto_attrs = [
         "removed",
         "selected",
@@ -199,6 +204,23 @@ class Element(Widget):
         "data",
         "pannable",
     ]
+    _cyto_attrs = []
+
+    def __init__(self, **kwargs):
+        cyto_attrs = self._cyto_attrs + self._base_cyto_attrs
+        for k, v in kwargs.items():
+            if k in cyto_attrs:
+                if k == "data":
+                    # update:
+                    self.data.update(v)
+                else:
+                    setattr(self, k, v)
+            else:
+                self.data[k] = v
+
+        if "id" not in self.data:
+            # generate id from instance
+            self.data["id"] = id(self)
 
 
 class Edge(Element):
@@ -211,10 +233,39 @@ class Edge(Element):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
+    # Overload with default
     pannable = Bool(True).tag(sync=True)
 
     # currently we don't sync anything for edges outside of the base Element
     _cyto_attrs = []
+
+    def __eq__(self, other):
+        # edges are equal if they have the same attributes,
+        # e.g. they connect the same points
+        self_data = self.data.copy()
+        self_data.update({"id": None, "source": None, "target": None})
+        other_data = other.data.copy()
+        other_data.update({"id": None, "source": None, "target": None})
+
+        if "directed" in self.classes:
+            return (
+                self.classes == other.classes
+                and self_data == other_data
+                and self.data.get("target") == other.data.get("target")
+                and self.data.get("source") == other.data.get("source")
+            )
+        return (
+            self.classes == other.classes
+            and self_data == other_data
+            and (
+                self.data.get("target") == other.data.get("target")
+                and self.data.get("source") == other.data.get("source")
+            )
+            or (
+                self.data.get("target") == other.data.get("source")
+                and self.data.get("source") == other.data.get("target")
+            )
+        )
 
 
 class Node(Element):
@@ -227,22 +278,20 @@ class Node(Element):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
+    # Overload with default
+    pannable = Bool(False).tag(sync=True)
+
+    # Attributes
+    # NOTE: If you add something here,
+    # make sure to add it to
+    # `_cyto_attrs` as well
     position = MutableDict().tag(sync=True)
     locked = Bool(False).tag(sync=True)
     grabbable = Bool(True).tag(sync=True)
+
     grabbed = Bool(False).tag(sync=True)
-    pannable = Bool(False).tag(sync=True)
 
-    _cyto_attrs = ["position", "locked", "grabbable"]
-
-
-def _set_attributes(instance, data):
-    cyto_attrs = instance._cyto_attrs + instance._base_cyto_attrs
-    for k, v in data.items():
-        if k in cyto_attrs:
-            setattr(instance, k, v)
-        else:
-            instance.data[k] = v
+    _cyto_attrs = ["position", "locked", "grabbable", "grabbed"]
 
 
 class Graph(Widget):
@@ -256,6 +305,7 @@ class Graph(Widget):
 
     nodes = MutableList(Instance(Node)).tag(sync=True, **widget_serialization)
     edges = MutableList(Instance(Edge)).tag(sync=True, **widget_serialization)
+
     # dictionary for syncing graph structure
     _adj = MutableDict().tag(sync=True)
 
@@ -373,15 +423,13 @@ class Graph(Widget):
             if new_edge:  # if the edge is not present in the graph
                 edge_list.append(edge)
                 if source not in self._adj:
-                    node_instance = Node()
                     # setting the id, according to current spec should be only int/str
-                    node_instance.data = {"id": source}
+                    node_instance = Node(id=source)
                     node_list.append(node_instance)
                     self._adj[source] = dict()
                 if target not in self._adj:
-                    node_instance = Node()
                     # setting the id, according to current spec should be only int/str
-                    node_instance.data = {"id": target}
+                    node_instance = Node(id=target)
                     node_list.append(node_instance)
                     self._adj[target] = dict()
 
@@ -482,42 +530,45 @@ class Graph(Widget):
         # override type infering if directed is provided by the user
         if isinstance(g, nx.DiGraph) and directed is None:
             directed = True
+
         # override type infering if multiple_edges is provided by the user
         if isinstance(g, nx.MultiGraph) and multiple_edges is None:
             multiple_edges = True
 
         node_list = list()
         for node, data in g.nodes(data=True):
-            if issubclass(type(node), Node):
+            if isinstance(node, Node):
                 node_instance = node
             else:
-                node_instance = Node()
-                _set_attributes(node_instance, data)
                 if "id" not in data:
-                    node_instance.data["id"] = str(node)
+                    data["id"] = str(node)
+
+                node_instance = Node(**data)
+
             node_list.append(node_instance)
         self.add_nodes(node_list)
 
         edge_list = list()
-        for source, target, data in g.edges(data=True):
-            edge_instance = Edge()
 
-            if issubclass(type(source), Node):
+        for source, target, data in g.edges(data=True):
+            edge_instance = Edge(**data)
+
+            if isinstance(source, Node):
                 edge_instance.data["source"] = source.data["id"]
             else:
                 edge_instance.data["source"] = str(source)
 
-            if issubclass(type(target), Node):
+            if isinstance(target, Node):
                 edge_instance.data["target"] = target.data["id"]
             else:
                 edge_instance.data["target"] = str(target)
 
-            _set_attributes(edge_instance, data)
-
             if directed and "directed" not in edge_instance.classes:
                 edge_instance.classes += " directed "
+
             if multiple_edges and "multiple_edges" not in edge_instance.classes:
                 edge_instance.classes += " multiple_edges "
+
             edge_list.append(edge_instance)
         self.add_edges(edge_list, directed, multiple_edges)
 
@@ -544,15 +595,13 @@ class Graph(Widget):
 
         node_list = list()
         for node in json_file["nodes"]:
-            node_instance = Node()
-            _set_attributes(node_instance, node)
+            node_instance = Node(**node)
             node_list.append(node_instance)
         self.add_nodes(node_list)
         edge_list = list()
         if "edges" in json_file:
             for edge in json_file["edges"]:
-                edge_instance = Edge()
-                _set_attributes(edge_instance, edge)
+                edge_instance = Edge(**edge)
                 if directed and "directed" not in edge_instance.classes:
                     edge_instance.classes += " directed "
                 if multiple_edges and "multiple_edges" not in edge_instance.classes:
@@ -737,8 +786,7 @@ class Graph(Widget):
             node_attributes["label"] = priority_labels[index]
 
             # create node
-            node_instance = Node()
-            _set_attributes(node_instance, node_attributes)
+            node_instance = Node(**node_attributes)
             node_list.append(node_instance)
 
         self.add_nodes(node_list)
@@ -746,8 +794,6 @@ class Graph(Widget):
         # convert Neo4j relationships to cytoscape edges
         edge_list = list()
         for rel in g.relationships:
-            edge_instance = Edge()
-
             # create dictionaries of relationship
             rel_attributes = dict(rel)
 
@@ -759,10 +805,9 @@ class Graph(Widget):
                 rel_attributes["name"] = rel.__class__.__name__
 
             # assign unique node ids
+            edge_instance = Edge(**rel_attributes)
             edge_instance.data["source"] = rel.start_node.identity
             edge_instance.data["target"] = rel.end_node.identity
-            _set_attributes(edge_instance, rel_attributes)
-
             edge_list.append(edge_instance)
 
         # Neo4j graphs are directed and may have multiple edges

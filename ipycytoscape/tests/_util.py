@@ -15,5 +15,4 @@ def compare_nodes(expected_nodes: List[Node], actual_nodes: List[Node]):
 def compare_edges(expected_edges: List[Edge], actual_edges: List[Edge]):
     assert bool(expected_edges) == bool(actual_edges)
     for expected, actual in zip(expected_edges, actual_edges):
-        assert expected.data == actual.data
-        assert expected.classes == actual.classes
+        assert expected == actual
