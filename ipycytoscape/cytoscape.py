@@ -244,20 +244,38 @@ class Edge(Element):
     def __eq__(self, other):
         # edges are equal if they have the same attributes,
         # e.g. they connect the same points
+
+        # copy self and other's data attributes
         self_data = self.data.copy()
-        self_data.update({"id": None, "source": None, "target": None})
         other_data = other.data.copy()
+
+        # remove unique identifiers:
+        #   - id because instance equality doesnt negate edge equality
+        #   - source/target so we can check undirected edges as well
+        self_data.update({"id": None, "source": None, "target": None})
         other_data.update({"id": None, "source": None, "target": None})
 
+        # Pull out classes, put into sets to compare,
+        # since "class1 class2 class3" should be equal to
+        #       "class3 class1 class2"
+        #
+        # Since classes will often look like " directed ",
+        # we make sure to purge and "" as well
+        self_classes = [_ for _ in set(self.classes.split(" ")) if _]
+        other_classes = [_ for _ in set(self.classes.split(" ")) if _]
         if "directed" in self.classes:
+            # self's target must equal other's target,
+            # sself's source must equal other's source
             return (
-                self.classes == other.classes
+                self_classes == other_classes
                 and self_data == other_data
                 and self.data.get("target") == other.data.get("target")
                 and self.data.get("source") == other.data.get("source")
             )
+        # target and source are interchangeable since its an undirected
+        # edge
         return (
-            self.classes == other.classes
+            self_classes == other_classes
             and self_data == other_data
             and (
                 self.data.get("target") == other.data.get("target")
