@@ -57,7 +57,7 @@
     "watch:labextension": "jupyter labextension watch ."
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3 || ^4.0.0",
+    "@jupyter-widgets/base": "^1.1.10 || ^2 || ^3 || ^4 || ^6",
     "@types/cytoscape": "^3.8.8",
     "cytoscape": "^3.14.0",
     "cytoscape-cola": "^2.3.0",
@@ -67,7 +67,7 @@
     "tippy.js": "^5.2.1"
   },
   "devDependencies": {
-    "@jupyterlab/builder": "^3.0.0",
+    "@jupyterlab/builder": "^3.4.0",
     "@phosphor/application": "^1.6.0",
     "@phosphor/widgets": "^1.6.0",
     "@types/expect.js": "^0.3.29",
