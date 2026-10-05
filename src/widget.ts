@@ -117,14 +117,14 @@ export class CytoscapeView extends DOMWidgetView {
       this.nodeViews = new widgets.ViewList(
         this.addNodeModel,
         this.removeNodeView,
-        this
+        this,
       );
       this.nodeViews.update(this.model.get('graph').get('nodes'));
 
       this.edgeViews = new widgets.ViewList(
         this.addEdgeModel,
         this.removeEdgeView,
-        this
+        this,
       );
       this.edgeViews.update(this.model.get('graph').get('edges'));
       this.cytoscape_obj.endBatch();
@@ -145,18 +145,18 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on(
       'change:user_zooming_enabled',
       this._updateUserZoomingEnabled,
-      this
+      this,
     );
     this.model.on('change:panning_enabled', this._updatePanningEnabled, this);
     this.model.on(
       'change:user_panning_enabled',
       this._updateUserPanningEnabled,
-      this
+      this,
     );
     this.model.on(
       'change:box_selection_enabled',
       this._updateBoxSelectionEnabled,
-      this
+      this,
     );
     this.model.on('change:selection_type', this._updateSelectionType, this);
     this.model.on('change:touch_tap_threshold', this.value_changed, this);
@@ -171,7 +171,7 @@ export class CytoscapeView extends DOMWidgetView {
     this.model.on(
       'change:_interaction_handlers',
       this.listenForUserEvents,
-      this
+      this,
     );
 
     const layout = this.model.get('layout');
@@ -309,7 +309,7 @@ export class CytoscapeView extends DOMWidgetView {
   }
   private _updateUserZoomingEnabled() {
     this.cytoscape_obj.userZoomingEnabled(
-      this.model.get('user_zooming_enabled')
+      this.model.get('user_zooming_enabled'),
     );
   }
   private _updatePanningEnabled() {
@@ -317,12 +317,12 @@ export class CytoscapeView extends DOMWidgetView {
   }
   private _updateUserPanningEnabled() {
     this.cytoscape_obj.userPanningEnabled(
-      this.model.get('user_panning_enabled')
+      this.model.get('user_panning_enabled'),
     );
   }
   private _updateBoxSelectionEnabled() {
     this.cytoscape_obj.boxSelectionEnabled(
-      this.model.get('box_selection_enabled')
+      this.model.get('box_selection_enabled'),
     );
   }
   private _updateSelectionType() {
@@ -357,7 +357,7 @@ export class CytoscapeView extends DOMWidgetView {
    */
   _addElementListeners(
     ele: cytoscape.CollectionReturnValue,
-    view: DOMWidgetView
+    view: DOMWidgetView,
   ) {
     ele.on('select', (event) => {
       view.model.set('selected', true);
