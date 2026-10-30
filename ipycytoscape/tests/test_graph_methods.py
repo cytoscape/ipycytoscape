@@ -352,3 +352,13 @@ class TestGraphAddMethods:
         graph.add_edge(copy.copy(edge_inv), multiple_edges=True)
         compare_edges(expected_edges_multiple, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
+
+    def test_add_nodes_invalid_type(self):
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Node"):
+            graph.add_nodes([{"id": "0"}])
+
+    def test_add_edges_invalid_type(self):
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Edge"):
+            graph.add_edges([{"source": "0", "target": "1"}])
