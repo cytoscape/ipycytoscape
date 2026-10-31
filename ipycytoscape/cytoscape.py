@@ -277,13 +277,15 @@ class Graph(Widget):
         ----------
         nodes : list of ipycytoscape.Node
         """
-        node_list = list()
+        nodes = list(nodes)
         for node in nodes:
             if not isinstance(node, Node):
                 raise TypeError(
                     "Each item in nodes must be an ipycytoscape.Node instance, "
                     f"got {type(node).__name__}."
                 )
+        node_list = list()
+        for node in nodes:
             if node.data["id"] not in self._adj:
                 self._adj[node.data["id"]] = dict()
                 node_list.append(node)
@@ -350,14 +352,16 @@ class Graph(Widget):
         directed : bool
         multiple_edges : boolean
         """
-        node_list = list()
-        edge_list = list()
+        edges = list(edges)
         for edge in edges:
             if not isinstance(edge, Edge):
                 raise TypeError(
                     "Each item in edges must be an ipycytoscape.Edge instance, "
                     f"got {type(edge).__name__}."
                 )
+        node_list = list()
+        edge_list = list()
+        for edge in edges:
             source, target = edge.data["source"], edge.data["target"]
 
             if directed and "directed" not in edge.classes:
