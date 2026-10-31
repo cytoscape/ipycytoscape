@@ -352,3 +352,44 @@ class TestGraphAddMethods:
         graph.add_edge(copy.copy(edge_inv), multiple_edges=True)
         compare_edges(expected_edges_multiple, graph.edges)
         compare_nodes(expected_nodes, graph.nodes)
+
+    def test_add_nodes_invalid_type(self):
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Node"):
+            graph.add_nodes([{"id": "0"}])
+
+    def test_add_nodes_invalid_type_mixed_input(self):
+        valid_node = Node(data={"id": "0"})
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Node"):
+            graph.add_nodes([valid_node, {"id": "1"}])
+        assert graph.nodes == []
+        assert graph._adj == {}
+
+        graph.add_nodes([valid_node])
+        compare_nodes([Node(data={"id": "0"}, position={})], graph.nodes)
+
+    def test_add_edges_invalid_type(self):
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Edge"):
+            graph.add_edges([{"source": "0", "target": "1"}])
+
+    def test_add_edges_invalid_type_mixed_input(self):
+        valid_edge = Edge(data={"source": "0", "target": "1"})
+        graph = Graph()
+        with pytest.raises(TypeError, match="ipycytoscape.Edge"):
+            graph.add_edges([valid_edge, {"source": "1", "target": "2"}])
+        assert graph.edges == []
+        assert graph.nodes == []
+        assert graph._adj == {}
+
+        graph.add_edges([valid_edge])
+        expected_nodes = [
+            Node(data={"id": "0"}, position={}),
+            Node(data={"id": "1"}, position={}),
+        ]
+        expected_edges = [
+            Edge(classes="", data={"source": "0", "target": "1"}),
+        ]
+        compare_edges(expected_edges, graph.edges)
+        compare_nodes(expected_nodes, graph.nodes)
